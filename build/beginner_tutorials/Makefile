@@ -38,19 +38,22 @@ RM = /usr/bin/cmake -E remove -f
 # Escaping for special characters.
 EQUALS = =
 
+# The program to use to edit the cache.
+CMAKE_EDIT_COMMAND = /usr/bin/ccmake
+
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/jake/catkin_ws/src
+CMAKE_SOURCE_DIR = /home/debian/ros_imu/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/jake/catkin_ws/build
+CMAKE_BINARY_DIR = /home/debian/ros_imu/build
 
 #=============================================================================
 # Targets provided globally by CMake.
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running interactive CMake command-line interface..."
-	/usr/bin/cmake -i .
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -120,14 +123,14 @@ test/fast: test
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/jake/catkin_ws/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/jake/catkin_ws/build/CMakeFiles /home/jake/catkin_ws/build/beginner_tutorials/CMakeFiles/progress.marks
-	cd /home/jake/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/jake/catkin_ws/build/CMakeFiles 0
+	cd /home/debian/ros_imu/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/debian/ros_imu/build/CMakeFiles /home/debian/ros_imu/build/beginner_tutorials/CMakeFiles/progress.marks
+	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/debian/ros_imu/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/clean
+	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/clean
 .PHONY : clean
 
 # The main clean target
@@ -136,22 +139,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/jake/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/preinstall
+	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/preinstall
+	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/jake/catkin_ws/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/debian/ros_imu/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 beginner_tutorials/CMakeFiles/roscpp_generate_messages_cpp.dir/rule:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/roscpp_generate_messages_cpp.dir/rule
+	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/roscpp_generate_messages_cpp.dir/rule
 .PHONY : beginner_tutorials/CMakeFiles/roscpp_generate_messages_cpp.dir/rule
 
 # Convenience name for target.
@@ -160,12 +163,12 @@ roscpp_generate_messages_cpp: beginner_tutorials/CMakeFiles/roscpp_generate_mess
 
 # fast build rule for target.
 roscpp_generate_messages_cpp/fast:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f beginner_tutorials/CMakeFiles/roscpp_generate_messages_cpp.dir/build.make beginner_tutorials/CMakeFiles/roscpp_generate_messages_cpp.dir/build
+	cd /home/debian/ros_imu/build && $(MAKE) -f beginner_tutorials/CMakeFiles/roscpp_generate_messages_cpp.dir/build.make beginner_tutorials/CMakeFiles/roscpp_generate_messages_cpp.dir/build
 .PHONY : roscpp_generate_messages_cpp/fast
 
 # Convenience name for target.
 beginner_tutorials/CMakeFiles/roscpp_generate_messages_lisp.dir/rule:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/roscpp_generate_messages_lisp.dir/rule
+	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/roscpp_generate_messages_lisp.dir/rule
 .PHONY : beginner_tutorials/CMakeFiles/roscpp_generate_messages_lisp.dir/rule
 
 # Convenience name for target.
@@ -174,12 +177,12 @@ roscpp_generate_messages_lisp: beginner_tutorials/CMakeFiles/roscpp_generate_mes
 
 # fast build rule for target.
 roscpp_generate_messages_lisp/fast:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f beginner_tutorials/CMakeFiles/roscpp_generate_messages_lisp.dir/build.make beginner_tutorials/CMakeFiles/roscpp_generate_messages_lisp.dir/build
+	cd /home/debian/ros_imu/build && $(MAKE) -f beginner_tutorials/CMakeFiles/roscpp_generate_messages_lisp.dir/build.make beginner_tutorials/CMakeFiles/roscpp_generate_messages_lisp.dir/build
 .PHONY : roscpp_generate_messages_lisp/fast
 
 # Convenience name for target.
 beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/rule:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/rule
+	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/rule
 .PHONY : beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/rule
 
 # Convenience name for target.
@@ -188,12 +191,12 @@ roscpp_generate_messages_py: beginner_tutorials/CMakeFiles/roscpp_generate_messa
 
 # fast build rule for target.
 roscpp_generate_messages_py/fast:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/build.make beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/build
+	cd /home/debian/ros_imu/build && $(MAKE) -f beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/build.make beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/build
 .PHONY : roscpp_generate_messages_py/fast
 
 # Convenience name for target.
 beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule
+	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule
 .PHONY : beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule
 
 # Convenience name for target.
@@ -202,12 +205,12 @@ rosgraph_msgs_generate_messages_cpp: beginner_tutorials/CMakeFiles/rosgraph_msgs
 
 # fast build rule for target.
 rosgraph_msgs_generate_messages_cpp/fast:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build.make beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build
+	cd /home/debian/ros_imu/build && $(MAKE) -f beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build.make beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build
 .PHONY : rosgraph_msgs_generate_messages_cpp/fast
 
 # Convenience name for target.
 beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/rule:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/rule
+	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/rule
 .PHONY : beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/rule
 
 # Convenience name for target.
@@ -216,12 +219,12 @@ rosgraph_msgs_generate_messages_lisp: beginner_tutorials/CMakeFiles/rosgraph_msg
 
 # fast build rule for target.
 rosgraph_msgs_generate_messages_lisp/fast:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build.make beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build
+	cd /home/debian/ros_imu/build && $(MAKE) -f beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build.make beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build
 .PHONY : rosgraph_msgs_generate_messages_lisp/fast
 
 # Convenience name for target.
 beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/rule:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/rule
+	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/rule
 .PHONY : beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/rule
 
 # Convenience name for target.
@@ -230,12 +233,12 @@ rosgraph_msgs_generate_messages_py: beginner_tutorials/CMakeFiles/rosgraph_msgs_
 
 # fast build rule for target.
 rosgraph_msgs_generate_messages_py/fast:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build.make beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build
+	cd /home/debian/ros_imu/build && $(MAKE) -f beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build.make beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build
 .PHONY : rosgraph_msgs_generate_messages_py/fast
 
 # Convenience name for target.
 beginner_tutorials/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
+	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
 .PHONY : beginner_tutorials/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
 
 # Convenience name for target.
@@ -244,12 +247,12 @@ std_msgs_generate_messages_cpp: beginner_tutorials/CMakeFiles/std_msgs_generate_
 
 # fast build rule for target.
 std_msgs_generate_messages_cpp/fast:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f beginner_tutorials/CMakeFiles/std_msgs_generate_messages_cpp.dir/build.make beginner_tutorials/CMakeFiles/std_msgs_generate_messages_cpp.dir/build
+	cd /home/debian/ros_imu/build && $(MAKE) -f beginner_tutorials/CMakeFiles/std_msgs_generate_messages_cpp.dir/build.make beginner_tutorials/CMakeFiles/std_msgs_generate_messages_cpp.dir/build
 .PHONY : std_msgs_generate_messages_cpp/fast
 
 # Convenience name for target.
 beginner_tutorials/CMakeFiles/std_msgs_generate_messages_lisp.dir/rule:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/std_msgs_generate_messages_lisp.dir/rule
+	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/std_msgs_generate_messages_lisp.dir/rule
 .PHONY : beginner_tutorials/CMakeFiles/std_msgs_generate_messages_lisp.dir/rule
 
 # Convenience name for target.
@@ -258,12 +261,12 @@ std_msgs_generate_messages_lisp: beginner_tutorials/CMakeFiles/std_msgs_generate
 
 # fast build rule for target.
 std_msgs_generate_messages_lisp/fast:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f beginner_tutorials/CMakeFiles/std_msgs_generate_messages_lisp.dir/build.make beginner_tutorials/CMakeFiles/std_msgs_generate_messages_lisp.dir/build
+	cd /home/debian/ros_imu/build && $(MAKE) -f beginner_tutorials/CMakeFiles/std_msgs_generate_messages_lisp.dir/build.make beginner_tutorials/CMakeFiles/std_msgs_generate_messages_lisp.dir/build
 .PHONY : std_msgs_generate_messages_lisp/fast
 
 # Convenience name for target.
 beginner_tutorials/CMakeFiles/std_msgs_generate_messages_py.dir/rule:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/std_msgs_generate_messages_py.dir/rule
+	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 beginner_tutorials/CMakeFiles/std_msgs_generate_messages_py.dir/rule
 .PHONY : beginner_tutorials/CMakeFiles/std_msgs_generate_messages_py.dir/rule
 
 # Convenience name for target.
@@ -272,7 +275,7 @@ std_msgs_generate_messages_py: beginner_tutorials/CMakeFiles/std_msgs_generate_m
 
 # fast build rule for target.
 std_msgs_generate_messages_py/fast:
-	cd /home/jake/catkin_ws/build && $(MAKE) -f beginner_tutorials/CMakeFiles/std_msgs_generate_messages_py.dir/build.make beginner_tutorials/CMakeFiles/std_msgs_generate_messages_py.dir/build
+	cd /home/debian/ros_imu/build && $(MAKE) -f beginner_tutorials/CMakeFiles/std_msgs_generate_messages_py.dir/build.make beginner_tutorials/CMakeFiles/std_msgs_generate_messages_py.dir/build
 .PHONY : std_msgs_generate_messages_py/fast
 
 # Help Target
@@ -308,6 +311,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/jake/catkin_ws/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/debian/ros_imu/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

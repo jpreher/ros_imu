@@ -34,11 +34,14 @@ RM = /usr/bin/cmake -E remove -f
 # Escaping for special characters.
 EQUALS = =
 
+# The program to use to edit the cache.
+CMAKE_EDIT_COMMAND = /usr/bin/ccmake
+
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/jake/catkin_ws/src
+CMAKE_SOURCE_DIR = /home/debian/ros_imu/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/jake/catkin_ws/build
+CMAKE_BINARY_DIR = /home/debian/ros_imu/build
 
 # Include any dependencies generated for this target.
 include leg_pose/CMakeFiles/pose_node.dir/depend.make
@@ -50,18 +53,18 @@ include leg_pose/CMakeFiles/pose_node.dir/progress.make
 include leg_pose/CMakeFiles/pose_node.dir/flags.make
 
 leg_pose/CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.o: leg_pose/CMakeFiles/pose_node.dir/flags.make
-leg_pose/CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.o: /home/jake/catkin_ws/src/leg_pose/src/legPoseSubPub.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/jake/catkin_ws/build/CMakeFiles $(CMAKE_PROGRESS_1)
+leg_pose/CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.o: /home/debian/ros_imu/src/leg_pose/src/legPoseSubPub.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/debian/ros_imu/build/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object leg_pose/CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.o"
-	cd /home/jake/catkin_ws/build/leg_pose && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.o -c /home/jake/catkin_ws/src/leg_pose/src/legPoseSubPub.cpp
+	cd /home/debian/ros_imu/build/leg_pose && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.o -c /home/debian/ros_imu/src/leg_pose/src/legPoseSubPub.cpp
 
 leg_pose/CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.i"
-	cd /home/jake/catkin_ws/build/leg_pose && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/jake/catkin_ws/src/leg_pose/src/legPoseSubPub.cpp > CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.i
+	cd /home/debian/ros_imu/build/leg_pose && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/debian/ros_imu/src/leg_pose/src/legPoseSubPub.cpp > CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.i
 
 leg_pose/CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.s"
-	cd /home/jake/catkin_ws/build/leg_pose && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/jake/catkin_ws/src/leg_pose/src/legPoseSubPub.cpp -o CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.s
+	cd /home/debian/ros_imu/build/leg_pose && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/debian/ros_imu/src/leg_pose/src/legPoseSubPub.cpp -o CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.s
 
 leg_pose/CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.o.requires:
 .PHONY : leg_pose/CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.o.requires
@@ -79,42 +82,42 @@ pose_node_OBJECTS = \
 # External object files for target pose_node
 pose_node_EXTERNAL_OBJECTS =
 
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: leg_pose/CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.o
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: leg_pose/CMakeFiles/pose_node.dir/build.make
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /opt/ros/hydro/lib/libroscpp.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /usr/lib/libboost_signals-mt.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /usr/lib/libboost_filesystem-mt.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /opt/ros/hydro/lib/librosconsole.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /opt/ros/hydro/lib/librosconsole_log4cxx.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /opt/ros/hydro/lib/librosconsole_backend_interface.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /usr/lib/liblog4cxx.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /usr/lib/libboost_regex-mt.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /opt/ros/hydro/lib/libxmlrpcpp.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /opt/ros/hydro/lib/libroscpp_serialization.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /opt/ros/hydro/lib/librostime.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /usr/lib/libboost_date_time-mt.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /usr/lib/libboost_system-mt.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /usr/lib/libboost_thread-mt.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /usr/lib/x86_64-linux-gnu/libpthread.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /opt/ros/hydro/lib/libcpp_common.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /opt/ros/hydro/lib/libconsole_bridge.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: /home/jake/catkin_ws/devel/lib/libpose_lib.so
-/home/jake/catkin_ws/devel/lib/leg_pose/pose_node: leg_pose/CMakeFiles/pose_node.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX executable /home/jake/catkin_ws/devel/lib/leg_pose/pose_node"
-	cd /home/jake/catkin_ws/build/leg_pose && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/pose_node.dir/link.txt --verbose=$(VERBOSE)
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: leg_pose/CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.o
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: leg_pose/CMakeFiles/pose_node.dir/build.make
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /home/debian/ros_catkin_ws/install_isolated/lib/libroscpp.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /usr/lib/libboost_signals-mt.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /usr/lib/libboost_filesystem-mt.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /home/debian/ros_catkin_ws/install_isolated/lib/librosconsole.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /home/debian/ros_catkin_ws/install_isolated/lib/librosconsole_log4cxx.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /home/debian/ros_catkin_ws/install_isolated/lib/librosconsole_backend_interface.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /usr/lib/liblog4cxx.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /usr/lib/libboost_regex-mt.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /home/debian/ros_catkin_ws/install_isolated/lib/libxmlrpcpp.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /home/debian/ros_catkin_ws/install_isolated/lib/libroscpp_serialization.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /home/debian/ros_catkin_ws/install_isolated/lib/librostime.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /usr/lib/libboost_date_time-mt.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /usr/lib/libboost_system-mt.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /usr/lib/libboost_thread-mt.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /usr/lib/arm-linux-gnueabihf/libpthread.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /home/debian/ros_catkin_ws/install_isolated/lib/libcpp_common.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /home/debian/ros_catkin_ws/install_isolated/lib/libconsole_bridge.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: /home/debian/ros_imu/devel/lib/libpose_lib.so
+/home/debian/ros_imu/devel/lib/leg_pose/pose_node: leg_pose/CMakeFiles/pose_node.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX executable /home/debian/ros_imu/devel/lib/leg_pose/pose_node"
+	cd /home/debian/ros_imu/build/leg_pose && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/pose_node.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-leg_pose/CMakeFiles/pose_node.dir/build: /home/jake/catkin_ws/devel/lib/leg_pose/pose_node
+leg_pose/CMakeFiles/pose_node.dir/build: /home/debian/ros_imu/devel/lib/leg_pose/pose_node
 .PHONY : leg_pose/CMakeFiles/pose_node.dir/build
 
 leg_pose/CMakeFiles/pose_node.dir/requires: leg_pose/CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.o.requires
 .PHONY : leg_pose/CMakeFiles/pose_node.dir/requires
 
 leg_pose/CMakeFiles/pose_node.dir/clean:
-	cd /home/jake/catkin_ws/build/leg_pose && $(CMAKE_COMMAND) -P CMakeFiles/pose_node.dir/cmake_clean.cmake
+	cd /home/debian/ros_imu/build/leg_pose && $(CMAKE_COMMAND) -P CMakeFiles/pose_node.dir/cmake_clean.cmake
 .PHONY : leg_pose/CMakeFiles/pose_node.dir/clean
 
 leg_pose/CMakeFiles/pose_node.dir/depend:
-	cd /home/jake/catkin_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/jake/catkin_ws/src /home/jake/catkin_ws/src/leg_pose /home/jake/catkin_ws/build /home/jake/catkin_ws/build/leg_pose /home/jake/catkin_ws/build/leg_pose/CMakeFiles/pose_node.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/debian/ros_imu/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/debian/ros_imu/src /home/debian/ros_imu/src/leg_pose /home/debian/ros_imu/build /home/debian/ros_imu/build/leg_pose /home/debian/ros_imu/build/leg_pose/CMakeFiles/pose_node.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : leg_pose/CMakeFiles/pose_node.dir/depend
 

@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/home/jake/catkin_ws/src/leg_pose/include/quaternion_util.h
+/home/debian/ros_imu/src/leg_pose/include/quaternion_util.h
 math.h
 -
 
-/home/jake/catkin_ws/src/leg_pose/src/quaternion_util.cpp
+/home/debian/ros_imu/src/leg_pose/src/quaternion_util.cpp
 quaternion_util.h
-/home/jake/catkin_ws/src/leg_pose/src/quaternion_util.h
+/home/debian/ros_imu/src/leg_pose/src/quaternion_util.h
 

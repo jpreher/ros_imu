@@ -34,11 +34,14 @@ RM = /usr/bin/cmake -E remove -f
 # Escaping for special characters.
 EQUALS = =
 
+# The program to use to edit the cache.
+CMAKE_EDIT_COMMAND = /usr/bin/ccmake
+
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/jake/catkin_ws/src
+CMAKE_SOURCE_DIR = /home/debian/ros_imu/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/jake/catkin_ws/build
+CMAKE_BINARY_DIR = /home/debian/ros_imu/build
 
 # Utility rule file for tests.
 
@@ -60,6 +63,6 @@ CMakeFiles/tests.dir/clean:
 .PHONY : CMakeFiles/tests.dir/clean
 
 CMakeFiles/tests.dir/depend:
-	cd /home/jake/catkin_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/jake/catkin_ws/src /home/jake/catkin_ws/src /home/jake/catkin_ws/build /home/jake/catkin_ws/build /home/jake/catkin_ws/build/CMakeFiles/tests.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/debian/ros_imu/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/debian/ros_imu/src /home/debian/ros_imu/src /home/debian/ros_imu/build /home/debian/ros_imu/build /home/debian/ros_imu/build/CMakeFiles/tests.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/tests.dir/depend
 

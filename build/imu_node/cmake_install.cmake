@@ -1,8 +1,8 @@
-# Install script for directory: /home/jake/catkin_ws/src/imu_node
+# Install script for directory: /home/debian/ros_imu/src/imu_node
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  SET(CMAKE_INSTALL_PREFIX "/home/jake/catkin_ws/install")
+  SET(CMAKE_INSTALL_PREFIX "/home/debian/ros_imu/install")
 ENDIF(NOT DEFINED CMAKE_INSTALL_PREFIX)
 STRING(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -33,17 +33,17 @@ IF(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 ENDIF(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 
 IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/jake/catkin_ws/build/imu_node/catkin_generated/installspace/imu_node.pc")
+  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/debian/ros_imu/build/imu_node/catkin_generated/installspace/imu_node.pc")
 ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
 
 IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/imu_node/cmake" TYPE FILE FILES
-    "/home/jake/catkin_ws/build/imu_node/catkin_generated/installspace/imu_nodeConfig.cmake"
-    "/home/jake/catkin_ws/build/imu_node/catkin_generated/installspace/imu_nodeConfig-version.cmake"
+    "/home/debian/ros_imu/build/imu_node/catkin_generated/installspace/imu_nodeConfig.cmake"
+    "/home/debian/ros_imu/build/imu_node/catkin_generated/installspace/imu_nodeConfig-version.cmake"
     )
 ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
 
 IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/imu_node" TYPE FILE FILES "/home/jake/catkin_ws/src/imu_node/package.xml")
+  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/imu_node" TYPE FILE FILES "/home/debian/ros_imu/src/imu_node/package.xml")
 ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
 

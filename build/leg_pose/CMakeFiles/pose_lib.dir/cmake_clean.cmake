@@ -1,7 +1,7 @@
 FILE(REMOVE_RECURSE
   "CMakeFiles/pose_lib.dir/src/quaternion_util.cpp.o"
-  "/home/jake/catkin_ws/devel/lib/libpose_lib.pdb"
-  "/home/jake/catkin_ws/devel/lib/libpose_lib.so"
+  "/home/debian/ros_imu/devel/lib/libpose_lib.pdb"
+  "/home/debian/ros_imu/devel/lib/libpose_lib.so"
 )
 
 # Per-language clean rules from dependency scanning.

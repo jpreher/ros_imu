@@ -1,2 +1,2 @@
 - setup-file:
-    local-name: /home/jake/catkin_ws/devel/setup.sh
+    local-name: /home/debian/ros_imu/devel/setup.sh

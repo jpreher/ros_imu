@@ -1,8 +1,8 @@
 # generated from catkin/cmake/template/pkg.context.pc.in
 CATKIN_PACKAGE_PREFIX = ""
-PROJECT_PKG_CONFIG_INCLUDE_DIRS = "/home/jake/catkin_ws/install/include".split(';') if "/home/jake/catkin_ws/install/include" != "" else []
+PROJECT_PKG_CONFIG_INCLUDE_DIRS = "/home/debian/ros_imu/install/include".split(';') if "/home/debian/ros_imu/install/include" != "" else []
 PROJECT_CATKIN_DEPENDS = "roscpp;rospy;std_msgs;message_runtime".replace(';', ' ')
 PKG_CONFIG_LIBRARIES_WITH_PREFIX = "".split(';') if "" != "" else []
 PROJECT_NAME = "leg_pose"
-PROJECT_SPACE_DIR = "/home/jake/catkin_ws/install"
+PROJECT_SPACE_DIR = "/home/debian/ros_imu/install"
 PROJECT_VERSION = "0.0.0"

@@ -34,11 +34,14 @@ RM = /usr/bin/cmake -E remove -f
 # Escaping for special characters.
 EQUALS = =
 
+# The program to use to edit the cache.
+CMAKE_EDIT_COMMAND = /usr/bin/ccmake
+
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/jake/catkin_ws/src
+CMAKE_SOURCE_DIR = /home/debian/ros_imu/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/jake/catkin_ws/build
+CMAKE_BINARY_DIR = /home/debian/ros_imu/build
 
 # Utility rule file for rosgraph_msgs_generate_messages_cpp.
 
@@ -56,10 +59,10 @@ beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build: ros
 .PHONY : beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build
 
 beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/clean:
-	cd /home/jake/catkin_ws/build/beginner_tutorials && $(CMAKE_COMMAND) -P CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/cmake_clean.cmake
+	cd /home/debian/ros_imu/build/beginner_tutorials && $(CMAKE_COMMAND) -P CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/cmake_clean.cmake
 .PHONY : beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/clean
 
 beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/depend:
-	cd /home/jake/catkin_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/jake/catkin_ws/src /home/jake/catkin_ws/src/beginner_tutorials /home/jake/catkin_ws/build /home/jake/catkin_ws/build/beginner_tutorials /home/jake/catkin_ws/build/beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/debian/ros_imu/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/debian/ros_imu/src /home/debian/ros_imu/src/beginner_tutorials /home/debian/ros_imu/build /home/debian/ros_imu/build/beginner_tutorials /home/debian/ros_imu/build/beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/depend
 

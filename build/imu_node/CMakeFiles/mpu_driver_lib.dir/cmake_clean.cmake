@@ -2,8 +2,8 @@ FILE(REMOVE_RECURSE
   "CMakeFiles/mpu_driver_lib.dir/src/MPU9150.cpp.o"
   "CMakeFiles/mpu_driver_lib.dir/src/BBB_I2C.cpp.o"
   "CMakeFiles/mpu_driver_lib.dir/src/quaternion_util.cpp.o"
-  "/home/jake/catkin_ws/devel/lib/libmpu_driver_lib.pdb"
-  "/home/jake/catkin_ws/devel/lib/libmpu_driver_lib.so"
+  "/home/debian/ros_imu/devel/lib/libmpu_driver_lib.pdb"
+  "/home/debian/ros_imu/devel/lib/libmpu_driver_lib.so"
 )
 
 # Per-language clean rules from dependency scanning.

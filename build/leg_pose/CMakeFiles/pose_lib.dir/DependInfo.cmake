@@ -4,7 +4,7 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_CXX
-  "/home/jake/catkin_ws/src/leg_pose/src/quaternion_util.cpp" "/home/jake/catkin_ws/build/leg_pose/CMakeFiles/pose_lib.dir/src/quaternion_util.cpp.o"
+  "/home/debian/ros_imu/src/leg_pose/src/quaternion_util.cpp" "/home/debian/ros_imu/build/leg_pose/CMakeFiles/pose_lib.dir/src/quaternion_util.cpp.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -21,9 +21,9 @@ SET(CMAKE_TARGET_LINKED_INFO_FILES
 
 # The include file search paths:
 SET(CMAKE_C_TARGET_INCLUDE_PATH
-  "/home/jake/catkin_ws/devel/include"
-  "/opt/ros/hydro/include"
-  "/home/jake/catkin_ws/src/leg_pose/include"
+  "/home/debian/ros_imu/devel/include"
+  "/home/debian/ros_catkin_ws/install_isolated/include"
+  "/home/debian/ros_imu/src/leg_pose/include"
   )
 SET(CMAKE_CXX_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})
 SET(CMAKE_Fortran_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})

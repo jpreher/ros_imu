@@ -34,11 +34,14 @@ RM = /usr/bin/cmake -E remove -f
 # Escaping for special characters.
 EQUALS = =
 
+# The program to use to edit the cache.
+CMAKE_EDIT_COMMAND = /usr/bin/ccmake
+
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/jake/catkin_ws/src
+CMAKE_SOURCE_DIR = /home/debian/ros_imu/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/jake/catkin_ws/build
+CMAKE_BINARY_DIR = /home/debian/ros_imu/build
 
 # Utility rule file for leg_pose_genlisp.
 
@@ -56,10 +59,10 @@ leg_pose/CMakeFiles/leg_pose_genlisp.dir/build: leg_pose_genlisp
 .PHONY : leg_pose/CMakeFiles/leg_pose_genlisp.dir/build
 
 leg_pose/CMakeFiles/leg_pose_genlisp.dir/clean:
-	cd /home/jake/catkin_ws/build/leg_pose && $(CMAKE_COMMAND) -P CMakeFiles/leg_pose_genlisp.dir/cmake_clean.cmake
+	cd /home/debian/ros_imu/build/leg_pose && $(CMAKE_COMMAND) -P CMakeFiles/leg_pose_genlisp.dir/cmake_clean.cmake
 .PHONY : leg_pose/CMakeFiles/leg_pose_genlisp.dir/clean
 
 leg_pose/CMakeFiles/leg_pose_genlisp.dir/depend:
-	cd /home/jake/catkin_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/jake/catkin_ws/src /home/jake/catkin_ws/src/leg_pose /home/jake/catkin_ws/build /home/jake/catkin_ws/build/leg_pose /home/jake/catkin_ws/build/leg_pose/CMakeFiles/leg_pose_genlisp.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/debian/ros_imu/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/debian/ros_imu/src /home/debian/ros_imu/src/leg_pose /home/debian/ros_imu/build /home/debian/ros_imu/build/leg_pose /home/debian/ros_imu/build/leg_pose/CMakeFiles/leg_pose_genlisp.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : leg_pose/CMakeFiles/leg_pose_genlisp.dir/depend
 

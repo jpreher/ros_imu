@@ -34,11 +34,14 @@ RM = /usr/bin/cmake -E remove -f
 # Escaping for special characters.
 EQUALS = =
 
+# The program to use to edit the cache.
+CMAKE_EDIT_COMMAND = /usr/bin/ccmake
+
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/jake/catkin_ws/src
+CMAKE_SOURCE_DIR = /home/debian/ros_imu/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/jake/catkin_ws/build
+CMAKE_BINARY_DIR = /home/debian/ros_imu/build
 
 # Utility rule file for roscpp_generate_messages_py.
 
@@ -56,10 +59,10 @@ beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/build: roscpp_gene
 .PHONY : beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/build
 
 beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/clean:
-	cd /home/jake/catkin_ws/build/beginner_tutorials && $(CMAKE_COMMAND) -P CMakeFiles/roscpp_generate_messages_py.dir/cmake_clean.cmake
+	cd /home/debian/ros_imu/build/beginner_tutorials && $(CMAKE_COMMAND) -P CMakeFiles/roscpp_generate_messages_py.dir/cmake_clean.cmake
 .PHONY : beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/clean
 
 beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/depend:
-	cd /home/jake/catkin_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/jake/catkin_ws/src /home/jake/catkin_ws/src/beginner_tutorials /home/jake/catkin_ws/build /home/jake/catkin_ws/build/beginner_tutorials /home/jake/catkin_ws/build/beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/debian/ros_imu/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/debian/ros_imu/src /home/debian/ros_imu/src/beginner_tutorials /home/debian/ros_imu/build /home/debian/ros_imu/build/beginner_tutorials /home/debian/ros_imu/build/beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/depend
 

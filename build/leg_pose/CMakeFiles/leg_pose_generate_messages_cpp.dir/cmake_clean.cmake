@@ -1,6 +1,6 @@
 FILE(REMOVE_RECURSE
   "CMakeFiles/leg_pose_generate_messages_cpp"
-  "/home/jake/catkin_ws/devel/include/leg_pose/legPose.h"
+  "/home/debian/ros_imu/devel/include/leg_pose/legPose.h"
 )
 
 # Per-language clean rules from dependency scanning.

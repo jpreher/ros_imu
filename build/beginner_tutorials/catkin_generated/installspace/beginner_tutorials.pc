@@ -1,8 +1,8 @@
-prefix=/home/jake/catkin_ws/install
+prefix=/home/debian/ros_imu/install
 
 Name: beginner_tutorials
 Description: Description of beginner_tutorials
 Version: 0.0.0
 Cflags: 
-Libs: -L/home/jake/catkin_ws/install/lib 
+Libs: -L/home/debian/ros_imu/install/lib 
 Requires: 

@@ -1,7 +1,7 @@
 FILE(REMOVE_RECURSE
   "CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.o"
-  "/home/jake/catkin_ws/devel/lib/leg_pose/pose_node.pdb"
-  "/home/jake/catkin_ws/devel/lib/leg_pose/pose_node"
+  "/home/debian/ros_imu/devel/lib/leg_pose/pose_node.pdb"
+  "/home/debian/ros_imu/devel/lib/leg_pose/pose_node"
 )
 
 # Per-language clean rules from dependency scanning.

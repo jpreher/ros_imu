@@ -1,0 +1,8 @@
+prefix=/home/jake/catkin_ws/install
+
+Name: leg_pose
+Description: Description of leg_pose
+Version: 0.0.0
+Cflags: -I/home/jake/catkin_ws/install/include
+Libs: -L/home/jake/catkin_ws/install/lib 
+Requires: roscpp rospy std_msgs message_runtime

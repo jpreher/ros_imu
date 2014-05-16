@@ -1,0 +1,42 @@
+
+imu/left_leg/imu1/name: 'foot'
+imu/left_leg/imu1/bus: 1
+imu/left_leg/imu1/addr: 0x68
+imu/left_leg/imu1/bias_path: '/home/debian/catkin_ws/src/imu_node/bias.txt'
+imu/left_leg/imu1/isvertical: false
+
+imu/left_leg/imu2/name: 'shank'
+imu/left_leg/imu2/bus: 1
+imu/left_leg/imu2/addr: 0x69
+imu/left_leg/imu2/bias_path: '/home/debian/catkin_ws/src/imu_node/bias.txt'
+imu/left_leg/imu2/isvertical: false
+
+imu/left_leg/imu3/name: 'thigh'
+imu/left_leg/imu3/bus: 2
+imu/left_leg/imu3/addr: 0x68
+imu/left_leg/imu3/bias_path: '/home/debian/catkin_ws/src/imu_node/bias.txt'
+imu/left_leg/imu3/isvertical: false
+
+imu/left_leg/imu4/name: 'hip'
+imu/left_leg/imu4/bus: 2
+imu/left_leg/imu4/addr: 0x69
+imu/left_leg/imu4/bias_path: '/home/debian/catkin_ws/src/imu_node/bias.txt'
+imu/left_leg/imu4/isvertical: false
+
+imu/right_leg/imu1/name: 'foot'
+imu/right_leg/imu1/bus: 1
+imu/right_leg/imu1/addr: 0x68
+imu/right_leg/imu1/bias_path: '/home/debian/catkin_ws/src/imu_node/bias.txt'
+imu/right_leg/imu1/isvertical: false
+
+imu/right_leg/imu2/name: 'shank'
+imu/right_leg/imu2/bus: 1
+imu/right_leg/imu2/addr: 0x69
+imu/right_leg/imu2/bias_path: '/home/debian/catkin_ws/src/imu_node/bias.txt'
+imu/right_leg/imu2/isvertical: false
+
+imu/right_leg/imu3/name: 'thigh'
+imu/right_leg/imu3/bus: 2
+imu/right_leg/imu3/addr: 0x69
+imu/right_leg/imu3/bias_path: '/home/debian/catkin_ws/src/imu_node/bias.txt'
+imu/right_leg/imu3/isvertical: false

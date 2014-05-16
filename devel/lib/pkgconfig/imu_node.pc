@@ -1,0 +1,8 @@
+prefix=/home/jake/catkin_ws/devel
+
+Name: imu_node
+Description: Description of imu_node
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/jake/catkin_ws/devel/lib 
+Requires: 

@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "imu_node_under")
+set(imu_node_under_MAINTAINER "debian <jake.reher@gmail.com>")
+set(imu_node_under_DEPRECATED "")
+set(imu_node_under_VERSION "0.0.0")
+set(imu_node_under_BUILD_DEPENDS "roscpp" "rospy" "sensor_msgs" "std_msgs" "std_srvs")
+set(imu_node_under_RUN_DEPENDS "roscpp" "rospy" "sensor_msgs" "std_msgs" "std_srvs")
+set(imu_node_under_BUILDTOOL_DEPENDS "catkin")

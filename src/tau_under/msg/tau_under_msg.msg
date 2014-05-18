@@ -1,0 +1,7 @@
+float64 left_shank_earth
+float64 left_thigh_shank
+float64 left_hip_thigh
+float64 right_shank_earth
+float64 right_thigh_shank
+float64 right_hip_thigh
+float64 tau

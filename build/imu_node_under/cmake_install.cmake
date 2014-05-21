@@ -1,8 +1,8 @@
-# Install script for directory: /home/debian/ros_imu/src/imu_node_under
+# Install script for directory: /home/aames/ros_imu/src/imu_node_under
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  SET(CMAKE_INSTALL_PREFIX "/home/debian/ros_imu/install")
+  SET(CMAKE_INSTALL_PREFIX "/home/aames/ros_imu/install")
 ENDIF(NOT DEFINED CMAKE_INSTALL_PREFIX)
 STRING(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -33,17 +33,17 @@ IF(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 ENDIF(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 
 IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/debian/ros_imu/build/imu_node_under/catkin_generated/installspace/imu_node_under.pc")
+  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/aames/ros_imu/build/imu_node_under/catkin_generated/installspace/imu_node_under.pc")
 ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
 
 IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/imu_node_under/cmake" TYPE FILE FILES
-    "/home/debian/ros_imu/build/imu_node_under/catkin_generated/installspace/imu_node_underConfig.cmake"
-    "/home/debian/ros_imu/build/imu_node_under/catkin_generated/installspace/imu_node_underConfig-version.cmake"
+    "/home/aames/ros_imu/build/imu_node_under/catkin_generated/installspace/imu_node_underConfig.cmake"
+    "/home/aames/ros_imu/build/imu_node_under/catkin_generated/installspace/imu_node_underConfig-version.cmake"
     )
 ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
 
 IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/imu_node_under" TYPE FILE FILES "/home/debian/ros_imu/src/imu_node_under/package.xml")
+  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/imu_node_under" TYPE FILE FILES "/home/aames/ros_imu/src/imu_node_under/package.xml")
 ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
 

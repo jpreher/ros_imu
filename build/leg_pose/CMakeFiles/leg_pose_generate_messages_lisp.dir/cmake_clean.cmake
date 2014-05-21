@@ -1,6 +1,6 @@
 FILE(REMOVE_RECURSE
   "CMakeFiles/leg_pose_generate_messages_lisp"
-  "/home/debian/ros_imu/devel/share/common-lisp/ros/leg_pose/msg/legPose.lisp"
+  "/home/aames/ros_imu/devel/share/common-lisp/ros/leg_pose/msg/legPose.lisp"
 )
 
 # Per-language clean rules from dependency scanning.

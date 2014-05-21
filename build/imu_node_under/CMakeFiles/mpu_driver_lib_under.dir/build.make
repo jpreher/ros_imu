@@ -31,17 +31,14 @@ CMAKE_COMMAND = /usr/bin/cmake
 # The command to remove a file.
 RM = /usr/bin/cmake -E remove -f
 
-# Escaping for special characters.
-EQUALS = =
-
 # The program to use to edit the cache.
 CMAKE_EDIT_COMMAND = /usr/bin/ccmake
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/debian/ros_imu/src
+CMAKE_SOURCE_DIR = /home/aames/ros_imu/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/debian/ros_imu/build
+CMAKE_BINARY_DIR = /home/aames/ros_imu/build
 
 # Include any dependencies generated for this target.
 include imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/depend.make
@@ -53,18 +50,18 @@ include imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/progress.make
 include imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/flags.make
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/flags.make
-imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o: /home/debian/ros_imu/src/imu_node_under/src/MPU9150.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/debian/ros_imu/build/CMakeFiles $(CMAKE_PROGRESS_1)
+imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o: /home/aames/ros_imu/src/imu_node_under/src/MPU9150.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/aames/ros_imu/build/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o"
-	cd /home/debian/ros_imu/build/imu_node_under && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o -c /home/debian/ros_imu/src/imu_node_under/src/MPU9150.cpp
+	cd /home/aames/ros_imu/build/imu_node_under && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o -c /home/aames/ros_imu/src/imu_node_under/src/MPU9150.cpp
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.i"
-	cd /home/debian/ros_imu/build/imu_node_under && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/debian/ros_imu/src/imu_node_under/src/MPU9150.cpp > CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.i
+	cd /home/aames/ros_imu/build/imu_node_under && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/aames/ros_imu/src/imu_node_under/src/MPU9150.cpp > CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.i
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.s"
-	cd /home/debian/ros_imu/build/imu_node_under && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/debian/ros_imu/src/imu_node_under/src/MPU9150.cpp -o CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.s
+	cd /home/aames/ros_imu/build/imu_node_under && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/aames/ros_imu/src/imu_node_under/src/MPU9150.cpp -o CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.s
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o.requires:
 .PHONY : imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o.requires
@@ -76,18 +73,18 @@ imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o.provides: i
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o.provides.build: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/flags.make
-imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o: /home/debian/ros_imu/src/imu_node_under/src/BBB_I2C.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/debian/ros_imu/build/CMakeFiles $(CMAKE_PROGRESS_2)
+imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o: /home/aames/ros_imu/src/imu_node_under/src/BBB_I2C.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/aames/ros_imu/build/CMakeFiles $(CMAKE_PROGRESS_2)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o"
-	cd /home/debian/ros_imu/build/imu_node_under && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o -c /home/debian/ros_imu/src/imu_node_under/src/BBB_I2C.cpp
+	cd /home/aames/ros_imu/build/imu_node_under && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o -c /home/aames/ros_imu/src/imu_node_under/src/BBB_I2C.cpp
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.i"
-	cd /home/debian/ros_imu/build/imu_node_under && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/debian/ros_imu/src/imu_node_under/src/BBB_I2C.cpp > CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.i
+	cd /home/aames/ros_imu/build/imu_node_under && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/aames/ros_imu/src/imu_node_under/src/BBB_I2C.cpp > CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.i
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.s"
-	cd /home/debian/ros_imu/build/imu_node_under && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/debian/ros_imu/src/imu_node_under/src/BBB_I2C.cpp -o CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.s
+	cd /home/aames/ros_imu/build/imu_node_under && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/aames/ros_imu/src/imu_node_under/src/BBB_I2C.cpp -o CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.s
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o.requires:
 .PHONY : imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o.requires
@@ -99,18 +96,18 @@ imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o.provides: i
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o.provides.build: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.o: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/flags.make
-imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.o: /home/debian/ros_imu/src/imu_node_under/src/quaternion_util.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/debian/ros_imu/build/CMakeFiles $(CMAKE_PROGRESS_3)
+imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.o: /home/aames/ros_imu/src/imu_node_under/src/quaternion_util.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/aames/ros_imu/build/CMakeFiles $(CMAKE_PROGRESS_3)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.o"
-	cd /home/debian/ros_imu/build/imu_node_under && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.o -c /home/debian/ros_imu/src/imu_node_under/src/quaternion_util.cpp
+	cd /home/aames/ros_imu/build/imu_node_under && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.o -c /home/aames/ros_imu/src/imu_node_under/src/quaternion_util.cpp
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.i"
-	cd /home/debian/ros_imu/build/imu_node_under && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/debian/ros_imu/src/imu_node_under/src/quaternion_util.cpp > CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.i
+	cd /home/aames/ros_imu/build/imu_node_under && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/aames/ros_imu/src/imu_node_under/src/quaternion_util.cpp > CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.i
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.s"
-	cd /home/debian/ros_imu/build/imu_node_under && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/debian/ros_imu/src/imu_node_under/src/quaternion_util.cpp -o CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.s
+	cd /home/aames/ros_imu/build/imu_node_under && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/aames/ros_imu/src/imu_node_under/src/quaternion_util.cpp -o CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.s
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.o.requires:
 .PHONY : imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.o.requires
@@ -130,16 +127,16 @@ mpu_driver_lib_under_OBJECTS = \
 # External object files for target mpu_driver_lib_under
 mpu_driver_lib_under_EXTERNAL_OBJECTS =
 
-/home/debian/ros_imu/devel/lib/libmpu_driver_lib_under.so: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o
-/home/debian/ros_imu/devel/lib/libmpu_driver_lib_under.so: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o
-/home/debian/ros_imu/devel/lib/libmpu_driver_lib_under.so: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.o
-/home/debian/ros_imu/devel/lib/libmpu_driver_lib_under.so: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make
-/home/debian/ros_imu/devel/lib/libmpu_driver_lib_under.so: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX shared library /home/debian/ros_imu/devel/lib/libmpu_driver_lib_under.so"
-	cd /home/debian/ros_imu/build/imu_node_under && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/mpu_driver_lib_under.dir/link.txt --verbose=$(VERBOSE)
+/home/aames/ros_imu/devel/lib/libmpu_driver_lib_under.so: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o
+/home/aames/ros_imu/devel/lib/libmpu_driver_lib_under.so: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o
+/home/aames/ros_imu/devel/lib/libmpu_driver_lib_under.so: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.o
+/home/aames/ros_imu/devel/lib/libmpu_driver_lib_under.so: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make
+/home/aames/ros_imu/devel/lib/libmpu_driver_lib_under.so: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX shared library /home/aames/ros_imu/devel/lib/libmpu_driver_lib_under.so"
+	cd /home/aames/ros_imu/build/imu_node_under && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/mpu_driver_lib_under.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build: /home/debian/ros_imu/devel/lib/libmpu_driver_lib_under.so
+imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build: /home/aames/ros_imu/devel/lib/libmpu_driver_lib_under.so
 .PHONY : imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/requires: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o.requires
@@ -148,10 +145,10 @@ imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/requires: imu_node_under/CMak
 .PHONY : imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/requires
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/clean:
-	cd /home/debian/ros_imu/build/imu_node_under && $(CMAKE_COMMAND) -P CMakeFiles/mpu_driver_lib_under.dir/cmake_clean.cmake
+	cd /home/aames/ros_imu/build/imu_node_under && $(CMAKE_COMMAND) -P CMakeFiles/mpu_driver_lib_under.dir/cmake_clean.cmake
 .PHONY : imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/clean
 
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/depend:
-	cd /home/debian/ros_imu/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/debian/ros_imu/src /home/debian/ros_imu/src/imu_node_under /home/debian/ros_imu/build /home/debian/ros_imu/build/imu_node_under /home/debian/ros_imu/build/imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/aames/ros_imu/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/aames/ros_imu/src /home/aames/ros_imu/src/imu_node_under /home/aames/ros_imu/build /home/aames/ros_imu/build/imu_node_under /home/aames/ros_imu/build/imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/depend
 

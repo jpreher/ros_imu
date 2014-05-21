@@ -35,17 +35,14 @@ CMAKE_COMMAND = /usr/bin/cmake
 # The command to remove a file.
 RM = /usr/bin/cmake -E remove -f
 
-# Escaping for special characters.
-EQUALS = =
-
 # The program to use to edit the cache.
 CMAKE_EDIT_COMMAND = /usr/bin/ccmake
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/debian/ros_imu/src
+CMAKE_SOURCE_DIR = /home/aames/ros_imu/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/debian/ros_imu/build
+CMAKE_BINARY_DIR = /home/aames/ros_imu/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -123,14 +120,14 @@ test/fast: test
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/debian/ros_imu/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/debian/ros_imu/build/CMakeFiles /home/debian/ros_imu/build/imu_node_under/CMakeFiles/progress.marks
-	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 imu_node_under/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/debian/ros_imu/build/CMakeFiles 0
+	cd /home/aames/ros_imu/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/aames/ros_imu/build/CMakeFiles /home/aames/ros_imu/build/imu_node_under/CMakeFiles/progress.marks
+	cd /home/aames/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 imu_node_under/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/aames/ros_imu/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 imu_node_under/clean
+	cd /home/aames/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 imu_node_under/clean
 .PHONY : clean
 
 # The main clean target
@@ -139,22 +136,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 imu_node_under/preinstall
+	cd /home/aames/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 imu_node_under/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 imu_node_under/preinstall
+	cd /home/aames/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 imu_node_under/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/debian/ros_imu/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/aames/ros_imu/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/rule:
-	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/rule
+	cd /home/aames/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/rule
 .PHONY : imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/rule
 
 # Convenience name for target.
@@ -163,12 +160,12 @@ mpu_driver_lib_under: imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/rule
 
 # fast build rule for target.
 mpu_driver_lib_under/fast:
-	cd /home/debian/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build
+	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build
 .PHONY : mpu_driver_lib_under/fast
 
 # Convenience name for target.
 imu_node_under/CMakeFiles/mpu_node_under.dir/rule:
-	cd /home/debian/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 imu_node_under/CMakeFiles/mpu_node_under.dir/rule
+	cd /home/aames/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 imu_node_under/CMakeFiles/mpu_node_under.dir/rule
 .PHONY : imu_node_under/CMakeFiles/mpu_node_under.dir/rule
 
 # Convenience name for target.
@@ -177,7 +174,7 @@ mpu_node_under: imu_node_under/CMakeFiles/mpu_node_under.dir/rule
 
 # fast build rule for target.
 mpu_node_under/fast:
-	cd /home/debian/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_node_under.dir/build.make imu_node_under/CMakeFiles/mpu_node_under.dir/build
+	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_node_under.dir/build.make imu_node_under/CMakeFiles/mpu_node_under.dir/build
 .PHONY : mpu_node_under/fast
 
 src/BBB_I2C.o: src/BBB_I2C.cpp.o
@@ -185,7 +182,7 @@ src/BBB_I2C.o: src/BBB_I2C.cpp.o
 
 # target to build an object file
 src/BBB_I2C.cpp.o:
-	cd /home/debian/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o
+	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.o
 .PHONY : src/BBB_I2C.cpp.o
 
 src/BBB_I2C.i: src/BBB_I2C.cpp.i
@@ -193,7 +190,7 @@ src/BBB_I2C.i: src/BBB_I2C.cpp.i
 
 # target to preprocess a source file
 src/BBB_I2C.cpp.i:
-	cd /home/debian/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.i
+	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.i
 .PHONY : src/BBB_I2C.cpp.i
 
 src/BBB_I2C.s: src/BBB_I2C.cpp.s
@@ -201,7 +198,7 @@ src/BBB_I2C.s: src/BBB_I2C.cpp.s
 
 # target to generate assembly for a file
 src/BBB_I2C.cpp.s:
-	cd /home/debian/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.s
+	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/BBB_I2C.cpp.s
 .PHONY : src/BBB_I2C.cpp.s
 
 src/MPU9150.o: src/MPU9150.cpp.o
@@ -209,7 +206,7 @@ src/MPU9150.o: src/MPU9150.cpp.o
 
 # target to build an object file
 src/MPU9150.cpp.o:
-	cd /home/debian/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o
+	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.o
 .PHONY : src/MPU9150.cpp.o
 
 src/MPU9150.i: src/MPU9150.cpp.i
@@ -217,7 +214,7 @@ src/MPU9150.i: src/MPU9150.cpp.i
 
 # target to preprocess a source file
 src/MPU9150.cpp.i:
-	cd /home/debian/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.i
+	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.i
 .PHONY : src/MPU9150.cpp.i
 
 src/MPU9150.s: src/MPU9150.cpp.s
@@ -225,7 +222,7 @@ src/MPU9150.s: src/MPU9150.cpp.s
 
 # target to generate assembly for a file
 src/MPU9150.cpp.s:
-	cd /home/debian/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.s
+	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/MPU9150.cpp.s
 .PHONY : src/MPU9150.cpp.s
 
 src/jake_imu_node_under.o: src/jake_imu_node_under.cpp.o
@@ -233,7 +230,7 @@ src/jake_imu_node_under.o: src/jake_imu_node_under.cpp.o
 
 # target to build an object file
 src/jake_imu_node_under.cpp.o:
-	cd /home/debian/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_node_under.dir/build.make imu_node_under/CMakeFiles/mpu_node_under.dir/src/jake_imu_node_under.cpp.o
+	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_node_under.dir/build.make imu_node_under/CMakeFiles/mpu_node_under.dir/src/jake_imu_node_under.cpp.o
 .PHONY : src/jake_imu_node_under.cpp.o
 
 src/jake_imu_node_under.i: src/jake_imu_node_under.cpp.i
@@ -241,7 +238,7 @@ src/jake_imu_node_under.i: src/jake_imu_node_under.cpp.i
 
 # target to preprocess a source file
 src/jake_imu_node_under.cpp.i:
-	cd /home/debian/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_node_under.dir/build.make imu_node_under/CMakeFiles/mpu_node_under.dir/src/jake_imu_node_under.cpp.i
+	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_node_under.dir/build.make imu_node_under/CMakeFiles/mpu_node_under.dir/src/jake_imu_node_under.cpp.i
 .PHONY : src/jake_imu_node_under.cpp.i
 
 src/jake_imu_node_under.s: src/jake_imu_node_under.cpp.s
@@ -249,7 +246,7 @@ src/jake_imu_node_under.s: src/jake_imu_node_under.cpp.s
 
 # target to generate assembly for a file
 src/jake_imu_node_under.cpp.s:
-	cd /home/debian/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_node_under.dir/build.make imu_node_under/CMakeFiles/mpu_node_under.dir/src/jake_imu_node_under.cpp.s
+	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_node_under.dir/build.make imu_node_under/CMakeFiles/mpu_node_under.dir/src/jake_imu_node_under.cpp.s
 .PHONY : src/jake_imu_node_under.cpp.s
 
 src/quaternion_util.o: src/quaternion_util.cpp.o
@@ -257,7 +254,7 @@ src/quaternion_util.o: src/quaternion_util.cpp.o
 
 # target to build an object file
 src/quaternion_util.cpp.o:
-	cd /home/debian/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.o
+	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.o
 .PHONY : src/quaternion_util.cpp.o
 
 src/quaternion_util.i: src/quaternion_util.cpp.i
@@ -265,7 +262,7 @@ src/quaternion_util.i: src/quaternion_util.cpp.i
 
 # target to preprocess a source file
 src/quaternion_util.cpp.i:
-	cd /home/debian/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.i
+	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.i
 .PHONY : src/quaternion_util.cpp.i
 
 src/quaternion_util.s: src/quaternion_util.cpp.s
@@ -273,7 +270,7 @@ src/quaternion_util.s: src/quaternion_util.cpp.s
 
 # target to generate assembly for a file
 src/quaternion_util.cpp.s:
-	cd /home/debian/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.s
+	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/src/quaternion_util.cpp.s
 .PHONY : src/quaternion_util.cpp.s
 
 # Help Target
@@ -314,6 +311,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/debian/ros_imu/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/aames/ros_imu/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

@@ -4,5 +4,5 @@ DEVELSPACE = 'TRUE' == 'TRUE'
 INSTALLSPACE = 'FALSE' == 'TRUE'
 
 PROJECT_NAME = 'leg_pose'
-PKG_MSG_INCLUDE_DIRS = '/home/debian/ros_imu/src/leg_pose/msg'
+PKG_MSG_INCLUDE_DIRS = '/home/aames/ros_imu/src/leg_pose/msg'
 ARG_DEPENDENCIES = 'std_msgs'

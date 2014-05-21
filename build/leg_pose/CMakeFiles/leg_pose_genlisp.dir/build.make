@@ -31,17 +31,14 @@ CMAKE_COMMAND = /usr/bin/cmake
 # The command to remove a file.
 RM = /usr/bin/cmake -E remove -f
 
-# Escaping for special characters.
-EQUALS = =
-
 # The program to use to edit the cache.
 CMAKE_EDIT_COMMAND = /usr/bin/ccmake
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/debian/ros_imu/src
+CMAKE_SOURCE_DIR = /home/aames/ros_imu/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/debian/ros_imu/build
+CMAKE_BINARY_DIR = /home/aames/ros_imu/build
 
 # Utility rule file for leg_pose_genlisp.
 
@@ -59,10 +56,10 @@ leg_pose/CMakeFiles/leg_pose_genlisp.dir/build: leg_pose_genlisp
 .PHONY : leg_pose/CMakeFiles/leg_pose_genlisp.dir/build
 
 leg_pose/CMakeFiles/leg_pose_genlisp.dir/clean:
-	cd /home/debian/ros_imu/build/leg_pose && $(CMAKE_COMMAND) -P CMakeFiles/leg_pose_genlisp.dir/cmake_clean.cmake
+	cd /home/aames/ros_imu/build/leg_pose && $(CMAKE_COMMAND) -P CMakeFiles/leg_pose_genlisp.dir/cmake_clean.cmake
 .PHONY : leg_pose/CMakeFiles/leg_pose_genlisp.dir/clean
 
 leg_pose/CMakeFiles/leg_pose_genlisp.dir/depend:
-	cd /home/debian/ros_imu/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/debian/ros_imu/src /home/debian/ros_imu/src/leg_pose /home/debian/ros_imu/build /home/debian/ros_imu/build/leg_pose /home/debian/ros_imu/build/leg_pose/CMakeFiles/leg_pose_genlisp.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/aames/ros_imu/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/aames/ros_imu/src /home/aames/ros_imu/src/leg_pose /home/aames/ros_imu/build /home/aames/ros_imu/build/leg_pose /home/aames/ros_imu/build/leg_pose/CMakeFiles/leg_pose_genlisp.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : leg_pose/CMakeFiles/leg_pose_genlisp.dir/depend
 

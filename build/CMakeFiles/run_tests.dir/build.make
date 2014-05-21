@@ -31,17 +31,14 @@ CMAKE_COMMAND = /usr/bin/cmake
 # The command to remove a file.
 RM = /usr/bin/cmake -E remove -f
 
-# Escaping for special characters.
-EQUALS = =
-
 # The program to use to edit the cache.
 CMAKE_EDIT_COMMAND = /usr/bin/ccmake
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/debian/ros_imu/src
+CMAKE_SOURCE_DIR = /home/aames/ros_imu/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/debian/ros_imu/build
+CMAKE_BINARY_DIR = /home/aames/ros_imu/build
 
 # Utility rule file for run_tests.
 
@@ -63,6 +60,6 @@ CMakeFiles/run_tests.dir/clean:
 .PHONY : CMakeFiles/run_tests.dir/clean
 
 CMakeFiles/run_tests.dir/depend:
-	cd /home/debian/ros_imu/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/debian/ros_imu/src /home/debian/ros_imu/src /home/debian/ros_imu/build /home/debian/ros_imu/build /home/debian/ros_imu/build/CMakeFiles/run_tests.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/aames/ros_imu/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/aames/ros_imu/src /home/aames/ros_imu/src /home/aames/ros_imu/build /home/aames/ros_imu/build /home/aames/ros_imu/build/CMakeFiles/run_tests.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/run_tests.dir/depend
 

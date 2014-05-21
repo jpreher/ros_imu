@@ -1,1 +1,1 @@
-/usr/bin/c++  -fPIC    -shared -Wl,-soname,libpose_lib.so -o /home/debian/ros_imu/devel/lib/libpose_lib.so CMakeFiles/pose_lib.dir/src/quaternion_util.cpp.o 
+/usr/bin/c++  -fPIC    -shared -Wl,-soname,libpose_lib.so -o /home/aames/ros_imu/devel/lib/libpose_lib.so CMakeFiles/pose_lib.dir/src/quaternion_util.cpp.o 

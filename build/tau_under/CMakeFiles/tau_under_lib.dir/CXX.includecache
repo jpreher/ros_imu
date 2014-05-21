@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/aames/ros_imu/src/tau_under/include/quaternion_util.h
+math.h
+-
+
+/home/aames/ros_imu/src/tau_under/src/quaternion_util.cpp
+quaternion_util.h
+/home/aames/ros_imu/src/tau_under/src/quaternion_util.h
+

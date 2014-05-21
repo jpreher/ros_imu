@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/debian/ros_imu/src/imu_node/include/BBB_I2C.h
+/home/aames/ros_imu/src/imu_node/include/BBB_I2C.h
 stdint.h
 -
 fcntl.h
@@ -24,15 +24,15 @@ iostream
 math.h
 -
 
-/home/debian/ros_imu/src/imu_node/include/MPU9150.h
+/home/aames/ros_imu/src/imu_node/include/MPU9150.h
 BBB_I2C.h
-/home/debian/ros_imu/src/imu_node/include/BBB_I2C.h
+/home/aames/ros_imu/src/imu_node/include/BBB_I2C.h
 MPU_RegMap.h
-/home/debian/ros_imu/src/imu_node/include/MPU_RegMap.h
+/home/aames/ros_imu/src/imu_node/include/MPU_RegMap.h
 butterworth_util.h
-/home/debian/ros_imu/src/imu_node/include/butterworth_util.h
+/home/aames/ros_imu/src/imu_node/include/butterworth_util.h
 quaternion_util.h
-/home/debian/ros_imu/src/imu_node/include/quaternion_util.h
+/home/aames/ros_imu/src/imu_node/include/quaternion_util.h
 memory
 -
 fstream
@@ -42,25 +42,25 @@ stdexcept
 stdint.h
 -
 
-/home/debian/ros_imu/src/imu_node/include/MPU_RegMap.h
+/home/aames/ros_imu/src/imu_node/include/MPU_RegMap.h
 
-/home/debian/ros_imu/src/imu_node/include/butterworth_util.h
+/home/aames/ros_imu/src/imu_node/include/butterworth_util.h
 vector
 -
 algorithm
 -
 
-/home/debian/ros_imu/src/imu_node/include/quaternion_util.h
+/home/aames/ros_imu/src/imu_node/include/quaternion_util.h
 math.h
 -
 
-/home/debian/ros_imu/src/imu_node/src/BBB_I2C.cpp
+/home/aames/ros_imu/src/imu_node/src/BBB_I2C.cpp
 BBB_I2C.h
-/home/debian/ros_imu/src/imu_node/src/BBB_I2C.h
+/home/aames/ros_imu/src/imu_node/src/BBB_I2C.h
 
-/home/debian/ros_imu/src/imu_node/src/MPU9150.cpp
+/home/aames/ros_imu/src/imu_node/src/MPU9150.cpp
 MPU9150.h
-/home/debian/ros_imu/src/imu_node/src/MPU9150.h
+/home/aames/ros_imu/src/imu_node/src/MPU9150.h
 stdlib.h
 -
 stdio.h
@@ -72,7 +72,7 @@ fstream
 math.h
 -
 
-/home/debian/ros_imu/src/imu_node/src/quaternion_util.cpp
+/home/aames/ros_imu/src/imu_node/src/quaternion_util.cpp
 quaternion_util.h
-/home/debian/ros_imu/src/imu_node/src/quaternion_util.h
+/home/aames/ros_imu/src/imu_node/src/quaternion_util.h
 

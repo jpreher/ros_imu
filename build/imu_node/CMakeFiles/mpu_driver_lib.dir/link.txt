@@ -1,1 +1,1 @@
-/usr/bin/c++  -fPIC    -shared -Wl,-soname,libmpu_driver_lib.so -o /home/debian/ros_imu/devel/lib/libmpu_driver_lib.so CMakeFiles/mpu_driver_lib.dir/src/MPU9150.cpp.o CMakeFiles/mpu_driver_lib.dir/src/BBB_I2C.cpp.o CMakeFiles/mpu_driver_lib.dir/src/quaternion_util.cpp.o 
+/usr/bin/c++  -fPIC    -shared -Wl,-soname,libmpu_driver_lib.so -o /home/aames/ros_imu/devel/lib/libmpu_driver_lib.so CMakeFiles/mpu_driver_lib.dir/src/MPU9150.cpp.o CMakeFiles/mpu_driver_lib.dir/src/BBB_I2C.cpp.o CMakeFiles/mpu_driver_lib.dir/src/quaternion_util.cpp.o 

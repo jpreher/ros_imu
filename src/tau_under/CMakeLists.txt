@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(tau_under)
+add_definitions(-std=c++0x)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -167,4 +168,4 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 add_library(tau_under_lib src/quaternion_util.cpp include/quaternion_util.h)
 
 add_executable(tau_under_node src/tau_under.cpp)
-target_link_libraries(pose_node ${catkin_LIBRARIES} tau_under_lib)
+target_link_libraries(tau_under_node ${catkin_LIBRARIES} tau_under_lib)

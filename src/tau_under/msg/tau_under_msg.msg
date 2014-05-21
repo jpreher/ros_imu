@@ -5,3 +5,4 @@ float64 right_shank_earth
 float64 right_thigh_shank
 float64 right_hip_thigh
 float64 tau
+bool right_is_stance

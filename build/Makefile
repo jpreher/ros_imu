@@ -228,6 +228,19 @@ gtest_main/fast:
 .PHONY : gtest_main/fast
 
 #=============================================================================
+# Target rules for targets named imu_common
+
+# Build rule for target.
+imu_common: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 imu_common
+.PHONY : imu_common
+
+# fast build rule for target.
+imu_common/fast:
+	$(MAKE) -f imu_common/CMakeFiles/imu_common.dir/build.make imu_common/CMakeFiles/imu_common.dir/build
+.PHONY : imu_common/fast
+
+#=============================================================================
 # Target rules for targets named roscpp_generate_messages_cpp
 
 # Build rule for target.
@@ -237,7 +250,7 @@ roscpp_generate_messages_cpp: cmake_check_build_system
 
 # fast build rule for target.
 roscpp_generate_messages_cpp/fast:
-	$(MAKE) -f beginner_tutorials/CMakeFiles/roscpp_generate_messages_cpp.dir/build.make beginner_tutorials/CMakeFiles/roscpp_generate_messages_cpp.dir/build
+	$(MAKE) -f imu_common/CMakeFiles/roscpp_generate_messages_cpp.dir/build.make imu_common/CMakeFiles/roscpp_generate_messages_cpp.dir/build
 .PHONY : roscpp_generate_messages_cpp/fast
 
 #=============================================================================
@@ -250,7 +263,7 @@ roscpp_generate_messages_lisp: cmake_check_build_system
 
 # fast build rule for target.
 roscpp_generate_messages_lisp/fast:
-	$(MAKE) -f beginner_tutorials/CMakeFiles/roscpp_generate_messages_lisp.dir/build.make beginner_tutorials/CMakeFiles/roscpp_generate_messages_lisp.dir/build
+	$(MAKE) -f imu_common/CMakeFiles/roscpp_generate_messages_lisp.dir/build.make imu_common/CMakeFiles/roscpp_generate_messages_lisp.dir/build
 .PHONY : roscpp_generate_messages_lisp/fast
 
 #=============================================================================
@@ -263,7 +276,7 @@ roscpp_generate_messages_py: cmake_check_build_system
 
 # fast build rule for target.
 roscpp_generate_messages_py/fast:
-	$(MAKE) -f beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/build.make beginner_tutorials/CMakeFiles/roscpp_generate_messages_py.dir/build
+	$(MAKE) -f imu_common/CMakeFiles/roscpp_generate_messages_py.dir/build.make imu_common/CMakeFiles/roscpp_generate_messages_py.dir/build
 .PHONY : roscpp_generate_messages_py/fast
 
 #=============================================================================
@@ -276,7 +289,7 @@ rosgraph_msgs_generate_messages_cpp: cmake_check_build_system
 
 # fast build rule for target.
 rosgraph_msgs_generate_messages_cpp/fast:
-	$(MAKE) -f beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build.make beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build
+	$(MAKE) -f imu_common/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build.make imu_common/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build
 .PHONY : rosgraph_msgs_generate_messages_cpp/fast
 
 #=============================================================================
@@ -289,7 +302,7 @@ rosgraph_msgs_generate_messages_lisp: cmake_check_build_system
 
 # fast build rule for target.
 rosgraph_msgs_generate_messages_lisp/fast:
-	$(MAKE) -f beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build.make beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build
+	$(MAKE) -f imu_common/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build.make imu_common/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build
 .PHONY : rosgraph_msgs_generate_messages_lisp/fast
 
 #=============================================================================
@@ -302,7 +315,7 @@ rosgraph_msgs_generate_messages_py: cmake_check_build_system
 
 # fast build rule for target.
 rosgraph_msgs_generate_messages_py/fast:
-	$(MAKE) -f beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build.make beginner_tutorials/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build
+	$(MAKE) -f imu_common/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build.make imu_common/CMakeFiles/rosgraph_msgs_generate_messages_py.dir/build
 .PHONY : rosgraph_msgs_generate_messages_py/fast
 
 #=============================================================================
@@ -315,7 +328,7 @@ std_msgs_generate_messages_cpp: cmake_check_build_system
 
 # fast build rule for target.
 std_msgs_generate_messages_cpp/fast:
-	$(MAKE) -f beginner_tutorials/CMakeFiles/std_msgs_generate_messages_cpp.dir/build.make beginner_tutorials/CMakeFiles/std_msgs_generate_messages_cpp.dir/build
+	$(MAKE) -f imu_common/CMakeFiles/std_msgs_generate_messages_cpp.dir/build.make imu_common/CMakeFiles/std_msgs_generate_messages_cpp.dir/build
 .PHONY : std_msgs_generate_messages_cpp/fast
 
 #=============================================================================
@@ -328,7 +341,7 @@ std_msgs_generate_messages_lisp: cmake_check_build_system
 
 # fast build rule for target.
 std_msgs_generate_messages_lisp/fast:
-	$(MAKE) -f beginner_tutorials/CMakeFiles/std_msgs_generate_messages_lisp.dir/build.make beginner_tutorials/CMakeFiles/std_msgs_generate_messages_lisp.dir/build
+	$(MAKE) -f imu_common/CMakeFiles/std_msgs_generate_messages_lisp.dir/build.make imu_common/CMakeFiles/std_msgs_generate_messages_lisp.dir/build
 .PHONY : std_msgs_generate_messages_lisp/fast
 
 #=============================================================================
@@ -341,7 +354,7 @@ std_msgs_generate_messages_py: cmake_check_build_system
 
 # fast build rule for target.
 std_msgs_generate_messages_py/fast:
-	$(MAKE) -f beginner_tutorials/CMakeFiles/std_msgs_generate_messages_py.dir/build.make beginner_tutorials/CMakeFiles/std_msgs_generate_messages_py.dir/build
+	$(MAKE) -f imu_common/CMakeFiles/std_msgs_generate_messages_py.dir/build.make imu_common/CMakeFiles/std_msgs_generate_messages_py.dir/build
 .PHONY : std_msgs_generate_messages_py/fast
 
 #=============================================================================
@@ -382,19 +395,6 @@ geometry_msgs_generate_messages_py: cmake_check_build_system
 geometry_msgs_generate_messages_py/fast:
 	$(MAKE) -f imu_node/CMakeFiles/geometry_msgs_generate_messages_py.dir/build.make imu_node/CMakeFiles/geometry_msgs_generate_messages_py.dir/build
 .PHONY : geometry_msgs_generate_messages_py/fast
-
-#=============================================================================
-# Target rules for targets named mpu_driver_lib
-
-# Build rule for target.
-mpu_driver_lib: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 mpu_driver_lib
-.PHONY : mpu_driver_lib
-
-# fast build rule for target.
-mpu_driver_lib/fast:
-	$(MAKE) -f imu_node/CMakeFiles/mpu_driver_lib.dir/build.make imu_node/CMakeFiles/mpu_driver_lib.dir/build
-.PHONY : mpu_driver_lib/fast
 
 #=============================================================================
 # Target rules for targets named mpu_node
@@ -486,19 +486,6 @@ std_srvs_generate_messages_py: cmake_check_build_system
 std_srvs_generate_messages_py/fast:
 	$(MAKE) -f imu_node/CMakeFiles/std_srvs_generate_messages_py.dir/build.make imu_node/CMakeFiles/std_srvs_generate_messages_py.dir/build
 .PHONY : std_srvs_generate_messages_py/fast
-
-#=============================================================================
-# Target rules for targets named mpu_driver_lib_under
-
-# Build rule for target.
-mpu_driver_lib_under: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 mpu_driver_lib_under
-.PHONY : mpu_driver_lib_under
-
-# fast build rule for target.
-mpu_driver_lib_under/fast:
-	$(MAKE) -f imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build.make imu_node_under/CMakeFiles/mpu_driver_lib_under.dir/build
-.PHONY : mpu_driver_lib_under/fast
 
 #=============================================================================
 # Target rules for targets named mpu_node_under
@@ -605,19 +592,6 @@ leg_pose_genpy/fast:
 .PHONY : leg_pose_genpy/fast
 
 #=============================================================================
-# Target rules for targets named pose_lib
-
-# Build rule for target.
-pose_lib: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 pose_lib
-.PHONY : pose_lib
-
-# fast build rule for target.
-pose_lib/fast:
-	$(MAKE) -f leg_pose/CMakeFiles/pose_lib.dir/build.make leg_pose/CMakeFiles/pose_lib.dir/build
-.PHONY : pose_lib/fast
-
-#=============================================================================
 # Target rules for targets named pose_node
 
 # Build rule for target.
@@ -722,19 +696,6 @@ tau_under_genpy/fast:
 .PHONY : tau_under_genpy/fast
 
 #=============================================================================
-# Target rules for targets named tau_under_lib
-
-# Build rule for target.
-tau_under_lib: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 tau_under_lib
-.PHONY : tau_under_lib
-
-# fast build rule for target.
-tau_under_lib/fast:
-	$(MAKE) -f tau_under/CMakeFiles/tau_under_lib.dir/build.make tau_under/CMakeFiles/tau_under_lib.dir/build
-.PHONY : tau_under_lib/fast
-
-#=============================================================================
 # Target rules for targets named tau_under_node
 
 # Build rule for target.
@@ -766,6 +727,7 @@ help:
 	@echo "... tests"
 	@echo "... gtest"
 	@echo "... gtest_main"
+	@echo "... imu_common"
 	@echo "... roscpp_generate_messages_cpp"
 	@echo "... roscpp_generate_messages_lisp"
 	@echo "... roscpp_generate_messages_py"
@@ -778,7 +740,6 @@ help:
 	@echo "... geometry_msgs_generate_messages_cpp"
 	@echo "... geometry_msgs_generate_messages_lisp"
 	@echo "... geometry_msgs_generate_messages_py"
-	@echo "... mpu_driver_lib"
 	@echo "... mpu_node"
 	@echo "... sensor_msgs_generate_messages_cpp"
 	@echo "... sensor_msgs_generate_messages_lisp"
@@ -786,7 +747,6 @@ help:
 	@echo "... std_srvs_generate_messages_cpp"
 	@echo "... std_srvs_generate_messages_lisp"
 	@echo "... std_srvs_generate_messages_py"
-	@echo "... mpu_driver_lib_under"
 	@echo "... mpu_node_under"
 	@echo "... leg_pose_gencpp"
 	@echo "... leg_pose_generate_messages"
@@ -795,7 +755,6 @@ help:
 	@echo "... leg_pose_generate_messages_py"
 	@echo "... leg_pose_genlisp"
 	@echo "... leg_pose_genpy"
-	@echo "... pose_lib"
 	@echo "... pose_node"
 	@echo "... tau_under_gencpp"
 	@echo "... tau_under_generate_messages"
@@ -804,7 +763,6 @@ help:
 	@echo "... tau_under_generate_messages_py"
 	@echo "... tau_under_genlisp"
 	@echo "... tau_under_genpy"
-	@echo "... tau_under_lib"
 	@echo "... tau_under_node"
 .PHONY : help
 

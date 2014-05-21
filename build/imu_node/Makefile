@@ -192,20 +192,6 @@ geometry_msgs_generate_messages_py/fast:
 .PHONY : geometry_msgs_generate_messages_py/fast
 
 # Convenience name for target.
-imu_node/CMakeFiles/mpu_driver_lib.dir/rule:
-	cd /home/aames/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 imu_node/CMakeFiles/mpu_driver_lib.dir/rule
-.PHONY : imu_node/CMakeFiles/mpu_driver_lib.dir/rule
-
-# Convenience name for target.
-mpu_driver_lib: imu_node/CMakeFiles/mpu_driver_lib.dir/rule
-.PHONY : mpu_driver_lib
-
-# fast build rule for target.
-mpu_driver_lib/fast:
-	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node/CMakeFiles/mpu_driver_lib.dir/build.make imu_node/CMakeFiles/mpu_driver_lib.dir/build
-.PHONY : mpu_driver_lib/fast
-
-# Convenience name for target.
 imu_node/CMakeFiles/mpu_node.dir/rule:
 	cd /home/aames/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 imu_node/CMakeFiles/mpu_node.dir/rule
 .PHONY : imu_node/CMakeFiles/mpu_node.dir/rule
@@ -303,54 +289,6 @@ std_srvs_generate_messages_py/fast:
 	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node/CMakeFiles/std_srvs_generate_messages_py.dir/build.make imu_node/CMakeFiles/std_srvs_generate_messages_py.dir/build
 .PHONY : std_srvs_generate_messages_py/fast
 
-src/BBB_I2C.o: src/BBB_I2C.cpp.o
-.PHONY : src/BBB_I2C.o
-
-# target to build an object file
-src/BBB_I2C.cpp.o:
-	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node/CMakeFiles/mpu_driver_lib.dir/build.make imu_node/CMakeFiles/mpu_driver_lib.dir/src/BBB_I2C.cpp.o
-.PHONY : src/BBB_I2C.cpp.o
-
-src/BBB_I2C.i: src/BBB_I2C.cpp.i
-.PHONY : src/BBB_I2C.i
-
-# target to preprocess a source file
-src/BBB_I2C.cpp.i:
-	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node/CMakeFiles/mpu_driver_lib.dir/build.make imu_node/CMakeFiles/mpu_driver_lib.dir/src/BBB_I2C.cpp.i
-.PHONY : src/BBB_I2C.cpp.i
-
-src/BBB_I2C.s: src/BBB_I2C.cpp.s
-.PHONY : src/BBB_I2C.s
-
-# target to generate assembly for a file
-src/BBB_I2C.cpp.s:
-	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node/CMakeFiles/mpu_driver_lib.dir/build.make imu_node/CMakeFiles/mpu_driver_lib.dir/src/BBB_I2C.cpp.s
-.PHONY : src/BBB_I2C.cpp.s
-
-src/MPU9150.o: src/MPU9150.cpp.o
-.PHONY : src/MPU9150.o
-
-# target to build an object file
-src/MPU9150.cpp.o:
-	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node/CMakeFiles/mpu_driver_lib.dir/build.make imu_node/CMakeFiles/mpu_driver_lib.dir/src/MPU9150.cpp.o
-.PHONY : src/MPU9150.cpp.o
-
-src/MPU9150.i: src/MPU9150.cpp.i
-.PHONY : src/MPU9150.i
-
-# target to preprocess a source file
-src/MPU9150.cpp.i:
-	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node/CMakeFiles/mpu_driver_lib.dir/build.make imu_node/CMakeFiles/mpu_driver_lib.dir/src/MPU9150.cpp.i
-.PHONY : src/MPU9150.cpp.i
-
-src/MPU9150.s: src/MPU9150.cpp.s
-.PHONY : src/MPU9150.s
-
-# target to generate assembly for a file
-src/MPU9150.cpp.s:
-	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node/CMakeFiles/mpu_driver_lib.dir/build.make imu_node/CMakeFiles/mpu_driver_lib.dir/src/MPU9150.cpp.s
-.PHONY : src/MPU9150.cpp.s
-
 src/jake_imu_node.o: src/jake_imu_node.cpp.o
 .PHONY : src/jake_imu_node.o
 
@@ -375,30 +313,6 @@ src/jake_imu_node.cpp.s:
 	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node/CMakeFiles/mpu_node.dir/build.make imu_node/CMakeFiles/mpu_node.dir/src/jake_imu_node.cpp.s
 .PHONY : src/jake_imu_node.cpp.s
 
-src/quaternion_util.o: src/quaternion_util.cpp.o
-.PHONY : src/quaternion_util.o
-
-# target to build an object file
-src/quaternion_util.cpp.o:
-	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node/CMakeFiles/mpu_driver_lib.dir/build.make imu_node/CMakeFiles/mpu_driver_lib.dir/src/quaternion_util.cpp.o
-.PHONY : src/quaternion_util.cpp.o
-
-src/quaternion_util.i: src/quaternion_util.cpp.i
-.PHONY : src/quaternion_util.i
-
-# target to preprocess a source file
-src/quaternion_util.cpp.i:
-	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node/CMakeFiles/mpu_driver_lib.dir/build.make imu_node/CMakeFiles/mpu_driver_lib.dir/src/quaternion_util.cpp.i
-.PHONY : src/quaternion_util.cpp.i
-
-src/quaternion_util.s: src/quaternion_util.cpp.s
-.PHONY : src/quaternion_util.s
-
-# target to generate assembly for a file
-src/quaternion_util.cpp.s:
-	cd /home/aames/ros_imu/build && $(MAKE) -f imu_node/CMakeFiles/mpu_driver_lib.dir/build.make imu_node/CMakeFiles/mpu_driver_lib.dir/src/quaternion_util.cpp.s
-.PHONY : src/quaternion_util.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -413,7 +327,6 @@ help:
 	@echo "... install/local"
 	@echo "... install/strip"
 	@echo "... list_install_components"
-	@echo "... mpu_driver_lib"
 	@echo "... mpu_node"
 	@echo "... rebuild_cache"
 	@echo "... sensor_msgs_generate_messages_cpp"
@@ -423,18 +336,9 @@ help:
 	@echo "... std_srvs_generate_messages_lisp"
 	@echo "... std_srvs_generate_messages_py"
 	@echo "... test"
-	@echo "... src/BBB_I2C.o"
-	@echo "... src/BBB_I2C.i"
-	@echo "... src/BBB_I2C.s"
-	@echo "... src/MPU9150.o"
-	@echo "... src/MPU9150.i"
-	@echo "... src/MPU9150.s"
 	@echo "... src/jake_imu_node.o"
 	@echo "... src/jake_imu_node.i"
 	@echo "... src/jake_imu_node.s"
-	@echo "... src/quaternion_util.o"
-	@echo "... src/quaternion_util.i"
-	@echo "... src/quaternion_util.s"
 .PHONY : help
 
 

@@ -1,0 +1,8 @@
+prefix=/home/aames/ros_imu/install
+
+Name: imu_common
+Description: Description of imu_common
+Version: 0.0.0
+Cflags: -I/home/aames/ros_imu/install/include
+Libs: -L/home/aames/ros_imu/install/lib -limu_common
+Requires: 

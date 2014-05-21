@@ -3,7 +3,7 @@
 
 leg_pose/CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.o
  /home/aames/ros_imu/devel/include/leg_pose/legPose.h
- /home/aames/ros_imu/src/leg_pose/include/quaternion_util.h
+ /home/aames/ros_imu/src/leg_pose/../imu_common/include/quaternion_util.h
  /home/aames/ros_imu/src/leg_pose/src/legPoseSubPub.cpp
  /opt/ros/hydro/include/XmlRpcDecl.h
  /opt/ros/hydro/include/XmlRpcValue.h

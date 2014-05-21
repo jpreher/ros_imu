@@ -1,8 +1,0 @@
-prefix=/home/jake/catkin_ws/devel
-
-Name: mpu9150_imu_driver
-Description: Description of mpu9150_imu_driver
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/jake/catkin_ws/devel/lib 
-Requires: message_runtime roscpp rospy std_msgs

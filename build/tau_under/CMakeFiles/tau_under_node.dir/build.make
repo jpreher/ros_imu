@@ -97,7 +97,7 @@ tau_under_node_EXTERNAL_OBJECTS =
 /home/aames/ros_imu/devel/lib/tau_under/tau_under_node: /usr/lib/x86_64-linux-gnu/libpthread.so
 /home/aames/ros_imu/devel/lib/tau_under/tau_under_node: /opt/ros/hydro/lib/libcpp_common.so
 /home/aames/ros_imu/devel/lib/tau_under/tau_under_node: /opt/ros/hydro/lib/libconsole_bridge.so
-/home/aames/ros_imu/devel/lib/tau_under/tau_under_node: /home/aames/ros_imu/devel/lib/libtau_under_lib.so
+/home/aames/ros_imu/devel/lib/tau_under/tau_under_node: /home/aames/ros_imu/devel/lib/libimu_common.so
 /home/aames/ros_imu/devel/lib/tau_under/tau_under_node: tau_under/CMakeFiles/tau_under_node.dir/build.make
 /home/aames/ros_imu/devel/lib/tau_under/tau_under_node: tau_under/CMakeFiles/tau_under_node.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX executable /home/aames/ros_imu/devel/lib/tau_under/tau_under_node"

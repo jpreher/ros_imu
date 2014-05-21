@@ -5,4 +5,4 @@ Description: Description of imu_node
 Version: 0.0.0
 Cflags: 
 Libs: -L/home/aames/ros_imu/devel/lib 
-Requires: 
+Requires: roscpp rospy sensor_msgs std_msgs std_srvs

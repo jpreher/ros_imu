@@ -97,7 +97,7 @@ mpu_node_under_EXTERNAL_OBJECTS =
 /home/aames/ros_imu/devel/lib/imu_node_under/mpu_node_under: /usr/lib/x86_64-linux-gnu/libpthread.so
 /home/aames/ros_imu/devel/lib/imu_node_under/mpu_node_under: /opt/ros/hydro/lib/libcpp_common.so
 /home/aames/ros_imu/devel/lib/imu_node_under/mpu_node_under: /opt/ros/hydro/lib/libconsole_bridge.so
-/home/aames/ros_imu/devel/lib/imu_node_under/mpu_node_under: /home/aames/ros_imu/devel/lib/libmpu_driver_lib_under.so
+/home/aames/ros_imu/devel/lib/imu_node_under/mpu_node_under: /home/aames/ros_imu/devel/lib/libimu_common.so
 /home/aames/ros_imu/devel/lib/imu_node_under/mpu_node_under: imu_node_under/CMakeFiles/mpu_node_under.dir/build.make
 /home/aames/ros_imu/devel/lib/imu_node_under/mpu_node_under: imu_node_under/CMakeFiles/mpu_node_under.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX executable /home/aames/ros_imu/devel/lib/imu_node_under/mpu_node_under"

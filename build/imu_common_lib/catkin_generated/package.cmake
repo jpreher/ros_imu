@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "imu_common_lib")
+set(imu_common_lib_MAINTAINER "aames <aames@todo.todo>")
+set(imu_common_lib_DEPRECATED "")
+set(imu_common_lib_VERSION "0.0.0")
+set(imu_common_lib_BUILD_DEPENDS "roscpp" "rospy")
+set(imu_common_lib_RUN_DEPENDS "roscpp" "rospy")
+set(imu_common_lib_BUILDTOOL_DEPENDS "catkin")

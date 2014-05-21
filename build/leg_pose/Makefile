@@ -248,20 +248,6 @@ leg_pose_genpy/fast:
 .PHONY : leg_pose_genpy/fast
 
 # Convenience name for target.
-leg_pose/CMakeFiles/pose_lib.dir/rule:
-	cd /home/aames/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 leg_pose/CMakeFiles/pose_lib.dir/rule
-.PHONY : leg_pose/CMakeFiles/pose_lib.dir/rule
-
-# Convenience name for target.
-pose_lib: leg_pose/CMakeFiles/pose_lib.dir/rule
-.PHONY : pose_lib
-
-# fast build rule for target.
-pose_lib/fast:
-	cd /home/aames/ros_imu/build && $(MAKE) -f leg_pose/CMakeFiles/pose_lib.dir/build.make leg_pose/CMakeFiles/pose_lib.dir/build
-.PHONY : pose_lib/fast
-
-# Convenience name for target.
 leg_pose/CMakeFiles/pose_node.dir/rule:
 	cd /home/aames/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 leg_pose/CMakeFiles/pose_node.dir/rule
 .PHONY : leg_pose/CMakeFiles/pose_node.dir/rule
@@ -299,30 +285,6 @@ src/legPoseSubPub.cpp.s:
 	cd /home/aames/ros_imu/build && $(MAKE) -f leg_pose/CMakeFiles/pose_node.dir/build.make leg_pose/CMakeFiles/pose_node.dir/src/legPoseSubPub.cpp.s
 .PHONY : src/legPoseSubPub.cpp.s
 
-src/quaternion_util.o: src/quaternion_util.cpp.o
-.PHONY : src/quaternion_util.o
-
-# target to build an object file
-src/quaternion_util.cpp.o:
-	cd /home/aames/ros_imu/build && $(MAKE) -f leg_pose/CMakeFiles/pose_lib.dir/build.make leg_pose/CMakeFiles/pose_lib.dir/src/quaternion_util.cpp.o
-.PHONY : src/quaternion_util.cpp.o
-
-src/quaternion_util.i: src/quaternion_util.cpp.i
-.PHONY : src/quaternion_util.i
-
-# target to preprocess a source file
-src/quaternion_util.cpp.i:
-	cd /home/aames/ros_imu/build && $(MAKE) -f leg_pose/CMakeFiles/pose_lib.dir/build.make leg_pose/CMakeFiles/pose_lib.dir/src/quaternion_util.cpp.i
-.PHONY : src/quaternion_util.cpp.i
-
-src/quaternion_util.s: src/quaternion_util.cpp.s
-.PHONY : src/quaternion_util.s
-
-# target to generate assembly for a file
-src/quaternion_util.cpp.s:
-	cd /home/aames/ros_imu/build && $(MAKE) -f leg_pose/CMakeFiles/pose_lib.dir/build.make leg_pose/CMakeFiles/pose_lib.dir/src/quaternion_util.cpp.s
-.PHONY : src/quaternion_util.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -341,16 +303,12 @@ help:
 	@echo "... leg_pose_genlisp"
 	@echo "... leg_pose_genpy"
 	@echo "... list_install_components"
-	@echo "... pose_lib"
 	@echo "... pose_node"
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... src/legPoseSubPub.o"
 	@echo "... src/legPoseSubPub.i"
 	@echo "... src/legPoseSubPub.s"
-	@echo "... src/quaternion_util.o"
-	@echo "... src/quaternion_util.i"
-	@echo "... src/quaternion_util.s"
 .PHONY : help
 
 

@@ -248,20 +248,6 @@ tau_under_genpy/fast:
 .PHONY : tau_under_genpy/fast
 
 # Convenience name for target.
-tau_under/CMakeFiles/tau_under_lib.dir/rule:
-	cd /home/aames/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 tau_under/CMakeFiles/tau_under_lib.dir/rule
-.PHONY : tau_under/CMakeFiles/tau_under_lib.dir/rule
-
-# Convenience name for target.
-tau_under_lib: tau_under/CMakeFiles/tau_under_lib.dir/rule
-.PHONY : tau_under_lib
-
-# fast build rule for target.
-tau_under_lib/fast:
-	cd /home/aames/ros_imu/build && $(MAKE) -f tau_under/CMakeFiles/tau_under_lib.dir/build.make tau_under/CMakeFiles/tau_under_lib.dir/build
-.PHONY : tau_under_lib/fast
-
-# Convenience name for target.
 tau_under/CMakeFiles/tau_under_node.dir/rule:
 	cd /home/aames/ros_imu/build && $(MAKE) -f CMakeFiles/Makefile2 tau_under/CMakeFiles/tau_under_node.dir/rule
 .PHONY : tau_under/CMakeFiles/tau_under_node.dir/rule
@@ -274,30 +260,6 @@ tau_under_node: tau_under/CMakeFiles/tau_under_node.dir/rule
 tau_under_node/fast:
 	cd /home/aames/ros_imu/build && $(MAKE) -f tau_under/CMakeFiles/tau_under_node.dir/build.make tau_under/CMakeFiles/tau_under_node.dir/build
 .PHONY : tau_under_node/fast
-
-src/quaternion_util.o: src/quaternion_util.cpp.o
-.PHONY : src/quaternion_util.o
-
-# target to build an object file
-src/quaternion_util.cpp.o:
-	cd /home/aames/ros_imu/build && $(MAKE) -f tau_under/CMakeFiles/tau_under_lib.dir/build.make tau_under/CMakeFiles/tau_under_lib.dir/src/quaternion_util.cpp.o
-.PHONY : src/quaternion_util.cpp.o
-
-src/quaternion_util.i: src/quaternion_util.cpp.i
-.PHONY : src/quaternion_util.i
-
-# target to preprocess a source file
-src/quaternion_util.cpp.i:
-	cd /home/aames/ros_imu/build && $(MAKE) -f tau_under/CMakeFiles/tau_under_lib.dir/build.make tau_under/CMakeFiles/tau_under_lib.dir/src/quaternion_util.cpp.i
-.PHONY : src/quaternion_util.cpp.i
-
-src/quaternion_util.s: src/quaternion_util.cpp.s
-.PHONY : src/quaternion_util.s
-
-# target to generate assembly for a file
-src/quaternion_util.cpp.s:
-	cd /home/aames/ros_imu/build && $(MAKE) -f tau_under/CMakeFiles/tau_under_lib.dir/build.make tau_under/CMakeFiles/tau_under_lib.dir/src/quaternion_util.cpp.s
-.PHONY : src/quaternion_util.cpp.s
 
 src/tau_under.o: src/tau_under.cpp.o
 .PHONY : src/tau_under.o
@@ -342,12 +304,8 @@ help:
 	@echo "... tau_under_generate_messages_py"
 	@echo "... tau_under_genlisp"
 	@echo "... tau_under_genpy"
-	@echo "... tau_under_lib"
 	@echo "... tau_under_node"
 	@echo "... test"
-	@echo "... src/quaternion_util.o"
-	@echo "... src/quaternion_util.i"
-	@echo "... src/quaternion_util.s"
 	@echo "... src/tau_under.o"
 	@echo "... src/tau_under.i"
 	@echo "... src/tau_under.s"

@@ -22,7 +22,7 @@ ros/builtin_message_traits.h
 ros/message_operations.h
 -
 
-/home/aames/ros_imu/src/leg_pose/include/quaternion_util.h
+/home/aames/ros_imu/src/leg_pose/../imu_common/include/quaternion_util.h
 math.h
 -
 

@@ -285,6 +285,24 @@ gtest_force_shared_crt:BOOL=OFF
 gtest_main_LIB_DEPENDS:STATIC=general;-lpthread;general;gtest;
 
 //Value Computed by CMake
+imu_common_BINARY_DIR:STATIC=/home/aames/ros_imu/build/imu_common
+
+//Dependencies for target
+imu_common_LIB_DEPENDS:STATIC=
+
+//Value Computed by CMake
+imu_common_SOURCE_DIR:STATIC=/home/aames/ros_imu/src/imu_common
+
+//Value Computed by CMake
+imu_common_lib_BINARY_DIR:STATIC=/home/aames/ros_imu/build/imu_common_lib
+
+//Dependencies for target
+imu_common_lib_LIB_DEPENDS:STATIC=
+
+//Value Computed by CMake
+imu_common_lib_SOURCE_DIR:STATIC=/home/aames/ros_imu/src/imu_common_lib
+
+//Value Computed by CMake
 imu_node_BINARY_DIR:STATIC=/home/aames/ros_imu/build/imu_node
 
 //Value Computed by CMake

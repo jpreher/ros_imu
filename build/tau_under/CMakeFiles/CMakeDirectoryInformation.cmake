@@ -11,8 +11,10 @@ SET(CMAKE_FORCE_UNIX_PATHS 1)
 # The C and CXX include file search paths:
 SET(CMAKE_C_INCLUDE_PATH
   "/home/aames/ros_imu/devel/include"
-  "/opt/ros/hydro/include"
+  "/home/aames/ros_imu/src/tau_under/../imu_common"
+  "/home/aames/ros_imu/src/tau_under/../imu_common/include"
   "/home/aames/ros_imu/src/tau_under/include"
+  "/opt/ros/hydro/include"
   )
 SET(CMAKE_CXX_INCLUDE_PATH ${CMAKE_C_INCLUDE_PATH})
 SET(CMAKE_Fortran_INCLUDE_PATH ${CMAKE_C_INCLUDE_PATH})

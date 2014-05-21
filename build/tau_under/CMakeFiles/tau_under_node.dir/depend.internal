@@ -3,8 +3,8 @@
 
 tau_under/CMakeFiles/tau_under_node.dir/src/tau_under.cpp.o
  /home/aames/ros_imu/devel/include/tau_under/tau_under_msg.h
- /home/aames/ros_imu/src/tau_under/include/butterworth_util.h
- /home/aames/ros_imu/src/tau_under/include/quaternion_util.h
+ /home/aames/ros_imu/src/tau_under/../imu_common/include/butterworth_util.h
+ /home/aames/ros_imu/src/tau_under/../imu_common/include/quaternion_util.h
  /home/aames/ros_imu/src/tau_under/src/tau_under.cpp
  /opt/ros/hydro/include/XmlRpcDecl.h
  /opt/ros/hydro/include/XmlRpcValue.h

@@ -22,13 +22,13 @@ ros/builtin_message_traits.h
 ros/message_operations.h
 -
 
-/home/aames/ros_imu/src/tau_under/include/butterworth_util.h
+/home/aames/ros_imu/src/tau_under/../imu_common/include/butterworth_util.h
 vector
 -
 algorithm
 -
 
-/home/aames/ros_imu/src/tau_under/include/quaternion_util.h
+/home/aames/ros_imu/src/tau_under/../imu_common/include/quaternion_util.h
 math.h
 -
 

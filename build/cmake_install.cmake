@@ -85,7 +85,7 @@ ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unsp
 IF(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   INCLUDE("/home/aames/ros_imu/build/gtest/cmake_install.cmake")
-  INCLUDE("/home/aames/ros_imu/build/beginner_tutorials/cmake_install.cmake")
+  INCLUDE("/home/aames/ros_imu/build/imu_common/cmake_install.cmake")
   INCLUDE("/home/aames/ros_imu/build/imu_node/cmake_install.cmake")
   INCLUDE("/home/aames/ros_imu/build/imu_node_under/cmake_install.cmake")
   INCLUDE("/home/aames/ros_imu/build/leg_pose/cmake_install.cmake")

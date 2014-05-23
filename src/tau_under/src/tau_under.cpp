@@ -69,8 +69,8 @@ public:
     tau_pub_ = node_handle_.advertise<tau_under::tau_under_msg>("tau_under", desired_freq_);
     
     // Set up butterworth filter for step detection.
-    const vector<float> a = {1.0, -1.348967745252794, 0.513981894219675};
-    const vector<float> b = {0.041253537241720, 0.082507074483441, 0.041253537241720};
+    const vector<float> a = {1.0, -1.561018075800718, 0.641351538057563};
+    const vector<float> b = {0.800592403464570, -1.601184806929141, 0.800592403464570};
     left_butter_.reset(new Butter(b, a));
     right_butter_.reset(new Butter(b, a));
 
@@ -134,6 +134,9 @@ public:
     quat::eulerXZY(qLst, hLst);
     quat::eulerXZY(qLs_e, hLs_e);
 
+    hLst[2] = -hLst[2];
+    hLs_e[2] = -hLs_e[2];
+
     // Right: Quaternion in Earth Fixed Frame.
     quat::prod(qR_s_meas, qRs_s, qRs_e); // Shank to earth
     quat::prod(qR_t_meas, qRt_s, qRt_e); // Thigh to earth
@@ -150,6 +153,9 @@ public:
     quat::eulerXZY(qRst, hRst);
     quat::eulerXZY(qRs_e, hRs_e);
 
+    hRst[2] = -hRst[2];
+    hRs_e[2] = -hRs_e[2];
+
     // Hip:
     float qh_e_inv[4];
     quat::prod(qh_meas, qh_s, qh_e);
@@ -159,6 +165,9 @@ public:
 
     quat::eulerXZY(qRht, hRht);
     quat::eulerXZY(qLht, hLht);
+
+    hRht[2] = -hRht[2];
+    hLht[2] = -hLht[2];
   }
 
   void RshankCall(const sensor_msgs::Imu& reading) {

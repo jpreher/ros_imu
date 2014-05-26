@@ -1,7 +1,0 @@
-set(_CATKIN_CURRENT_PACKAGE "tau_under")
-set(tau_under_MAINTAINER "jake <jake@todo.todo>")
-set(tau_under_DEPRECATED "")
-set(tau_under_VERSION "0.0.0")
-set(tau_under_BUILD_DEPENDS "roscpp" "rospy" "std_msgs" "message_generation")
-set(tau_under_RUN_DEPENDS "roscpp" "rospy" "std_msgs" "message_runtime")
-set(tau_under_BUILDTOOL_DEPENDS "catkin")

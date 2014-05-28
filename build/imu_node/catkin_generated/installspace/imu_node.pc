@@ -1,0 +1,8 @@
+prefix=/home/aames/ros_imu/install
+
+Name: imu_node
+Description: Description of imu_node
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/aames/ros_imu/install/lib 
+Requires: roscpp rospy sensor_msgs std_msgs std_srvs

@@ -223,6 +223,8 @@ public:
   }
 
   void hipCall(const sensor_msgs::Imu& reading) {
+    ROS_INFO("got data hip");
+
     qh_meas[0] = reading.orientation.w;
     qh_meas[1] = reading.orientation.x;
     qh_meas[2] = reading.orientation.y;
@@ -305,6 +307,7 @@ public:
   void spin() { //DONE
     while (ros::ok()){
       if ( newDataRThigh && newDataRShank && newDataLThigh && newDataLShank && newDataHip )
+        ROS_INFO("Got data from everyone, doing stuff");
         publish_data();
         ros::spinOnce();
         rate.sleep();
@@ -320,7 +323,7 @@ int main(int argc, char **argv) { //DONE
   tu.Rthigh_sub_ = n.subscribe("right_leg/data2", 100, &tau_func::RthighCall, &tu);
   tu.Lshank_sub_ = n.subscribe("left_leg/data1", 100, &tau_func::LshankCall, &tu);
   tu.Lthigh_sub_ = n.subscribe("left_leg/data2", 100, &tau_func::LthighCall, &tu);
-  tu.hip_sub_ = n.subscribe("right_leg/data3", 100, &tau_func::hipCall, &tu);
+  tu.hip_sub_ = n.subscribe("left_leg/data3", 100, &tau_func::hipCall, &tu);
 
   tu.spin();
 

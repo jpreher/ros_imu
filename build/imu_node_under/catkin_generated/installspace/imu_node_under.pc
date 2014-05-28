@@ -1,0 +1,8 @@
+prefix=/home/aames/ros_imu/install
+
+Name: imu_node_under
+Description: Description of imu_node_under
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/aames/ros_imu/install/lib 
+Requires: 

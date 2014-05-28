@@ -27,7 +27,7 @@
 #define right_leg true
 
 //Sample frequency
-float sampleFreq = 200.0f;
+float sampleFreq = 150.0f;
 
 typedef std::shared_ptr<MPU9150> MPUptr;
 
@@ -81,8 +81,8 @@ public:
   
   	imuNode(ros::NodeHandle h) : private_node_handle_("~"),
   		node_handle_(h), calibrate_requested1_(false), calibrate_requested2_(false),
-  		calibrate_requested3_(false), desired_freq_(200),
-  		rate(200) 
+  		calibrate_requested3_(false), desired_freq_(sampleFreq),
+  		rate(sampleFreq) 
   	{
 	  	std::string leg;
   		if ( left_leg ) {

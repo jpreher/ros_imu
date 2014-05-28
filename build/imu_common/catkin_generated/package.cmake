@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "imu_common")
+set(imu_common_MAINTAINER "jake reher <jake.reher@gmail.com>")
+set(imu_common_DEPRECATED "")
+set(imu_common_VERSION "0.0.0")
+set(imu_common_BUILD_DEPENDS "roscpp" "rospy")
+set(imu_common_RUN_DEPENDS "roscpp" "rospy")
+set(imu_common_BUILDTOOL_DEPENDS "catkin")

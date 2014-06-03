@@ -223,8 +223,6 @@ public:
   }
 
   void hipCall(const sensor_msgs::Imu& reading) {
-    ROS_INFO("got data hip");
-
     qh_meas[0] = reading.orientation.w;
     qh_meas[1] = reading.orientation.x;
     qh_meas[2] = reading.orientation.y;
@@ -307,7 +305,6 @@ public:
   void spin() { //DONE
     while (ros::ok()){
       if ( newDataRThigh && newDataRShank && newDataLThigh && newDataLShank && newDataHip )
-        ROS_INFO("Got data from everyone, doing stuff");
         publish_data();
         ros::spinOnce();
         rate.sleep();

@@ -14,8 +14,8 @@
 
 //---------------------------------------------------------------------------------------------------
 // Mahony Filter Definitions
-#define twoKpDef	(2.0f * 1.0f)	// 2 * proportional gain
-#define twoKiDef	(2.0f * 0.1f)	// 2 * integral gain
+#define twoKpDef	(2.0f * 2.0f)	// 2 * proportional gain
+#define twoKiDef	(2.0f * 0.05f)	// 2 * integral gain
 
 typedef std::shared_ptr<Butter> ButterPtr;
 
@@ -31,7 +31,6 @@ private:
     float IMUscale[9];
     float integralFBx, integralFBy, integralFBz;
     float twoKp, twoKi;
-    bool vert_orient;
 
     int GYRO_CURRENT_SETTING;
     int ACCEL_CURRENT_SETTING;
@@ -45,6 +44,7 @@ private:
     void initCompass();
 
 public:
+    bool vert_orient;
     float GYRbias[3];
     //float filt_acc[3];    //Removed as butterworth not in use
     float sampleFreq;

@@ -1,8 +1,0 @@
-prefix=/home/aames/ros_imu/devel
-
-Name: imu_common_lib
-Description: Description of imu_common_lib
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/aames/ros_imu/devel/lib 
-Requires: 

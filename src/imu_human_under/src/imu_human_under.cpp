@@ -36,21 +36,19 @@ public:
 	// Placeholders for the IMU classes
 	MPUptr IMU1;
 	MPUptr IMU2;
-	MPUptr IMU3;
 
 	// Keep track of number of IMU
 	int numIMU;
-	int imu1_bus, imu2_bus, imu3_bus;
-	int imu1_addr, imu2_addr, imu3_addr;
-	bool imu1_isvert, imu2_isvert, imu3_isvert;
-	std::string imu1_name, imu2_name, imu3_name;
+	int imu1_bus, imu2_bus;
+	int imu1_addr, imu2_addr;
+	bool imu1_isvert, imu2_isvert;
+	std::string imu1_name, imu2_name;
 
   	ros::Rate rate;
 
 	// IMU messages are published with standard IMU sensor_msgs.
 	sensor_msgs::Imu reading1;
 	sensor_msgs::Imu reading2;
-	sensor_msgs::Imu reading3;
 
 	std::string was_slow_;
 
@@ -58,30 +56,25 @@ public:
   	ros::NodeHandle private_node_handle_;
   	ros::Publisher imu1_data_pub_;
   	ros::Publisher imu2_data_pub_;
-  	ros::Publisher imu3_data_pub_;
   	ros::ServiceServer calibrate1_serv_;
   	ros::ServiceServer calibrate2_serv_;
-  	ros::ServiceServer calibrate3_serv_;
   	ros::Publisher is_calibrated1_pub_;
   	ros::Publisher is_calibrated2_pub_;
-  	ros::Publisher is_calibrated3_pub_;
 
   	bool running;
 
   	bool autocalibrate_;
   	bool calibrate_requested1_;
   	bool calibrate_requested2_;
-  	bool calibrate_requested3_;
   	bool calibrated1_;
 	bool calibrated2_;
-	bool calibrated3_;
 
 
 	double desired_freq_;
   
   	imuNode(ros::NodeHandle h) : private_node_handle_("~"),
   		node_handle_(h), calibrate_requested1_(false), calibrate_requested2_(false),
-  		calibrate_requested3_(false), desired_freq_(sampleFreq),
+		desired_freq_(sampleFreq),
   		rate(sampleFreq) 
   	{
 	  	std::string leg;
@@ -98,12 +91,10 @@ public:
     	private_node_handle_.param("autocalibrate", autocalibrate_, true);
     	private_node_handle_.param("assume_calibrated1", calibrated1_, false);
     	private_node_handle_.param("assume_calibrated2", calibrated2_, false);
-       	private_node_handle_.param("assume_calibrated3", calibrated3_, false);
 
     	// Set up IMU publishers
     	imu1_data_pub_ = imu_node_handle.advertise<sensor_msgs::Imu>("data1", desired_freq_);
     	imu2_data_pub_ = imu_node_handle.advertise<sensor_msgs::Imu>("data2", desired_freq_);
-    	imu3_data_pub_ = imu_node_handle.advertise<sensor_msgs::Imu>("data3", desired_freq_);
 
     	// Calibration server for each IMU
     	//calibrate1_serv_ = imu_node_handle.advertiseService("calibrate", &imuNode::calibrate, this);
@@ -113,7 +104,6 @@ public:
     	// Publishers to release info on which IMU's are calibrated.
     	is_calibrated1_pub_ = imu_node_handle.advertise<std_msgs::Bool>("is_calibrated", 1, true);
     	is_calibrated2_pub_ = imu_node_handle.advertise<std_msgs::Bool>("is_calibrated", 1, true);
-    	is_calibrated3_pub_ = imu_node_handle.advertise<std_msgs::Bool>("is_calibrated", 1, true);
 
     	// Loop is not to run yet.
     	running = false;
@@ -139,26 +129,17 @@ public:
 			ros::param::get("/imu/left_leg/imu2/addr", imu2_addr);
 			ros::param::get("/imu/left_leg/imu2/bias_path", bias_path2);
 			ros::param::get("/imu/left_leg/imu2/isvertical", imu2_isvert);
-			// IMU 3
-			ros::param::get("/imu/left_leg/imu3/name", imu3_name);
-			ros::param::get("/imu/left_leg/imu3/bus", imu3_bus);
-			ros::param::get("/imu/left_leg/imu3/addr", imu3_addr);
-			ros::param::get("/imu/left_leg/imu3/bias_path", bias_path3);
-			ros::param::get("/imu/left_leg/imu3/isvertical", imu3_isvert);
 
 			ros::param::get("/imu/left_leg/num_imu", numIMU);
 
 			const char* imu1_biasPath = bias_path1.c_str();
 			const char* imu2_biasPath = bias_path2.c_str();
-			const char* imu3_biasPath = bias_path3.c_str();
 
 			// Set up the proper classes for the IMUs
 			ROS_INFO("Loading left IMU1 bias and setting up class.");
 			IMU1.reset(new MPU9150(imu1_bus, imu1_addr, imu1_biasPath, sampleFreq, imu1_isvert));
 			ROS_INFO("Loading left IMU2 bias and setting up class.");
 			IMU2.reset(new MPU9150(imu2_bus, imu2_addr, imu2_biasPath, sampleFreq, imu2_isvert));
-			ROS_INFO("Loading left IMU3 bias and setting up class.");
-			IMU3.reset(new MPU9150(imu3_bus, imu3_addr, imu3_biasPath, sampleFreq, imu3_isvert));
 
 		} else if ( right_leg == true ){
 			int imu1_bus, imu2_bus;
@@ -166,7 +147,6 @@ public:
 			bool imu1_isvert, imu2_isvert;
 			std::string bias_path1;
 			std::string bias_path2;
-			std::string bias_path3;
 			// IMU 1
 			ros::param::get("/imu/right_leg/imu1/name", imu1_name);
 			ros::param::get("/imu/right_leg/imu1/bus", imu1_bus);
@@ -208,15 +188,10 @@ public:
             IMU1->initialize();
 	  		ROS_INFO("Initializing IMU2");
             IMU2->initialize();
-            if ( numIMU > 2 ) {
-            	ROS_INFO("Initializing IMU3");
-            	IMU3->initialize();
-            }
 
 	  		if (autocalibrate_){
 	  			calibrate_requested1_ = true;
 	  			calibrate_requested2_ = true;
-	  			calibrate_requested3_ = true;
 	  		}
 
 	  		if ( autocalibrate_ || calibrate_requested1_ ){
@@ -234,16 +209,6 @@ public:
 	  			autocalibrate_ = false;
 	  		} else {
 	  			ROS_INFO("Not calibrating IMU 2, use service to calibrate.");
-	  		}
-	  		if (numIMU > 2) {
-	  			if ( autocalibrate_ || calibrate_requested3_ ){
-	  				ROS_INFO("Calibrating IMU 3.");
-	  				calibrateIMU(IMU3);
-	  				calibrate_requested3_ = false;
-	  				autocalibrate_ = false;
-	  			} else {
-	  				ROS_INFO("Not calibrating IMU 3, use service to calibrate.");
-	  			}
 	  		}
 
 	  		ROS_INFO("All IMU sensors initialized.");
@@ -270,7 +235,7 @@ public:
 	        was_slow_ = "Full IMU loop was slow.";
 	    }
 
-	    getData(reading1, reading2, reading3);
+	    getData(reading1, reading2);
 	    double endtime = ros::Time::now().toSec();
 	    if (endtime - starttime > 0.006)
 	    {
@@ -283,8 +248,6 @@ public:
 
 	    imu1_data_pub_.publish(reading1);
 	    imu2_data_pub_.publish(reading2);
-	    if ( numIMU > 2 )
-	    	imu3_data_pub_.publish(reading3);
 
 	    endtime = ros::Time::now().toSec();
 	    if (endtime - starttime > 0.006)
@@ -319,11 +282,9 @@ public:
 		}
 	}
 
-	void getData(sensor_msgs::Imu& data1, sensor_msgs::Imu& data2, sensor_msgs::Imu& data3){
+	void getData(sensor_msgs::Imu& data1, sensor_msgs::Imu& data2){
         IMU1->MahonyAHRSupdateIMU();
         IMU2->MahonyAHRSupdateIMU();
-        if ( numIMU > 2 )
-        	IMU3->MahonyAHRSupdateIMU();
 
         data1.linear_acceleration.x = IMU1->v_acc[0];
         data1.linear_acceleration.y = IMU1->v_acc[1];
@@ -354,23 +315,6 @@ public:
         data2.orientation.z = IMU2->v_quat[3];
 
         data2.header.stamp = ros::Time::now();
-	
-        if ( numIMU > 2 ) {
-        	data3.linear_acceleration.x = IMU3->v_acc[0];
-	        data3.linear_acceleration.y = IMU3->v_acc[1];
-	        data3.linear_acceleration.z = IMU3->v_acc[2];
-	 
-	        data3.angular_velocity.x = IMU3->v_gyr[0];
-	        data3.angular_velocity.y = IMU3->v_gyr[1];
-	        data3.angular_velocity.z = IMU3->v_gyr[2];
-
-	        data3.orientation.w = IMU3->v_quat[0];
-	        data3.orientation.x = IMU3->v_quat[1];
-	        data3.orientation.y = IMU3->v_quat[2];
-	        data3.orientation.z = IMU3->v_quat[3];
-
-	        data3.header.stamp = ros::Time::now();
-        }
 	}
 
 	void calibrateIMU(MPUptr& IMU){
@@ -398,7 +342,11 @@ public:
 main(int argc, char** argv)
 {
 	// Init the ros node.
-	ros::init(argc, argv, "mpu9150_node");
+	if ( left_leg ) {
+		ros::init(argc, argv, "left_mpu9150_node");
+	} else {
+		ros::init(argc, argv, "right_mpu9150_node");
+	}
 	ros::NodeHandle nh;
 
 	imuNode in(nh);

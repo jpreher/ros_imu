@@ -78,6 +78,7 @@ int8_t BBBI2C::readBytes(uint8_t bus, uint8_t devAddress, uint8_t regAddress, ui
     char namebuf[64];
     snprintf(namebuf, sizeof(namebuf), "/dev/i2c-%d", bus);
     int file;
+
     if ((file = open(namebuf, O_RDWR)) < 0){
             std::cout << "Failed to open MPU6050 Sensor on " << namebuf << " I2C Bus" << std::endl;
             return(1);
@@ -91,14 +92,17 @@ int8_t BBBI2C::readBytes(uint8_t bus, uint8_t devAddress, uint8_t regAddress, ui
     // in write mode and then a stop/start condition is issued. Data bytes are
     // transferred with automatic address increment.
     char buf[1] = { regAddress };
-    if(write(file, buf, 1) !=1){
-        std::cout << "Failed to Reset Address in readFullSensor() " << std::endl;
+    if( write(file, buf, 1) !=1 ){
+        std::cout << "Failed to command read address on register " << regAddress;
+        std::cout << ". Waiting 1ms and looping to try a bit bang" << std::endl;
+        usleep(100);
+        return(3);
     }
 
     int numberBytes = length;
-    int bytesRead = read(file, data, numberBytes);
-    if (bytesRead == -1){
-        std::cout << "Failure to read Byte Stream in readFullSensor()" << std::endl;
+    int bytesRead = read( file, data, numberBytes );
+    if ( bytesRead == -1 ){
+        std::cout << "Failure to read byte stream on " << regAddress << std::endl;
     }
     close(file);
     return bytesRead;

@@ -634,7 +634,7 @@ void MPU9150::MahonyAHRSupdateIMU() {
     v_quat[0] = q0;
     v_quat[1] = q1;
     v_quat[2] = q2;
-    v_quat[3] = q3;
+    v_quat[3] = 0.f;
 
     quat::eulerXZY(v_quat,v_euler);
 }

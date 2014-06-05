@@ -165,6 +165,8 @@ public:
 
 			if (imu1_isvert)
 				ROS_INFO("IMU1 is vertical");
+			if (imu2_isvert)
+				ROS_INFO("IMU2 is vertical");
 
 			ROS_INFO("Loading right IMU1 bias and setting up class.");
 			IMU1.reset(new MPU9150(imu1_bus, imu1_addr, imu1_biasPath, sampleFreq, imu1_isvert));

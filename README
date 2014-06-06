@@ -2,4 +2,6 @@ ROSNODE repository for IMU work.
 leg_pose
 imu_node
 imu_node_under
+imu_human
+imu_human_under
 tau_under

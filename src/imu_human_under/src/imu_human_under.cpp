@@ -301,8 +301,6 @@ public:
         data1.orientation.y = IMU1->v_quat[2];
         data1.orientation.z = IMU1->v_quat[3];
 
-        data1.header.stamp = ros::Time::now();
-
         data2.linear_acceleration.x = IMU2->v_acc[0];
         data2.linear_acceleration.y = IMU2->v_acc[1];
         data2.linear_acceleration.z = IMU2->v_acc[2];
@@ -316,13 +314,15 @@ public:
         data2.orientation.y = IMU2->v_quat[2];
         data2.orientation.z = IMU2->v_quat[3];
 
-        data2.header.stamp = ros::Time::now();
+        data1.header.stamp = ros::Time::now();
+        data2.header.stamp = data1.header.stamp;
 	}
 
 	void calibrateIMU(MPUptr& IMU){
 		float tempx = 0.;
 		float tempy = 0.;
 		float tempz = 0.;
+		//Take 500 readings and average the values.
 		for ( int i=0; i<500; i++ ) {
 			IMU->read6DOF();
 			tempx += IMU->v_gyr[0];
@@ -331,13 +331,16 @@ public:
 		}
 
 		if ( IMU->vert_orient ) {
+			//If the imu is vertical exchange x and z
 			IMU->GYRbias[0] += tempz / 500.0f;
 			IMU->GYRbias[2] -= tempx / 500.0f;
 		} else {
+			//Otherwise just average
 			IMU->GYRbias[0] += tempx / 500.0f;
 			IMU->GYRbias[2] += tempz / 500.0f;
 		}
-			IMU->GYRbias[1] += tempy / 500.0f;
+		//Y axis does not change.
+		IMU->GYRbias[1] += tempy / 500.0f;
 	}
 };
 

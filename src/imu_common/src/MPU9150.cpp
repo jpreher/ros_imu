@@ -9,7 +9,8 @@
 // 04/01/2014   Jake Reher      Finalized Deadreckoning (which was subsequently removed after proving
 //                              unsatisfactory for online applications). Code polished and finalized.
 // 04/14/2014   Jake Reher      Made several sign changes and zeroed z axis proportial gains to eliminate
-//                              error buildup on z axis of quaternion.
+//                              error buildup on z axis of quaternion in 6DOF measurement cases.
+// 06/06/2014   Jake Reher      Changed accelerometer range to +/- 4 g's. 
 //
 //=====================================================================================================*/
 //---------------------------------------------------------------------------------------------------
@@ -91,8 +92,8 @@ void MPU9150::initialize() {
     //initCompass();
 
     setClock(MPU6050_CLOCK_PLL_XGYRO);
-    setAccelRange(MPU6050_ACCEL_FS_2);
-    setGyroRange(MPU6050_GYRO_FS_500);
+    setAccelRange(MPU6050_ACCEL_FS_4);
+    setGyroRange(MPU6050_GYRO_FS_1000);
     setDLPFMode(MPU6050_DLPF_BW_98);
     usleep(50000);
     initOrientation();
@@ -219,7 +220,7 @@ void MPU9150::initCompass() {
     //Enable master I2C mode
     BBBI2C::writeBit(bus,devAddress, MPU6050_RA_USER_CTRL, MPU6050_USERCTRL_I2C_MST_EN_BIT, 1);
 
-    ////////////TODO: add debug code for checking if compass working properly
+    ////////////TODO: add unittest code for checking if compass working properly
 }
 
 /* FUNCTION read6DOF()
@@ -351,7 +352,7 @@ void MPU9150::read6DOF() {
     }
 
     //Low pass filter the acceleration
-    //Disabled as it causes ~5-10ms delay in angle reading
+    //Disabled as it causes ~5-10ms phase lag in angle reading
     //filt_acc[0] = butterX->update(v_acc[0]);
     //filt_acc[1] = butterY->update(v_acc[1]);
     //filt_acc[2] = butterZ->update(v_acc[2]);

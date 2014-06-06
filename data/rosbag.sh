@@ -5,8 +5,8 @@ bag="${prefix}.bag"
 param="${prefix}.rosparam.yaml"
 
 rosbag record -j -O $bag \
-#	/right_leg/data1 \
-#	/right_leg/data2 \
+	/right_leg/data1 \
+	/right_leg/data2 \
 	/left_leg/data1 \
 	/left_leg/data2 \
 #	/left_leg/data3 \

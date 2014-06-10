@@ -1,0 +1,6 @@
+
+imu/imu1/name: 'car'
+imu/imu1/bus: 1
+imu/imu1/addr: 0x68
+imu/imu1/bias_path: '/home/debian/ros_imu/bias/6b.txt'
+imu/imu1/isvertical: false

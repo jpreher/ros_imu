@@ -63,7 +63,7 @@ public:
     quat::inv(qt_e, qt_e_inv);
 
     // Relative rotation between joints.
-    quat::prod(qt_e_inv, qs_e, qst); //Shank to thigh
+    quat::prod(qs_e_inv, qt_e, qst); //Shank to thigh
 
     // Convert to fixed angles.
     quat::eulerXZY(qst, hst);

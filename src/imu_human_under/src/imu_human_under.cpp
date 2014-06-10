@@ -69,6 +69,8 @@ public:
   	bool calibrated1_;
 	bool calibrated2_;
 
+	double ref_quat[4];
+
 
 	double desired_freq_;
   
@@ -319,9 +321,15 @@ public:
 	}
 
 	void calibrateIMU(MPUptr& IMU){
-		float tempx = 0.;
-		float tempy = 0.;
-		float tempz = 0.;
+		float tempx = 0.f;
+		float tempy = 0.f;
+		float tempz = 0.f;
+		float gx[50000];
+		float gy[50000];
+		float norm[50000];
+		float theta_t[50000];
+		int N = 1;
+
 		//Take 500 readings and average the values.
 		for ( int i=0; i<500; i++ ) {
 			IMU->read6DOF();
@@ -341,6 +349,38 @@ public:
 		}
 		//Y axis does not change.
 		IMU->GYRbias[1] += tempy / 500.0f;
+
+		// Wait for user input
+		std::cout << "Ready user for hip adduction calibration." << std::endl;
+		std::cin >> tempx;
+		std::cout << "Go!" << std::endl;
+
+		bool add_inprog = true;
+		float tempnorm = 0.f;
+		float sign = 0.f;
+		float tempdot = 0.f;
+		// If movement is over threshold append values.
+		while ( add_inprog ) {
+			IMU->read6DOF();
+			tempnorm = sqrt(IMU->v_gyr[0]*IMU->v_gyr[0] + IMU->v_gyr[1]*IMU->v_gyr[1]);
+			norm[N] = tempnorm;
+			norm[N-1] = tempnorm;
+			if ( tempnorm > 0.25f ) {
+				while (norm[N] - norm[N-1] > 0.f) {
+					IMU->read6DOF();
+					gx[N] = IMU->v_gyr[0];
+					gy[N] = IMU->v_gyr[1];
+					sign = copysignf(1.0, gx[N]*gy[N]-gy[N]*gx[N]);
+					tempdot = gx[N]*gx[N] + gy[N]*gy[N];
+					tempnorm = IMU->v_gyr[0]*IMU->v_gyr[0] + IMU->v_gyr[1]*IMU->v_gyr[1];
+					theta_t[N] = sign*acos(tempdot / tempnorm);
+					N += 1;
+				}
+				add_inprog = false;
+				break;
+			}
+		}
+
 	}
 };
 

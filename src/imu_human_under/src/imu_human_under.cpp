@@ -69,9 +69,6 @@ public:
   	bool calibrated1_;
 	bool calibrated2_;
 
-	double ref_quat[4];
-
-
 	double desired_freq_;
   
   	imuNode(ros::NodeHandle h) : private_node_handle_("~"),
@@ -359,12 +356,17 @@ public:
 		float tempnorm = 0.f;
 		float sign = 0.f;
 		float tempdot = 0.f;
-		// If movement is over threshold append values.
+
+		// While we have not yet started or finished
 		while ( add_inprog ) {
 			IMU->read6DOF();
+
+			// Calculations to check for starting movement threshold
 			tempnorm = sqrt(IMU->v_gyr[0]*IMU->v_gyr[0] + IMU->v_gyr[1]*IMU->v_gyr[1]);
 			norm[N] = tempnorm;
 			norm[N-1] = tempnorm;
+
+			// If threshold norm of velocity over 0.25 start
 			if ( tempnorm > 0.25f ) {
 				while (norm[N] - norm[N-1] > 0.f) {
 					IMU->read6DOF();
@@ -375,12 +377,29 @@ public:
 					tempnorm = IMU->v_gyr[0]*IMU->v_gyr[0] + IMU->v_gyr[1]*IMU->v_gyr[1];
 					theta_t[N] = sign*acos(tempdot / tempnorm);
 					N += 1;
+					usleep(5000); // Poorly timed 200 hz rate
 				}
 				add_inprog = false;
 				break;
 			}
 		}
 
+		// Now calculate the yaw value
+		tempnorm = 0.f;
+		float numerator = 0.f;
+		float temp = 0.f;
+		float angle[3];
+		angle[0] = 0.f;
+		angle[1] = 0.f;
+		for ( int i=0; i < (N+1); i++ ) {
+			temp = sqrt(gx[N] * gx[N] + gy[N] * gy[N]);
+			tempnorm += temp;
+			numerator += temp * theta_t[N];
+		}
+		angle[2] = numerator / tempnorm;
+		quat::euler2quatXYZ(angle, IMU->ref_quat);		
+
+		ROS_INFO("Finished yaw calibration with offset angle of %f radians", angle[2]);
 	}
 };
 

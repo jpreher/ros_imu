@@ -54,6 +54,7 @@ public:
     float v_quat[4];        //q0, q1, q2, q3 (q0=w)
     float v_cquat[4];       //q0, q1, q2, q3 removing initital orientation
     float v_euler[3];       //roll, pitch, yaw
+    float ref_quat[4];
 
     MPU9150(uint8_t bus, uint8_t address, const char *bias, float freq, bool vertical);
     virtual ~MPU9150();

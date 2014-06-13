@@ -93,6 +93,7 @@ public:
   	imuNode(ros::NodeHandle h) : private_node_handle_("~"),
   		node_handle_(h), calibrate_requested1_(false), calibrate_requested2_(false),
   		calibrate_requested3_(false), calibrate_requested4_(false),
+  		right_yaw_calibrate_(false), left_yaw_calibrate_(false),
 		desired_freq_(sampleFreq),
   		rate(sampleFreq) 
   	{
@@ -206,6 +207,8 @@ public:
 	  		if (autocalibrate_){
 	  			calibrate_requested1_ = true;
 	  			calibrate_requested2_ = true;
+	  			calibrate_requested3_ = true;
+	  			calibrate_requested4_ = true;
 	  		}
 
 	  		if ( autocalibrate_ || calibrate_requested1_ ){
@@ -268,7 +271,7 @@ public:
 	    static double prevtime = 0;
 	    double starttime = ros::Time::now().toSec();
 
-	    if (prevtime && prevtime - starttime > 0.006)
+	    if (prevtime && prevtime - starttime > 0.01)
 	    {
 	       	ROS_WARN("Full IMU loop took %f ms. Nominal is 5 ms.", 1000 * (prevtime - starttime));
 	        was_slow_ = "Full IMU loop was slow.";
@@ -276,7 +279,7 @@ public:
 
 	    getData(reading1, reading2, reading3, reading4);
 	    double endtime = ros::Time::now().toSec();
-	    if (endtime - starttime > 0.006)
+	    if (endtime - starttime > 0.01)
 	    {
 	        ROS_WARN("Gathering data took %f ms. Nominal is <5 ms.", 1000 * (endtime - starttime));
 	        was_slow_ = "Full IMU loop was slow.";
@@ -291,7 +294,7 @@ public:
 	    imu4_data_pub_.publish(reading4);
 
 	    endtime = ros::Time::now().toSec();
-	    if (endtime - starttime > 0.006)
+	    if (endtime - starttime > 0.01)
 	    {
 	        ROS_WARN("Publishing took %f ms. Nominal is <5 ms.", 1000 * (endtime - starttime));
 	        was_slow_ = "Full IMU loop was slow.";
@@ -497,7 +500,6 @@ public:
       		for ( int i=0; i<300; i++ ){
         		sign = copysignf(1.f, gx[i]*gY[i] - gy[i]*gX[i]);
         		N += 1;
-
       		}
 
       		ROS_INFO("Finished yaw calibration!");

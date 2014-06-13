@@ -353,9 +353,9 @@ void MPU9150::read6DOF() {
 
     //Low pass filter the acceleration
     //Disabled as it causes ~5-10ms phase lag in angle reading
-    //filt_acc[0] = butterX->update(v_acc[0]);
-    //filt_acc[1] = butterY->update(v_acc[1]);
-    //filt_acc[2] = butterZ->update(v_acc[2]);
+    filt_acc[0] = butterX->update(v_acc[0]);
+    filt_acc[1] = butterY->update(v_acc[1]);
+    filt_acc[2] = butterZ->update(v_acc[2]);
 }
 
 /* FUNCTION read9DOF()

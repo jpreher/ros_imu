@@ -6,6 +6,7 @@
 //
 // Date			Author			Notes
 // 04/04/2014 	Jake Reher		Initial Release
+// 06/11/2014   Jake Reher      Added rotation of vector by quaternion
 //
 //=====================================================================================================*/
 // For more details on how the math behind these functions work read:
@@ -64,6 +65,23 @@ void quat::prod(float q1[4], float q2[4], float q1q2[4]){
     q1q2[1] = a0*b1 + a1*b0 + a2*b3 - a3*b2;
     q1q2[2] = a0*b2 - a1*b3 + a2*b0 + a3*b1;
     q1q2[3] = a0*b3 + a1*b2 - a2*b1 + a3*b0;
+}
+
+void quat::rotateVec(float vec[3], float q[4], float rotated[3]) {
+    float q0, q1, q2, q3;
+    q0 = q[0];
+    q1 = q[1];
+    q2 = q[2];
+    q3 = q[3];
+
+    float v1, v2, v3;
+    v1 = vec[0];
+    v2 = vec[1];
+    v3 = vec[2];
+
+    rotated[0] = v1*(1.f - 2.f*q2*q2 - 2.f*q3*q3) + 2.f*v2*(q1*q2 + q0*q3) + 2.f*v3*(q1*q3 - q0*q2);
+    rotated[1] = 2.f*v1*(q1*q2 + q0*q3) + v2*(1.f - 2.f*q1*q1 - 2.f*q3*q3) + 2.f*v3*(q2*q3 + q0*q1);
+    rotated[2] = 2.f*v1*(q1*q3 + q0*q2) + 2.f*v2*(q2*q3 - q0*q1) + v3*(1.f - 2.f*q1*q1 - 2.f*q2*q2);
 }
 
 void quat::eulerXYZ(float q[4], float euler[3]){

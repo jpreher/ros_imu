@@ -46,7 +46,7 @@ private:
 public:
     bool vert_orient;
     float GYRbias[3];
-    //float filt_acc[3];    //Removed as butterworth not in use
+    float filt_acc[3];    //Removed as butterworth not in use
     float sampleFreq;
     float v_acc[3];         //ax,ay,az
     float v_gyr[3];         //gx,gy,gz

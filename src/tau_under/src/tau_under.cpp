@@ -3,6 +3,8 @@
 #include <tau_under/tau_under_msg.h>
 #include "quaternion_util.h"
 #include "butterworth_util.h"
+#include "std_srvs/Empty.h"
+
 
 typedef std::shared_ptr<Butter> ButterPtr;
 
@@ -18,10 +20,18 @@ public:
   ros::Subscriber Rthigh_sub_;  
   ros::Subscriber Lshank_sub_;
   ros::Subscriber Lthigh_sub_;
-  ros::Subscriber hip_sub_;
   bool first;
-  bool newDataRShank, newDataRThigh, newDataLShank, newDataLThigh, newDataHip;
+  bool newDataRShank, newDataRThigh, newDataLShank, newDataLThigh;
   bool RightIsStance;
+
+  bool reset_pose_;
+  bool start_tau_;
+  bool stop_tau_;
+  bool tau_running_;
+
+  ros::ServiceServer reset_pose_serv_;
+  ros::ServiceServer start_tau_serv_;
+  ros::ServiceServer stop_tau_serv_;
 
   float Vdesired;
   float phip, phip_o;
@@ -33,7 +43,6 @@ public:
   float qRs_s[4], qRt_s[4];         // Link body frame to sensor frame rotation.
   float qRs_e[4], qRt_e[4];         // Link body frame to earth frame rotation.
   float qRst[4];                    // Shank to thigh rotation.
-  float hRht[3];                    // Euler angle hip to thigh.
   float hRst[3];                    // Euler angle shank to thigh.
   float hRs_e[3];                   // Euler angle shank to earth.
   float qR_s_meas[4], qR_t_meas[4]; // Measured (sensor frame).
@@ -43,17 +52,9 @@ public:
   float qLs_s[4], qLt_s[4];         // Link body frame to sensor frame rotation.
   float qLs_e[4], qLt_e[4];         // Link body frame to earth frame rotation.
   float qLst[4];                    // Shank to thigh rotation.
-  float hLht[3];                    // Euler angle hip to thigh.
   float hLst[3];                    // Euler angle shank to thigh.
   float hLs_e[3];                   // Euler angle shank to earth.
   float qL_s_meas[4], qL_t_meas[4]; // Measured (sensor frame).
-
-  // Hip
-  float qh_e_ref[4];                // Link to earth reference frame.
-  float qh_s[4];                    // Link body frame to sensor frame rotation.
-  float qh_e[4];                    // Link body frame to earth frame rotation.
-  float qh_meas[4];
-  float qRht[4], qLht[4];
 
   float Lt, Lc; // LENGTH OF THIGH AND CALF
 
@@ -65,7 +66,10 @@ public:
 
   ros::Publisher tau_pub_;
 
-  tau_func(ros::NodeHandle h) : node_handle_(h), desired_freq_(800), rate(800)  { //DONE
+  tau_func(ros::NodeHandle h) : node_handle_(h), desired_freq_(600), rate(desired_freq_),
+           tau_running_(false), reset_pose_(false), start_tau_(false), stop_tau_(false)
+  {
+    ros::NodeHandle tau_node_handle(node_handle_, "pose");
     tau_pub_ = node_handle_.advertise<tau_under::tau_under_msg>("tau_under", desired_freq_);
     
     // Set up butterworth filter for step detection.
@@ -84,16 +88,20 @@ public:
     qRs_e_ref[2] = qRt_e_ref[2] = 0.0f;
     qRs_e_ref[3] = qRt_e_ref[3] = 0.0f;
 
-    qLs_e_ref[0] = qLt_e_ref[0] = qh_e_ref[0] = 1.0f;
-    qLs_e_ref[1] = qLt_e_ref[1] = qh_e_ref[1] = 0.0f;
-    qLs_e_ref[2] = qLt_e_ref[2] = qh_e_ref[2] = 0.0f;
-    qLs_e_ref[3] = qLt_e_ref[3] = qh_e_ref[3] = 0.0f;
+    qLs_e_ref[0] = qLt_e_ref[0] = 1.0f;
+    qLs_e_ref[1] = qLt_e_ref[1] = 0.0f;
+    qLs_e_ref[2] = qLt_e_ref[2] = 0.0f;
+    qLs_e_ref[3] = qLt_e_ref[3] = 0.0f;
 
     ros::param::get("tauParam/v_desired", Vdesired);
     ros::param::get("tauParam/length_calf", Lc);
     ros::param::get("tauParam/length_thigh", Lt);
     ros::param::get("tauParam/right_start", RightIsStance);
     ros::param::get("tauParam/switch_threshold", switch_threshold);
+
+    reset_pose_serv_ = tau_node_handle.advertiseService("reset_pose", &tau_func::reset_pose, this);
+    start_tau_serv_ =  tau_node_handle.advertiseService("start_tau", &tau_func::start_tau, this);
+    stop_tau_serv_ = tau_node_handle.advertiseService("stop_tau", &tau_func::stop_tau, this);
   }
 
   void initPose() { //DONE
@@ -107,14 +115,12 @@ public:
     quat::inv(qR_t_meas, qRts_e_inv);
     quat::inv(qL_s_meas, qLss_e_inv);
     quat::inv(qL_t_meas, qLts_e_inv);
-    quat::inv(qh_meas, qhs_e_inv);
 
     // Create composite quaternion for reference pose.
     quat::prod(qRss_e_inv, qRs_e_ref, qRs_s);
     quat::prod(qRts_e_inv, qRt_e_ref, qRt_s);
     quat::prod(qLss_e_inv, qLs_e_ref, qLs_s);
     quat::prod(qLts_e_inv, qLt_e_ref, qLt_s);
-    quat::prod(qhs_e_inv, qh_e_ref, qh_s);
   }
 
   void updatePose() { //
@@ -155,19 +161,6 @@ public:
 
     hRst[2] = -hRst[2];
     hRs_e[2] = -hRs_e[2];
-
-    // Hip:
-    float qh_e_inv[4];
-    quat::prod(qh_meas, qh_s, qh_e);
-    quat::inv(qh_e, qh_e_inv);
-    quat::prod(qh_e_inv, qRt_e, qRht);  // Hip to right thigh
-    quat::prod(qh_e_inv, qLt_e, qLht);  // Hip to left thigh
-
-    quat::eulerXZY(qRht, hRht);
-    quat::eulerXZY(qLht, hLht);
-
-    hRht[2] = -hRht[2];
-    hLht[2] = -hLht[2];
   }
 
   void RshankCall(const sensor_msgs::Imu& reading) {
@@ -222,15 +215,6 @@ public:
     newDataLThigh = true;
   }
 
-  void hipCall(const sensor_msgs::Imu& reading) {
-    qh_meas[0] = reading.orientation.w;
-    qh_meas[1] = reading.orientation.x;
-    qh_meas[2] = reading.orientation.y;
-    qh_meas[3] = reading.orientation.z;
-
-    newDataHip = true;
-  }
-
   void resetTau() {
     if ( RightIsStance ) {
       // Calculate phip_o with right
@@ -272,26 +256,25 @@ public:
       updatePose();
     }
 
-    if ( checkReset() ) {
-      if ( RightIsStance ) {
-        RightIsStance = false;
-        resetTau();
-      } else {
-        RightIsStance = true;
-        resetTau();
+    if ( tau_running_ ) { // Dont run the tau calculation until the user starts it.
+      if ( checkReset() ) {
+        if ( RightIsStance ) {
+          RightIsStance = false;
+          resetTau();
+        } else {
+          RightIsStance = true;
+          resetTau();
+        }
       }
-    }
 
-    calcTau();
+      calcTau();
+    }
 
     pose_data.right_shank_earth = hRs_e[2];
     pose_data.right_thigh_shank = hRst[2];
-    pose_data.right_hip_thigh = hRht[2];
     pose_data.left_shank_earth = hLs_e[2];
     pose_data.left_thigh_shank = hLst[2];
-    pose_data.left_hip_thigh = hLht[2];
     pose_data.tau = tau;
-
 
     tau_pub_.publish(pose_data);
 
@@ -299,16 +282,51 @@ public:
     newDataRShank = false;
     newDataLThigh = false;
     newDataLShank = false;
-    newDataHip = false;
   }
 
   void spin() { //DONE
     while (ros::ok()){
-      if ( newDataRThigh && newDataRShank && newDataLThigh && newDataLShank && newDataHip )
+      if ( newDataRThigh && newDataRShank && newDataLThigh && newDataLShank )
         publish_data();
+        check_srvs();
         ros::spinOnce();
         rate.sleep();
     } 
+  }
+
+  void check_srvs() {
+    if ( reset_pose_ ) {
+      ROS_INFO("Re-initializing pose.");
+      initPose();
+      reset_pose_ = false;
+    }
+    if ( start_tau_ ) {
+      ROS_INFO("Starting tau calculation.");
+      start_tau_ = false;
+      resetTau();
+    }
+    if ( stop_tau_ ) {
+      ROS_INFO("Stopping tau calculation.");
+      stop_tau_ = false;
+    }
+  }
+
+  bool reset_pose(std_srvs::Empty::Request  &req,
+                  std_srvs::Empty::Response &resp) {
+    reset_pose_ = true;
+    return true;
+  }
+
+  bool start_tau(std_srvs::Empty::Request  &req,
+                std_srvs::Empty::Response &resp) {
+    start_tau_ = true;
+    return true;
+  }
+
+  bool stop_tau(std_srvs::Empty::Request  &req,
+                std_srvs::Empty::Response &resp) {
+    stop_tau_ = true;
+    return true;
   }
 };
 
@@ -320,7 +338,6 @@ int main(int argc, char **argv) { //DONE
   tu.Rthigh_sub_ = n.subscribe("right_leg/data2", 100, &tau_func::RthighCall, &tu);
   tu.Lshank_sub_ = n.subscribe("left_leg/data1", 100, &tau_func::LshankCall, &tu);
   tu.Lthigh_sub_ = n.subscribe("left_leg/data2", 100, &tau_func::LthighCall, &tu);
-  tu.hip_sub_ = n.subscribe("left_leg/data3", 100, &tau_func::hipCall, &tu);
 
   tu.spin();
 

@@ -462,29 +462,35 @@ public:
 			calibrateIMU(IMU1);
 			calibrate_msg.data = true;
 			is_calibrated1_pub_.publish(calibrate_msg);
+			calibrate_requested1_ = false;
 		}
 		if ( calibrate_requested2_ ) {
 			calibrateIMU(IMU2);
 			calibrate_msg.data = true;
 			is_calibrated2_pub_.publish(calibrate_msg);
+			calibrate_requested2_ = false;
 		}
 		if ( calibrate_requested3_ ) {
 			calibrateIMU(IMU3);
 			calibrate_msg.data = true;
 			is_calibrated3_pub_.publish(calibrate_msg);
+			calibrate_requested3_ = false;
 		}
 		if ( calibrate_requested4_ ) {
 			calibrateIMU(IMU4);
 			calibrate_msg.data = true;
 			is_calibrated4_pub_.publish(calibrate_msg);
+			calibrate_requested4_ = false;
 		}
 		if ( right_yaw_calibrate_ ) {
       		ROS_INFO("Got command to start right leg yaw calibration.");
       		calibrateYaw();
+      		right_yaw_calibrate_ = false;
     	}
     	if ( left_yaw_calibrate_ ) {
       		ROS_INFO("Got command to start left leg yaw calibration.");
       		calibrateYaw();
+      		left_yaw_calibrate_ = false;
     	}
 	}
 

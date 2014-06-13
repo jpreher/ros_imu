@@ -6,6 +6,7 @@
  */
 
 #include "MPU9150.h"
+#include "quaternion_util.h"
 
 #include <assert.h>
 #include <math.h>
@@ -87,6 +88,8 @@ public:
 	bool calibrated2_;
 	bool calibrated3_;
 	bool calibrated4_;
+
+	float qRs_s[4], qRt_s[4];
 
 	double desired_freq_;
   
@@ -485,39 +488,116 @@ public:
 		if ( right_yaw_calibrate_ ) {
       		ROS_INFO("Got command to start right leg yaw calibration.");
       		calibrateYaw();
-      		right_yaw_calibrate_ = false;
     	}
     	if ( left_yaw_calibrate_ ) {
       		ROS_INFO("Got command to start left leg yaw calibration.");
       		calibrateYaw();
-      		left_yaw_calibrate_ = false;
     	}
 	}
 
   	void calibrateYaw() {
     	float gx[5000], gy[5000], gX[5000], gY[5000];
     	float tempg;
-    	float tempnorm[5000];
+    	float tempnorm;
     	float tempdot;
+    	float theta_t[5000];
     	int N = 0;
     	float sign;
 
     	if ( right_yaw_calibrate_ ) {
-      		for ( int i=0; i<300; i++ ){
+    		initPose(IMU3, IMU4);
+
+       		ROS_INFO("Start left leg movement");
+   		
+      		for ( int i=0; i<500; i++ ){
+      			// Read the IMU
+      			IMU3->read6DOF();
+      			IMU4->read6DOF();
+      			gx[i] = IMU3->v_gyr[0];
+      			gy[i] = IMU3->v_gyr[1];
+     			gX[i] = IMU4->v_gyr[0];
+     			gY[i] = IMU4->v_gyr[1];
+
+     			// Perform the calculation
         		sign = copysignf(1.f, gx[i]*gY[i] - gy[i]*gX[i]);
+        		tempdot = gx[i]*gX[i] + gy[i]*gY[i];
+        		tempnorm = (gx[i]*gx[i] + gy[i]*gy[i]) * (gX[i]*gX[i] + gY[i]*gY[i]);
+        		theta_t[i] = sign * acos(tempdot / tempnorm);
+
+        		// Tick up the indexer
         		N += 1;
+
+        		// Wait
+        		usleep(5000);
       		}
+
+      		// Calculate the yaw angle
+
 
       		ROS_INFO("Finished yaw calibration!");
       		right_yaw_calibrate_ = false;
     	}
     	if (left_yaw_calibrate_ ) {
+    		initPose(IMU1, IMU2);
+
       		ROS_INFO("Start left leg movement");
-      		//do cal stuff
+      		for ( int i=0; i<500; i++ ){
+      			// Read the IMU
+      			IMU1->MahonyAHRSupdateIMU();
+      			IMU2->MahonyAHRSupdateIMU();
+      			gx[i] = IMU1->v_gyr[0];
+      			gy[i] = IMU1->v_gyr[1];
+     			gX[i] = IMU2->v_gyr[0];
+     			gY[i] = IMU2->v_gyr[1];
+
+     			// Perform the calculation
+        		sign = copysignf(1.f, gx[i]*gY[i] - gy[i]*gX[i]);
+        		tempdot = gx[i]*gX[i] + gy[i]*gY[i];
+        		tempnorm = (gx[i]*gx[i] + gy[i]*gy[i]) * (gX[i]*gX[i] + gY[i]*gY[i]);
+        		theta_t[i] = sign * acos(tempdot / tempnorm);
+
+        		// Tick up the indexer
+        		N += 1;
+
+        		// Wait
+        		usleep(5000);
+      		}
 
       		ROS_INFO("Finished yaw calibration!");
       		left_yaw_calibrate_ = false;
     	}
+  	}
+
+  	void initPose(MPUptr &imu1, MPUptr &imu2) {
+    	float qRss_e_inv[4], qRts_e_inv[4];
+    	float qRs_e_ref[4], qRt_e_ref[4];
+    	float qR_s_meas[4], qR_t_meas[4];
+    	imu1->MahonyAHRSupdateIMU();
+    	imu2->MahonyAHRSupdateIMU();
+
+    	qRs_e_ref[0] = qRt_e_ref[0] = 1.f;
+    	qRs_e_ref[1] = qRt_e_ref[1] = 0.f;
+    	qRs_e_ref[2] = qRt_e_ref[2] = 0.f;
+    	qRs_e_ref[3] = qRt_e_ref[3] = 0.f;
+
+    	qR_s_meas[0] = imu1->v_quat[0];
+    	qR_s_meas[1] = imu1->v_quat[1];
+    	qR_s_meas[2] = imu1->v_quat[2];
+    	qR_s_meas[3] = imu1->v_quat[3];
+
+    	qR_t_meas[0] = imu2->v_quat[0];
+    	qR_t_meas[1] = imu2->v_quat[1];
+    	qR_t_meas[2] = imu2->v_quat[2];
+    	qR_t_meas[3] = imu2->v_quat[3];
+
+    	ROS_INFO("Setting up initial pose.");
+    	// Invert the measured reference pose measurement.
+    	quat::inv(qR_s_meas, qRss_e_inv);
+    	quat::inv(qR_t_meas, qRts_e_inv);
+
+    	// Create composite quaternion for reference pose.
+    	quat::prod(qRss_e_inv, qRs_e_ref, qRs_s);
+    	quat::prod(qRts_e_inv, qRt_e_ref, qRt_s);
   	}
 };
 

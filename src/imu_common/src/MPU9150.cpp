@@ -99,8 +99,8 @@ void MPU9150::initialize() {
     initOrientation();
 
     //Initial convergence of butterworth filters. Takes 0.5 seconds @ 200Hz.
-    //for (int i=0; i<100; i++)
-    //    read6DOF();
+    for (int i=0; i<100; i++)
+        read6DOF();
 }
 
 /* FUNCTION setSleep()

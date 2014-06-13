@@ -6,6 +6,7 @@
  */
 
 #include "MPU9150.h"
+#include "quaternion_util.h"
 
 #include <assert.h>
 #include <math.h>
@@ -21,10 +22,6 @@
 #include "std_srvs/Empty.h"
 
 #include "std_msgs/Bool.h"
-
-// Define which leg you want this node to handle
-#define left_leg false
-#define right_leg true
 
 //Sample frequency
 float sampleFreq = 200.0f;
@@ -198,11 +195,22 @@ public:
 	}
 
 	void getData(sensor_msgs::Imu& data1){
+		float tempacc[3];
+		float tempq[4], tempangs[3];
         IMU1->MahonyAHRSupdateIMU();
 
-        data1.linear_acceleration.x = IMU1->v_acc[0];
-        data1.linear_acceleration.y = IMU1->v_acc[1];
-        data1.linear_acceleration.z = IMU1->v_acc[2];
+        // Rotate the acceleration into the reference frame.
+        quat::eulerXZY(IMU1->v_quat, tempangs);
+        tempangs[1] = tempangs[2];
+        tempangs[0] = 0.f;
+        tempangs[3] = 0.f;
+        quat::euler2quatXYZ(tempangs, tempq);
+        quat::rotateVec(IMU1->v_acc, tempq, tempacc);
+
+        // Assign the data to the message
+        data1.linear_acceleration.x = tempacc[0];
+        data1.linear_acceleration.y = tempacc[1];
+        data1.linear_acceleration.z = tempacc[2];
  
         data1.angular_velocity.x = IMU1->v_gyr[0];
         data1.angular_velocity.y = IMU1->v_gyr[1];

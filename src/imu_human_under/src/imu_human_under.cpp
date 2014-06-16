@@ -123,6 +123,9 @@ public:
     	calibrate_serv3_ = imu_node_handle.advertiseService("calibrate_gyro3", &imuNode::calibrate3, this);
     	calibrate_serv4_ = imu_node_handle.advertiseService("calibrate_gyro4", &imuNode::calibrate4, this);
 
+    	left_yaw_cal_serv_ = imu_node_handle.advertiseService("calibrate_left_yaw", &imuNode::left_yaw, this);
+    	right_yaw_cal_serv_ = imu_node_handle.advertiseService("calibrate_right_yaw", &imuNode::right_yaw, this);
+
     	// Publishers to release info on which IMU's are calibrated.
     	is_calibrated1_pub_ = imu_node_handle.advertise<std_msgs::Bool>("is_calibrated1", 1, false);
     	is_calibrated2_pub_ = imu_node_handle.advertise<std_msgs::Bool>("is_calibrated2", 1, false);
@@ -415,6 +418,7 @@ public:
 	bool calibrate2(std_srvs::Empty::Request  &req,
    		        	std_srvs::Empty::Response &resp) {
 		std_msgs::Bool calibrate_msg;
+		calibrate_msg.data = true;
 		calibrate_requested2_ = true;
 		is_calibrated2_pub_.publish(calibrate_msg);
 		return true;
@@ -423,6 +427,7 @@ public:
 	bool calibrate3(std_srvs::Empty::Request  &req,
    		        	std_srvs::Empty::Response &resp) {
 		std_msgs::Bool calibrate_msg;
+		calibrate_msg.data = true;
 		calibrate_requested3_ = true;
 		is_calibrated3_pub_.publish(calibrate_msg);
 		return true;
@@ -431,10 +436,24 @@ public:
 	bool calibrate4(std_srvs::Empty::Request  &req,
    		        	std_srvs::Empty::Response &resp) {
 		std_msgs::Bool calibrate_msg;
+		calibrate_msg.data = true;
 		calibrate_requested4_ = true;
 		is_calibrated4_pub_.publish(calibrate_msg);
 		return true;
 	}	
+
+	bool right_yaw(std_srvs::Empty::Request  &req,
+   		           std_srvs::Empty::Response &resp) {
+		right_yaw_calibrate_ = true;
+		return true;
+
+	}
+
+	bool left_yaw(std_srvs::Empty::Request  &req,
+   		          std_srvs::Empty::Response &resp) {
+		left_yaw_calibrate_ = true;
+		return true;
+	}
 
 	void calibrateIMU(MPUptr& IMU){
 		float tempx = 0.f;
@@ -514,7 +533,7 @@ public:
     	if ( right_yaw_calibrate_ ) {
     		initPose(IMU3, IMU4);
 
-       		ROS_INFO("Start left leg movement");
+       		ROS_INFO("Start right leg movement");
    		
       		for ( int i=0; i<500; i++ ){
       			// Read the IMU
@@ -554,7 +573,7 @@ public:
 
       		quat::euler2quatXYZ(eul, l_y_quat);
 
-      		ROS_INFO("Finished yaw calibration!");
+      		ROS_INFO("Finished right yaw calibration!");
       		right_yaw_calibrate_ = false;
     	}
     	if (left_yaw_calibrate_ ) {
@@ -583,7 +602,7 @@ public:
         		usleep(5000);
       		}
 
-      		ROS_INFO("Finished yaw calibration!");
+      		ROS_INFO("Finished left yaw calibration!");
       		left_yaw_calibrate_ = false;
     	}
   	}

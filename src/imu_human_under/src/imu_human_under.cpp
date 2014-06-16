@@ -90,6 +90,7 @@ public:
 	bool calibrated4_;
 
 	float qRs_s[4], qRt_s[4];
+	float l_y_quat[4], r_y_quat[4];
 
 	double desired_freq_;
   
@@ -186,6 +187,11 @@ public:
 		ROS_INFO("Loading right IMU4 bias and setting up class.");
 		IMU4.reset(new MPU9150(imu4_bus, imu4_addr, imu4_biasPath, sampleFreq, imu4_isvert));
 
+		// Initialize the yaw offset as zero, user must calibrate to get later
+		l_y_quat[0] = 1.f;
+		l_y_quat[1] = l_y_quat[2] = l_y_quat[3] = 0.f;
+		r_y_quat[0] = 1.f;
+		r_y_quat[1] = r_y_quat[2] = r_y_quat[3] = 0.f;
   	}
 
 	~imuNode()
@@ -503,6 +509,7 @@ public:
     	float theta_t[5000];
     	int N = 0;
     	float sign;
+    	float den, num, eul[3];
 
     	if ( right_yaw_calibrate_ ) {
     		initPose(IMU3, IMU4);
@@ -524,15 +531,28 @@ public:
         		tempnorm = (gx[i]*gx[i] + gy[i]*gy[i]) * (gX[i]*gX[i] + gY[i]*gY[i]);
         		theta_t[i] = sign * acos(tempdot / tempnorm);
 
+        		cout << theta_t[i];
+
         		// Tick up the indexer
         		N += 1;
 
         		// Wait
         		usleep(5000);
       		}
+      		num = 0.f;
+      		den = 0.f;
 
       		// Calculate the yaw angle
+      		for (int i=0; i<N; i++) {
+      			num += sqrt(gx[i]*gx[i] + gy[i]*gy[i]) * theta_t[i];
+      			den += sqrt(gx[i]*gx[i] + gy[i]*gy[i]);
+      		}
 
+      		eul[0] = 0.f;
+      		eul[1] = 0.f;
+      		eul[2] = num/den;
+
+      		quat::euler2quatXYZ(eul, l_y_quat);
 
       		ROS_INFO("Finished yaw calibration!");
       		right_yaw_calibrate_ = false;

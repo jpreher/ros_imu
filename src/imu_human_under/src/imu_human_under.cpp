@@ -529,12 +529,19 @@ public:
     	int N = 0;
     	float sign;
     	float den, num, eul[3];
+    	float q_ref[4], qss_e_inv, qts_e_inv;
+
+    	q_ref[0] = 1.f;
+    	q_ref[1] = q_ref[2] = q_ref[3] = 0.f;
 
     	if ( right_yaw_calibrate_ ) {
     		initPose(IMU3, IMU4);
 
-       		ROS_INFO("Start right leg movement");
-   		
+       		// Invert the measured reference pose measurement.
+    		//quat::inv(IMU3->v_quat, qss_e_inv);
+    		//quat::inv(IMU4->v_quat, qts_e_inv);
+
+   			ROS_INFO("Start right leg movement");
       		for ( int i=0; i<500; i++ ){
       			// Read the IMU
       			IMU3->read6DOF();
@@ -548,9 +555,16 @@ public:
         		sign = copysignf(1.f, gx[i]*gY[i] - gy[i]*gX[i]);
         		tempdot = gx[i]*gX[i] + gy[i]*gY[i];
         		tempnorm = (gx[i]*gx[i] + gy[i]*gy[i]) * (gX[i]*gX[i] + gY[i]*gY[i]);
-        		theta_t[i] = sign * acos(tempdot / tempnorm);
 
-        		cout << theta_t[i];
+        		if (tempdot < 0.001) {
+        			theta_t[i] = sign * 0.f;
+        		} else if (tempnorm < 0.001) {
+        			theta_t[i] = sign * 0.f;
+        		} else {
+        			theta_t[i] = sign * acos(tempdot / tempnorm);
+        		}
+
+        		std::cout << theta_t[i] << ", " << i << ", ";
 
         		// Tick up the indexer
         		N += 1;

@@ -218,19 +218,28 @@ public:
   void resetTau() {
     if ( RightIsStance ) {
       // Calculate phip_o with right
-      phip_o = - Lc*sin(hRs_e[2]) - Lt*sin(hRs_e[2] + hRst[2]);
+      // nonlinear phip
+      //phip_o = - Lc*sin(hRs_e[2]) - Lt*sin(hRs_e[2] + hRst[2]);
+      // linear phip
+      phip_o = Lc*hRs_e[2] + Lt*(hRs_e[2] + hRst[2]);
     } else {
       // Calculate phip_o with left
-      phip_o = - Lc*sin(hLs_e[2]) - Lt*sin(hLs_e[2] + hLst[2]);
+      //phip_o = - Lc*sin(hLs_e[2]) - Lt*sin(hLs_e[2] + hLst[2]);
+      phip_o = Lc*hLs_e[2] + Lt*(hLs_e[2] + hLst[2]);
     }
     calcTau();
   }
 
   void calcTau(){
     if ( RightIsStance ) {
-      tau = (-Lc*sin(hRs_e[2]) - Lt*sin(hRs_e[2] + hRst[2]) - phip_o) / Vdesired;
+      // nonlinear tau
+      // tau = (-Lc*sin(hRs_e[2]) - Lt*sin(hRs_e[2] + hRst[2]) - phip_o) / Vdesired;
+      // linear tau
+      tau = (Lc*(hRs_e[2]) + Lt*(hRs_e[2] + hRst[2]) - phip_o) / Vdesired;
     } else {
-      tau = (-Lc*sin(hLs_e[2]) - Lt*sin(hLs_e[2] + hLst[2]) - phip_o) / Vdesired;
+      // nonlinear tau
+      //tau = (-Lc*sin(hLs_e[2]) - Lt*sin(hLs_e[2] + hLst[2]) - phip_o) / Vdesired;
+      tau = (Lc*(hLs_e[2]) + Lt*(hLs_e[2] + hLst[2]) - phip_o) / Vdesired;
     }
   }
 
@@ -302,12 +311,14 @@ public:
     }
     if ( start_tau_ ) {
       ROS_INFO("Starting tau calculation.");
+      tau_running_ = true;
       start_tau_ = false;
       resetTau();
     }
     if ( stop_tau_ ) {
       ROS_INFO("Stopping tau calculation.");
       stop_tau_ = false;
+      tau_running_ = false;
     }
   }
 
@@ -334,10 +345,10 @@ int main(int argc, char **argv) { //DONE
   ros::init(argc, argv, "legPose_right_no_foot");
   ros::NodeHandle n;
   tau_func tu(n);
-  tu.Rshank_sub_ = n.subscribe("right_leg/data1", 100, &tau_func::RshankCall, &tu);
-  tu.Rthigh_sub_ = n.subscribe("right_leg/data2", 100, &tau_func::RthighCall, &tu);
-  tu.Lshank_sub_ = n.subscribe("left_leg/data1", 100, &tau_func::LshankCall, &tu);
-  tu.Lthigh_sub_ = n.subscribe("left_leg/data2", 100, &tau_func::LthighCall, &tu);
+  tu.Rshank_sub_ = n.subscribe("human_under/data3", 100, &tau_func::RshankCall, &tu);
+  tu.Rthigh_sub_ = n.subscribe("human_under/data4", 100, &tau_func::RthighCall, &tu);
+  tu.Lshank_sub_ = n.subscribe("human_under/data1", 100, &tau_func::LshankCall, &tu);
+  tu.Lthigh_sub_ = n.subscribe("human_under/data2", 100, &tau_func::LthighCall, &tu);
 
   tu.spin();
 

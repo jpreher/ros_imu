@@ -2,4 +2,4 @@ tauParam/v_desired: 0.8
 tauParam/length_calf: 0.4319
 tauParam/length_thigh: 0.429
 tauParam/right_start: true
-tauParam/switch_threshold: 15.0
+tauParam/switch_threshold: 4.0

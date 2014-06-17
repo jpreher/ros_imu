@@ -9,8 +9,7 @@
 // 04/01/2014   Jake Reher      Finalized Deadreckoning (which was subsequently removed after proving
 //                              unsatisfactory for online applications). Code polished and finalized.
 // 04/14/2014   Jake Reher      Made several sign changes and zeroed z axis proportial gains to eliminate
-//                              error buildup on z axis of quaternion in 6DOF measurement cases.
-// 06/06/2014   Jake Reher      Changed accelerometer range to +/- 4 g's. 
+//                              error buildup on z axis of quaternion.
 //
 //=====================================================================================================*/
 //---------------------------------------------------------------------------------------------------
@@ -54,7 +53,7 @@ MPU9150::MPU9150(uint8_t bus, uint8_t address, const char *bias, float freq, boo
             }
         }
     }
-    configfile.close();
+        configfile.close();
 
     // Load butterworth filter constants.
     const vector<float> a = {1.0, -1.56101807580072, 0.641351538057563};
@@ -89,18 +88,18 @@ void MPU9150::initialize() {
     setSleep(false);
 
     //Initialize the compass
-    initCompass();
+    //initCompass();
 
     setClock(MPU6050_CLOCK_PLL_XGYRO);
-    setAccelRange(MPU6050_ACCEL_FS_4);
-    setGyroRange(MPU6050_GYRO_FS_1000);
+    setAccelRange(MPU6050_ACCEL_FS_2);
+    setGyroRange(MPU6050_GYRO_FS_500);
     setDLPFMode(MPU6050_DLPF_BW_98);
     usleep(50000);
     initOrientation();
 
     //Initial convergence of butterworth filters. Takes 0.5 seconds @ 200Hz.
-    for (int i=0; i<100; i++)
-        read6DOF();
+    //for (int i=0; i<100; i++)
+    //    read6DOF();
 }
 
 /* FUNCTION setSleep()
@@ -220,7 +219,7 @@ void MPU9150::initCompass() {
     //Enable master I2C mode
     BBBI2C::writeBit(bus,devAddress, MPU6050_RA_USER_CTRL, MPU6050_USERCTRL_I2C_MST_EN_BIT, 1);
 
-    ////////////TODO: add unittest code for checking if compass working properly
+    ////////////TODO: add debug code for checking if compass working properly
 }
 
 /* FUNCTION read6DOF()
@@ -251,7 +250,7 @@ void MPU9150::read6DOF() {
         tempf[2] *= -1.0f;
 
         tempf[0] -= ACCbias[0];
-        tempf[1] -= ACCbias[1]; //Y and Z axes must be flipped signs as biasing is done in madgwick frame of reference.
+        tempf[1] -= ACCbias[1];
         tempf[2] -= ACCbias[2];
         v_acc[0] = IMUscale[0]*tempf[0] + IMUscale[1]*tempf[1] + IMUscale[2]*tempf[2];
         v_acc[1] = IMUscale[3]*tempf[0] + IMUscale[4]*tempf[1] + IMUscale[5]*tempf[2];
@@ -265,7 +264,7 @@ void MPU9150::read6DOF() {
         tempf[2] *= -1.0f;
 
         tempf[0] -= ACCbias[0];
-        tempf[1] -= ACCbias[1]; //Y and Z axes must be flipped signs as biasing is done in madgwick frame of reference.
+        tempf[1] -= ACCbias[1];
         tempf[2] -= ACCbias[2];
         v_acc[0] = IMUscale[0]*tempf[0] + IMUscale[1]*tempf[1] + IMUscale[2]*tempf[2];
         v_acc[1] = IMUscale[3]*tempf[0] + IMUscale[4]*tempf[1] + IMUscale[5]*tempf[2];
@@ -279,7 +278,7 @@ void MPU9150::read6DOF() {
         tempf[2] *= -1.0f;
 
         tempf[0] -= ACCbias[0];
-        tempf[1] -= ACCbias[1]; //Y and Z axes must be flipped signs as biasing is done in madgwick frame of reference.
+        tempf[1] -= ACCbias[1];
         tempf[2] -= ACCbias[2];
         v_acc[0] = IMUscale[0]*tempf[0] + IMUscale[1]*tempf[1] + IMUscale[2]*tempf[2];
         v_acc[1] = IMUscale[3]*tempf[0] + IMUscale[4]*tempf[1] + IMUscale[5]*tempf[2];
@@ -293,7 +292,7 @@ void MPU9150::read6DOF() {
         tempf[2] *= -1.0f;
 
         tempf[0] -= ACCbias[0];
-        tempf[1] -= ACCbias[1]; //Y and Z axes must be flipped signs as biasing is done in madgwick frame of reference.
+        tempf[1] -= ACCbias[1];
         tempf[2] -= ACCbias[2];
         v_acc[0] = IMUscale[0]*tempf[0] + IMUscale[1]*tempf[1] + IMUscale[2]*tempf[2];
         v_acc[1] = IMUscale[3]*tempf[0] + IMUscale[4]*tempf[1] + IMUscale[5]*tempf[2];
@@ -352,10 +351,10 @@ void MPU9150::read6DOF() {
     }
 
     //Low pass filter the acceleration
-    //Disabled as it causes ~5-10ms phase lag in angle reading
-    filt_acc[0] = butterX->update(v_acc[0]);
-    filt_acc[1] = butterY->update(v_acc[1]);
-    filt_acc[2] = butterZ->update(v_acc[2]);
+    //Disabled as it causes ~5-10ms delay in angle reading
+    //filt_acc[0] = butterX->update(v_acc[0]);
+    //filt_acc[1] = butterY->update(v_acc[1]);
+    //filt_acc[2] = butterZ->update(v_acc[2]);
 }
 
 /* FUNCTION read9DOF()
@@ -379,14 +378,7 @@ void MPU9150::read9DOF() {
 
     for (int i=0; i<3; i++) {
         tempi[i] = ~tempi[i] + 1;
-        v_mag[i] = 0.3f * (float)tempi[i];
-    }
-
-    //If the IMU has been defined as a vertical IMU switch the X and Z axes.
-    if (vert_orient == true) {
-        float temp = v_mag[0];
-        v_mag[0] = -1.f * v_mag[2];
-        v_mag[2] = temp;
+        v_mag[i] = 0.3f * tempi[i];
     }
 }
 
@@ -549,7 +541,7 @@ void MPU9150::MahonyAHRSupdate() {
     v_quat[2] = q2;
     v_quat[3] = q3;
 
-    quat::eulerXZY(v_quat,v_euler);
+    quat::eulerZYX(v_quat,v_euler);
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -642,7 +634,7 @@ void MPU9150::MahonyAHRSupdateIMU() {
     v_quat[0] = q0;
     v_quat[1] = q1;
     v_quat[2] = q2;
-    v_quat[3] = 0.f;
+    v_quat[3] = q3;
 
     quat::eulerXZY(v_quat,v_euler);
 }

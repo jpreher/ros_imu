@@ -239,6 +239,7 @@ public:
     } else {
       // nonlinear tau
       //tau = (-Lc*sin(hLs_e[2]) - Lt*sin(hLs_e[2] + hLst[2]) - phip_o) / Vdesired;
+      // linear tau
       tau = (Lc*(hLs_e[2]) + Lt*(hLs_e[2] + hLst[2]) - phip_o) / Vdesired;
     }
   }

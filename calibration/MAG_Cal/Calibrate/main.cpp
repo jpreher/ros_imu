@@ -18,7 +18,7 @@ struct timeval mytime;
 int startTime;
 int newTime;
 float timediff;
-float t[200];
+float t[2000];
 float g = 9.80556;
 
 struct calibrate {
@@ -95,7 +95,7 @@ int main()
     for (int i=0; i<2000; i++){
         CalFile << IMUCal.tempX[i] << ", " << \
                    IMUCal.tempY[i] << ", " << \
-                   IMUCal.tempZ[i] << "\n" << endl;
+                   IMUCal.tempZ[i] << endl;
     }
     CalFile.close();
 

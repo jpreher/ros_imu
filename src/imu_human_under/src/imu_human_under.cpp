@@ -160,9 +160,9 @@ public:
 
 		// Set up the proper classes for the IMUs
 		ROS_INFO("Loading left IMU1 bias and setting up class.");
-		IMU1.reset(new MPU9150(imu1_bus, imu1_addr, imu1_biasPath, sampleFreq, imu1_isvert));
+		IMU1.reset(new MPU9150(imu1_bus, imu1_addr, imu1_biasPath, sampleFreq, imu1_isvert, true));
 		ROS_INFO("Loading left IMU2 bias and setting up class.");
-		IMU2.reset(new MPU9150(imu2_bus, imu2_addr, imu2_biasPath, sampleFreq, imu2_isvert));
+		IMU2.reset(new MPU9150(imu2_bus, imu2_addr, imu2_biasPath, sampleFreq, imu2_isvert, true));
 
 		// IMU 1
 		ros::param::get("/imu/right_leg/imu1/name", imu3_name);
@@ -186,9 +186,9 @@ public:
 			ROS_INFO("IMU4 is vertical");
 
 		ROS_INFO("Loading right IMU3 bias and setting up class.");
-		IMU3.reset(new MPU9150(imu3_bus, imu3_addr, imu3_biasPath, sampleFreq, imu3_isvert));
+		IMU3.reset(new MPU9150(imu3_bus, imu3_addr, imu3_biasPath, sampleFreq, imu3_isvert, true));
 		ROS_INFO("Loading right IMU4 bias and setting up class.");
-		IMU4.reset(new MPU9150(imu4_bus, imu4_addr, imu4_biasPath, sampleFreq, imu4_isvert));
+		IMU4.reset(new MPU9150(imu4_bus, imu4_addr, imu4_biasPath, sampleFreq, imu4_isvert, true));
 
 		// Initialize the yaw offset as zero, user must calibrate to get later
 		l_y_quat[0] = 1.f;

@@ -154,11 +154,11 @@ public:
 
 			// Set up the proper classes for the IMUs
 			ROS_INFO("Loading left IMU1 bias and setting up class.");
-			IMU1.reset(new MPU9150(imu1_bus, imu1_addr, imu1_biasPath, sampleFreq, imu1_isvert));
+			IMU1.reset(new MPU9150(imu1_bus, imu1_addr, imu1_biasPath, sampleFreq, imu1_isvert, true));
 			ROS_INFO("Loading left IMU2 bias and setting up class.");
-			IMU2.reset(new MPU9150(imu2_bus, imu2_addr, imu2_biasPath, sampleFreq, imu2_isvert));
+			IMU2.reset(new MPU9150(imu2_bus, imu2_addr, imu2_biasPath, sampleFreq, imu2_isvert, true));
 			ROS_INFO("Loading left IMU3 bias and setting up class.");
-			IMU3.reset(new MPU9150(imu3_bus, imu3_addr, imu3_biasPath, sampleFreq, imu3_isvert));
+			IMU3.reset(new MPU9150(imu3_bus, imu3_addr, imu3_biasPath, sampleFreq, imu3_isvert, true));
 
 		} else if ( right_leg == true ){
 			int imu1_bus, imu2_bus;
@@ -187,9 +187,9 @@ public:
 				ROS_INFO("IMU1 is vertical");
 
 			ROS_INFO("Loading right IMU1 bias and setting up class.");
-			IMU1.reset(new MPU9150(imu1_bus, imu1_addr, imu1_biasPath, sampleFreq, imu1_isvert));
+			IMU1.reset(new MPU9150(imu1_bus, imu1_addr, imu1_biasPath, sampleFreq, imu1_isvert, true));
 			ROS_INFO("Loading right IMU2 bias and setting up class.");
-			IMU2.reset(new MPU9150(imu2_bus, imu2_addr, imu2_biasPath, sampleFreq, imu2_isvert));
+			IMU2.reset(new MPU9150(imu2_bus, imu2_addr, imu2_biasPath, sampleFreq, imu2_isvert, true));
 
 		} else {
 			ROS_WARN("Node leg is improperly specified! Didn't do anything. Fix me up!");

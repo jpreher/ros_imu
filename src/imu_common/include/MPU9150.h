@@ -29,6 +29,8 @@ private:
     uint8_t buffer[64];
     float ACCbias[3];
     float IMUscale[9];
+    float MAGbias[3];
+    float MAGscale[9];
     float integralFBx, integralFBy, integralFBz;
     float twoKp, twoKi;
 
@@ -56,7 +58,7 @@ public:
     float v_euler[3];       //roll, pitch, yaw
     float ref_quat[4];
 
-    MPU9150(uint8_t bus, uint8_t address, const char *bias, float freq, bool vertical);
+    MPU9150(uint8_t bus, uint8_t address, const char *bias, float freq, bool vertical, bool magnetometer);
     virtual ~MPU9150();
     void initialize();
     void read6DOF();

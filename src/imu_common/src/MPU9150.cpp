@@ -11,6 +11,7 @@
 // 04/14/2014   Jake Reher      Made several sign changes and zeroed z axis proportial gains to eliminate
 //                              error buildup on z axis of quaternion in 6DOF measurement cases.
 // 06/06/2014   Jake Reher      Changed accelerometer range to +/- 4 g's. 
+// 06/17/2014   Jake Reher      Added magnetometer biasing and vertical orientation capabilities.
 //
 //=====================================================================================================*/
 //---------------------------------------------------------------------------------------------------
@@ -26,7 +27,7 @@
 /* CONSTRUCTOR
  *
  */
-MPU9150::MPU9150(uint8_t bus, uint8_t address, const char *bias, float freq, bool vertical) {
+MPU9150::MPU9150(uint8_t bus, uint8_t address, const char *bias, float freq, bool vertical, bool magnetometer) {
     // Sets the bus, address, and bias of the IMU.
     this->bus = bus;
     devAddress = address;
@@ -51,6 +52,22 @@ MPU9150::MPU9150(uint8_t bus, uint8_t address, const char *bias, float freq, boo
             }
         	else {
                 configfile >> IMUscale[i-6];
+            }
+        }
+    }
+    if ( magnetometer ) {
+        if ( !configfile.is_open() ) {
+            cout << "Failed to open configuration file!" << endl;
+            MAGbias[0] = MAGbias[1] = MAGbias[2] = 0.f;
+            MAGscale[0] = MAGscale[4] = MAGscale[8] = 1.f;
+            MAGscale[1] = MAGscale[2] = MAGscale[3] = MAGscale[5] = MAGscale[6] = MAGscale[7] = 0.f;
+        } else {
+            for (int i=0; i<12; i++) {
+                if (i<3) {
+                    configfile >> MAGbias[i];
+                } else {
+                    configfile >> MAGscale[i-3];
+                }
             }
         }
     }
@@ -363,6 +380,7 @@ void MPU9150::read6DOF() {
  *
  */
 void MPU9150::read9DOF() {
+    float tempf[3];
     //Get accel and gyro readings.
     read6DOF();
 
@@ -381,6 +399,14 @@ void MPU9150::read9DOF() {
         tempi[i] = ~tempi[i] + 1;
         v_mag[i] = 0.3f * (float)tempi[i];
     }
+
+    tempf[0] = v_mag[0];
+    tempf[1] = v_mag[1];
+    tempf[2] = v_mag[2];
+
+    v_mag[0] = MAGscale[0] * (tempf[0] - MAGbias[0]) + MAGscale[1] * (tempf[1] - MAGbias[1]) + MAGscale[2] * (tempf[2] - MAGbias[2]);
+    v_mag[1] = MAGscale[4] * (tempf[1] - MAGbias[1]) + MAGscale[5] * (tempf[2] - MAGbias[2]);
+    v_mag[2] = MAGscale[8] * (tempf[2] - MAGbias[2]);
 
     //If the IMU has been defined as a vertical IMU switch the X and Z axes.
     if (vert_orient == true) {

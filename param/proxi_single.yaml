@@ -1,0 +1,6 @@
+
+imu/imu1/name: 'proxi_hip'
+imu/imu1/bus: 1
+imu/imu1/addr: 0x69
+imu/imu1/bias_path: '/home/debian/ros_imu/bias/9c.txt'
+imu/imu1/isvertical: false

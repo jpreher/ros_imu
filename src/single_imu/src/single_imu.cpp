@@ -89,13 +89,13 @@ public:
 		std::string bias_path1;
 
 		// IMU 1
-		ros::param::get("/imu/left_leg/imu1/name", imu1_name);
-		ros::param::get("/imu/left_leg/imu1/bus", imu1_bus);
-		ros::param::get("/imu/left_leg/imu1/addr", imu1_addr);
-		ros::param::get("/imu/left_leg/imu1/bias_path", bias_path1);
-		ros::param::get("/imu/left_leg/imu1/isvertical", imu1_isvert);
+		ros::param::get("/imu/imu1/name", imu1_name);
+		ros::param::get("/imu/imu1/bus", imu1_bus);
+		ros::param::get("/imu/imu1/addr", imu1_addr);
+		ros::param::get("/imu/imu1/bias_path", bias_path1);
+		ros::param::get("/imu/imu1/isvertical", imu1_isvert);
 
-		ros::param::get("/imu/left_leg/num_imu", numIMU);
+		ros::param::get("/imu/num_imu", numIMU);
 
 		const char* imu1_biasPath = bias_path1.c_str();
 

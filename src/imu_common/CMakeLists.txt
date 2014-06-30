@@ -39,7 +39,8 @@ include_directories(
 add_library(imu_common src/MPU9150.cpp include/MPU9150.h 
 	src/BBB_I2C.cpp include/BBB_I2C.h 
 	src/quaternion_util.cpp include/quaternion_util.h
-	include/butterworth_util.h include/MPU_RegMap.h)
+	include/butterworth_util.h include/MPU_RegMap.h
+	include/limits.hpp include/common_assert.hpp)
 
 
 

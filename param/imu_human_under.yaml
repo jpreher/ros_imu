@@ -17,7 +17,7 @@ imu/right_leg/num_imu: 2
 imu/right_leg/imu1/name: 'shank'
 imu/right_leg/imu1/bus: 2
 imu/right_leg/imu1/addr: 0x69
-imu/right_leg/imu1/bias_path: '/home/debian/ros_imu/bias/6a.txt'
+imu/right_leg/imu1/bias_path: '/home/debian/ros_imu/bias/9e.txt'
 imu/right_leg/imu1/isvertical: true
 
 imu/right_leg/imu2/name: 'thigh'

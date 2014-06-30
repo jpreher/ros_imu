@@ -3,15 +3,19 @@
 #include <tau_under/tau_under_msg.h>
 #include "quaternion_util.h"
 #include "butterworth_util.h"
+#include "limits.hpp"
 #include "std_srvs/Empty.h"
 
-
 typedef std::shared_ptr<Butter> ButterPtr;
+typedef std::shared_ptr<control_utilities::RateLimiter> LimitPtr;
+
 
 class tau_func {
 public:
   ButterPtr left_butter_;
   ButterPtr right_butter_;
+
+  LimitPtr limiter_;
 
   float right_impact_checker;
   float left_impact_checker;
@@ -71,6 +75,8 @@ public:
   {
     ros::NodeHandle tau_node_handle(node_handle_, "pose");
     tau_pub_ = node_handle_.advertise<tau_under::tau_under_msg>("tau_under", desired_freq_);
+
+    limiter_.reset(new control_utilities::RateLimiter(0.f, 9999.f));
     
     // Set up butterworth filter for step detection.
     const vector<float> a = {1.0, -1.561018075800718, 0.641351538057563};
@@ -236,11 +242,13 @@ public:
       // tau = (-Lc*sin(hRs_e[2]) - Lt*sin(hRs_e[2] + hRst[2]) - phip_o) / Vdesired;
       // linear tau
       tau = (Lc*(hRs_e[2]) + Lt*(hRs_e[2] + hRst[2]) - phip_o) / Vdesired;
+      tau = limiter_.update(0.005, tau);
     } else {
       // nonlinear tau
       //tau = (-Lc*sin(hLs_e[2]) - Lt*sin(hLs_e[2] + hLst[2]) - phip_o) / Vdesired;
       // linear tau
       tau = (Lc*(hLs_e[2]) + Lt*(hLs_e[2] + hLst[2]) - phip_o) / Vdesired;
+      tau = limiter_.update(0.005, tau);
     }
   }
 

@@ -18,7 +18,7 @@
 #include "ros/ros.h"
 #include "ros/time.h"
 
-#include "sensor_msgs/Imu.h"
+#include <imu_common/imu.h>
 #include "std_srvs/Empty.h"
 
 #include "std_msgs/Bool.h"
@@ -43,7 +43,7 @@ public:
   	ros::Rate rate;
 
 	// IMU messages are published with standard IMU sensor_msgs.
-	sensor_msgs::Imu reading1;
+	imu_common::imu reading1;
 
 	std::string was_slow_;
 
@@ -74,7 +74,7 @@ public:
     	private_node_handle_.param("assume_calibrated1", calibrated1_, false);
 
     	// Set up IMU publishers
-    	imu1_data_pub_ = imu_node_handle.advertise<sensor_msgs::Imu>("data1", desired_freq_);
+    	imu1_data_pub_ = imu_node_handle.advertise<imu_common::imu>("data1", desired_freq_);
 
     	// Calibration server for each IMU
     	calibrate_serv1_ = imu_node_handle.advertiseService("calibrate_gyro1", &imuNode::calibrate1, this);
@@ -189,8 +189,8 @@ public:
 		}
 	}
 
-	void getData(sensor_msgs::Imu& data1) {
-        IMU1->MahonyAHRSupdateIMU();
+	void getData(imu_common::imu& data1) {
+        IMU1->MahonyAHRSupdate();
 
         data1.linear_acceleration.x = IMU1->v_acc[0];
         data1.linear_acceleration.y = IMU1->v_acc[1];
@@ -199,6 +199,10 @@ public:
         data1.angular_velocity.x = IMU1->v_gyr[0];
         data1.angular_velocity.y = IMU1->v_gyr[1];
         data1.angular_velocity.z = IMU1->v_gyr[2];
+
+        data1.magnetometer.x = IMU1->v_mag[0];
+        data1.magnetometer.y = IMU1->v_mag[1];
+        data1.magnetometer.z = IMU1->v_mag[2];
 
         data1.orientation.w = IMU1->v_quat[0];
         data1.orientation.x = IMU1->v_quat[1];

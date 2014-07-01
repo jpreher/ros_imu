@@ -9,7 +9,6 @@
 typedef std::shared_ptr<Butter> ButterPtr;
 typedef std::shared_ptr<control_utilities::RateLimiter> LimitPtr;
 
-
 class tau_func {
 public:
   ButterPtr left_butter_;
@@ -64,6 +63,8 @@ public:
 
   int desired_freq_;
 
+  float tau_clamp;
+
   ros::NodeHandle node_handle_;
   tau_under::tau_under_msg pose_data;
   ros::Rate rate;
@@ -76,7 +77,7 @@ public:
     ros::NodeHandle tau_node_handle(node_handle_, "pose");
     tau_pub_ = node_handle_.advertise<tau_under::tau_under_msg>("tau_under", desired_freq_);
 
-    limiter_.reset(new control_utilities::RateLimiter(0.f, 9999.f));
+    limiter_.reset(new control_utilities::RateLimiter(0.f, NAN));
     
     // Set up butterworth filter for step detection.
     const vector<float> a = {1.0, -1.561018075800718, 0.641351538057563};
@@ -233,6 +234,7 @@ public:
       //phip_o = - Lc*sin(hLs_e[2]) - Lt*sin(hLs_e[2] + hLst[2]);
       phip_o = Lc*hLs_e[2] + Lt*(hLs_e[2] + hLst[2]);
     }
+    limiter_->reset(0.f);
     calcTau();
   }
 
@@ -242,13 +244,15 @@ public:
       // tau = (-Lc*sin(hRs_e[2]) - Lt*sin(hRs_e[2] + hRst[2]) - phip_o) / Vdesired;
       // linear tau
       tau = (Lc*(hRs_e[2]) + Lt*(hRs_e[2] + hRst[2]) - phip_o) / Vdesired;
-      tau = limiter_->update(0.005, tau);
+      tau_clamp = limiter_->update(0.005, tau);
+      //std::cout << limiter_->wasSaturated() << std::endl;
     } else {
       // nonlinear tau
       //tau = (-Lc*sin(hLs_e[2]) - Lt*sin(hLs_e[2] + hLst[2]) - phip_o) / Vdesired;
       // linear tau
       tau = (Lc*(hLs_e[2]) + Lt*(hLs_e[2] + hLst[2]) - phip_o) / Vdesired;
-      tau = limiter_->update(0.005, tau);
+      tau_clamp = limiter_->update(0.005, tau);
+      //std::cout << limiter_->wasSaturated() << std::endl;
     }
   }
 
@@ -256,10 +260,12 @@ public:
     // Check the butterworth filter magnitudes and publish true if reset is to be applied
     if ( RightIsStance ) {
       if ( right_impact_checker > switch_threshold ) {
+        std::cout << "switching to left stance" << std::endl;
         return true;
       } else { return false; }
     } else {
       if ( left_impact_checker > switch_threshold ) {
+        std::cout << "switching to right stance" << std::endl;
         return true;
       } else { return false; }
     }
@@ -293,6 +299,8 @@ public:
     pose_data.left_shank_earth = hLs_e[2];
     pose_data.left_thigh_shank = hLst[2];
     pose_data.tau = tau;
+    pose_data.tau_clamped = tau_clamp;
+    pose_data.header.stamp = ros::Time::now();
 
     tau_pub_.publish(pose_data);
 

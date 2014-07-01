@@ -8,7 +8,24 @@ add_definitions(-std=c++0x)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
+  message_generation
+  std_msgs
+  sensor_msgs
 )
+
+## Generate messages in the 'msg' folder
+ add_message_files(
+   FILES
+   imu.msg
+ )
+
+ ## Generate added messages and services with any dependencies listed here
+ generate_messages(
+   DEPENDENCIES
+   std_msgs
+   geometry_msgs
+ )
+
 
 ###################################
 ## catkin specific configuration ##

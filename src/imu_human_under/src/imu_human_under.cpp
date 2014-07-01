@@ -18,8 +18,8 @@
 #include "ros/ros.h"
 #include "ros/time.h"
 
-#include "sensor_msgs/Imu.h"
 #include "std_srvs/Empty.h"
+#include <imu_common/imu.h>
 
 #include "std_msgs/Bool.h"
 
@@ -46,10 +46,10 @@ public:
   	ros::Rate rate;
 
 	// IMU messages are published with standard IMU sensor_msgs.
-	sensor_msgs::Imu reading1;
-	sensor_msgs::Imu reading2;
-	sensor_msgs::Imu reading3;
-	sensor_msgs::Imu reading4;
+	imu_common::imu reading1;
+	imu_common::imu reading2;
+	imu_common::imu reading3;
+	imu_common::imu reading4;
 
 	std::string was_slow_;
 
@@ -112,10 +112,10 @@ public:
     	private_node_handle_.param("assume_calibrated4", calibrated4_, false);
 
     	// Set up IMU publishers
-    	imu1_data_pub_ = imu_node_handle.advertise<sensor_msgs::Imu>("data1", desired_freq_);
-    	imu2_data_pub_ = imu_node_handle.advertise<sensor_msgs::Imu>("data2", desired_freq_);
-    	imu3_data_pub_ = imu_node_handle.advertise<sensor_msgs::Imu>("data3", desired_freq_);
-    	imu4_data_pub_ = imu_node_handle.advertise<sensor_msgs::Imu>("data4", desired_freq_);
+    	imu1_data_pub_ = imu_node_handle.advertise<imu_common::imu>("data1", desired_freq_);
+    	imu2_data_pub_ = imu_node_handle.advertise<imu_common::imu>("data2", desired_freq_);
+    	imu3_data_pub_ = imu_node_handle.advertise<imu_common::imu>("data3", desired_freq_);
+    	imu4_data_pub_ = imu_node_handle.advertise<imu_common::imu>("data4", desired_freq_);
 
     	// Calibration server for each IMU
     	calibrate_serv1_ = imu_node_handle.advertiseService("calibrate_gyro1", &imuNode::calibrate1, this);
@@ -339,7 +339,7 @@ public:
 		}
 	}
 
-	void getData(sensor_msgs::Imu& data1, sensor_msgs::Imu& data2, sensor_msgs::Imu& data3, sensor_msgs::Imu& data4){
+	void getData(imu_common::imu& data1, imu_common::imu& data2, imu_common::imu& data3, imu_common::imu& data4){
         IMU1->MahonyAHRSupdateIMU();
         IMU2->MahonyAHRSupdateIMU();
 

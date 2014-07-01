@@ -79,8 +79,9 @@ inline double clamp(double value, double max, int *presult = NULL)
  */
 inline double rate_limit(double prev, double cur, double dt, double rate_min, double rate_max, int *presult = NULL)
 {
-    if (std::isnan(dt))
+    if (std::isnan(dt)){
         return cur;
+    }
     common_assert(dt > 0); // Allow zero dt?
     return clamp(cur, prev + dt * rate_min, prev + dt * rate_max, presult);
 }

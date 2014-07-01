@@ -190,7 +190,7 @@ public:
 	}
 
 	void getData(imu_common::imu& data1) {
-        IMU1->MahonyAHRSupdate();
+        IMU1->MahonyAHRSupdateIMU();
 
         data1.linear_acceleration.x = IMU1->v_acc[0];
         data1.linear_acceleration.y = IMU1->v_acc[1];

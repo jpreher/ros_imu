@@ -520,7 +520,7 @@ void MPU9150::MahonyAHRSupdate() {
         // Estimated direction of gravity and magnetic field
         halfvx = q1q3 - q0q2;
         halfvy = q0q1 + q2q3;
-        halfvz = q0q0 - 0.5f + q3q3;
+        halfvz = q0q0 - q1q1 - q2q2 + q3q3;
         halfwx = bx * (0.5f - q2q2 - q3q3) + bz * (q1q3 - q0q2);
         halfwy = bx * (q1q2 - q0q3) + bz * (q0q1 + q2q3);
         halfwz = bx * (q0q2 + q1q3) + bz * (0.5f - q1q1 - q2q2);
@@ -625,13 +625,13 @@ void MPU9150::MahonyAHRSupdateIMU() {
 
         // Compute and apply integral feedback if enabled
         if(twoKi > 0.0f) {
-            integralFBx += twoKi * halfex * (1.0f / sampleFreq);	// integral error scaled by Ki
-            integralFBy += twoKi * halfey * (1.0f / sampleFreq);
+            integralFBx += halfex;	// integral error scaled by Ki
+            integralFBy += halfey;
             //integralFBz += twoKi * halfez * (1.0f / sampleFreq);
             integralFBz = 0.0; //Preventing integral windup of yaw. This is causing problems.
-            gx += integralFBx;	// apply integral feedback
-            gy += integralFBy;
-            gz += integralFBz;
+            gx += twoKi * integralFBx;	// apply integral feedback
+            gy += twoKi * integralFBy;
+            gz += twoKi * integralFBz;
         }
         else {
             integralFBx = 0.0f;	// prevent integral windup
@@ -647,16 +647,16 @@ void MPU9150::MahonyAHRSupdateIMU() {
     }
 
     // Integrate rate of change of quaternion
-    tempgx = gx * (0.5f * (1.0f / sampleFreq));		// pre-multiply common factors
-    tempgy = gy * (0.5f * (1.0f / sampleFreq));
-    tempgz = gz * (0.5f * (1.0f / sampleFreq));
+    tempgx = gx;		// pre-multiply common factors
+    tempgy = gy;
+    tempgz = gz;
     qa = q0;
     qb = q1;
     qc = q2;
-    q0 += (-qb * tempgx - qc * tempgy - q3 * tempgz);
-    q1 += (qa * tempgx + qc * tempgz - q3 * tempgy);
-    q2 += (qa * tempgy - qb * tempgz + q3 * tempgx);
-    q3 += (qa * tempgz + qb * tempgy - qc * tempgx);
+    q0 += (-qb * tempgx - qc * tempgy - q3 * tempgz) * (0.5f * (1.0f / sampleFreq));
+    q1 += (qa * tempgx + qc * tempgz - q3 * tempgy) * (0.5f * (1.0f / sampleFreq));
+    q2 += (qa * tempgy - qb * tempgz + q3 * tempgx) * (0.5f * (1.0f / sampleFreq));
+    q3 += (qa * tempgz + qb * tempgy - qc * tempgx) * (0.5f * (1.0f / sampleFreq));
 
     // Normalise quaternion
     recipNorm = invSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);

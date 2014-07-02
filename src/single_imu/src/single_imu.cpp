@@ -198,7 +198,7 @@ public:
 		time_now = ros::Time::now().toSec();
 		float dt = (float)(time_now - time_last);
 
-        IMU1->MahonyAHRSupdateIMU_t(dt);
+        IMU1->MahonyAHRSupdateIMU(dt);
 
         data1.linear_acceleration.x = IMU1->v_acc[0];
         data1.linear_acceleration.y = IMU1->v_acc[1];
@@ -220,6 +220,8 @@ public:
         data1.integralE.x = IMU1-> integralFBx;
         data1.integralE.y = IMU1-> integralFBy;
         data1.integralE.z = IMU1-> integralFBz;
+
+
 
         data1.header.stamp = ros::Time::now();
 

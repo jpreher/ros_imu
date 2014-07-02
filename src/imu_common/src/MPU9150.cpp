@@ -604,6 +604,16 @@ void MPU9150::MahonyAHRSupdateIMU() {
     float tempgy;
     float tempgz;
 
+    float tempg[3];
+    tempg[0] = gx;
+    tempg[1] = gy;
+    tempg[2] = gz;
+
+    rotateVec(tempg, v_quat, tempg);
+    gx = tempg[0];
+    gy = tempg[1];
+    gz = tempg[2];
+
     // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
     if(!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))) {
 

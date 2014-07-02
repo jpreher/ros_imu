@@ -66,7 +66,7 @@ public:
     void initOrientation();
     void MahonyAHRSupdate();
     void MahonyAHRSupdateIMU();
-    void MahonyAHRSupdateIMU(float dt);
+    void MahonyAHRSupdateIMU_t(float dt);
 };
 
 #endif // MPU9150_H

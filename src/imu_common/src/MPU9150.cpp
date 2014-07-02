@@ -581,7 +581,7 @@ void MPU9150::MahonyAHRSupdate() {
 //---------------------------------------------------------------------------------------------------
 // IMU algorithm update
 
-void MPU9150::MahonyAHRSupdateIMU(float dt) {
+void MPU9150::MahonyAHRSupdateIMU_t(float dt) {
     float recipNorm;
     float halfvx, halfvy, halfvz;
     float halfex, halfey, halfez;
@@ -679,7 +679,7 @@ void MPU9150::MahonyAHRSupdateIMU() {
     float halfex, halfey, halfez;
     float qa, qb, qc;
 
-    float dt = sampleFreq;
+    float dt = 1.f / sampleFreq;
 
     read6DOF(); //Updates IMU readings. Uses filtered accel data.
 

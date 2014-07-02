@@ -346,8 +346,8 @@ public:
 	void getData(imu_common::imu& data1, imu_common::imu& data2, imu_common::imu& data3, imu_common::imu& data4){
 		time_now = ros::Time::now().toSec();
 		float dt = time_now - time_last;
-        IMU1->MahonyAHRSupdateIMU(dt);
-        IMU2->MahonyAHRSupdateIMU(dt);
+        IMU1->MahonyAHRSupdateIMU_t(dt);
+        IMU2->MahonyAHRSupdateIMU_t(dt);
 
         data1.linear_acceleration.x = IMU1->v_acc[0];
         data1.linear_acceleration.y = IMU1->v_acc[1];
@@ -378,8 +378,8 @@ public:
         data1.header.stamp = ros::Time::now();
         data2.header.stamp = data1.header.stamp;
 
-        IMU3->MahonyAHRSupdateIMU(dt);
-        IMU4->MahonyAHRSupdateIMU(dt);
+        IMU3->MahonyAHRSupdateIMU_t(dt);
+        IMU4->MahonyAHRSupdateIMU_t(dt);
 
         data3.linear_acceleration.x = IMU3->v_acc[0];
         data3.linear_acceleration.y = IMU3->v_acc[1];

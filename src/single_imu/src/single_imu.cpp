@@ -61,8 +61,8 @@ public:
 
 	double desired_freq_;
 
-	float time_now;
-	float time_last;
+	double time_now;
+	double time_last;
   
   	imuNode(ros::NodeHandle h) : private_node_handle_("~"),
   		node_handle_(h), calibrate_requested1_(false),
@@ -196,7 +196,7 @@ public:
 
 	void getData(imu_common::imu& data1) {
 		time_now = ros::Time::now().toSec();
-		float dt = time_now - time_last;
+		float dt = (float)(time_now - time_last);
 
         IMU1->MahonyAHRSupdateIMU_t(dt);
 
@@ -217,9 +217,13 @@ public:
         data1.orientation.y = IMU1->v_quat[2];
         data1.orientation.z = IMU1->v_quat[3];
 
+        data1.integralE.x = IMU1-> integralFBx;
+        data1.integralE.y = IMU1-> integralFBy;
+        data1.integralE.z = IMU1-> integralFBz;
+
         data1.header.stamp = ros::Time::now();
 
-        time_last = ros::Time::now().toSec();
+        time_last = time_now;
 	}
 
 	bool calibrate1(std_srvs::Empty::Request  &req,

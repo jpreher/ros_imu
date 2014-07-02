@@ -625,8 +625,8 @@ void MPU9150::MahonyAHRSupdateIMU_t(float dt) {
 
         // Compute and apply integral feedback if enabled
         if(twoKi > 0.0f) {
-            integralFBx += halfex;	// integral error scaled by Ki
-            integralFBy += halfey;
+            integralFBx += halfex * dt;	// integral error scaled by Ki
+            integralFBy += halfey * dt;
             //integralFBz += twoKi * halfez * (1.0f / sampleFreq);
             integralFBz = 0.0; //Preventing integral windup of yaw. This is causing problems.
             gx += twoKi * integralFBx;	// apply integral feedback
@@ -719,8 +719,8 @@ void MPU9150::MahonyAHRSupdateIMU() {
 
         // Compute and apply integral feedback if enabled
         if(twoKi > 0.0f) {
-            integralFBx += halfex;  // integral error scaled by Ki
-            integralFBy += halfey;
+            integralFBx += halfex * dt;  // integral error scaled by Ki
+            integralFBy += halfey * dt;
             //integralFBz += twoKi * halfez * (1.0f / sampleFreq);
             integralFBz = 0.0; //Preventing integral windup of yaw. This is causing problems.
             gx += twoKi * integralFBx;  // apply integral feedback

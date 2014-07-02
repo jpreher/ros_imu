@@ -60,12 +60,17 @@ public:
   	bool calibrated1_;
 
 	double desired_freq_;
+
+	float time_now;
+	float time_last;
   
   	imuNode(ros::NodeHandle h) : private_node_handle_("~"),
   		node_handle_(h), calibrate_requested1_(false),
 		desired_freq_(sampleFreq),
   		rate(sampleFreq) 
   	{
+
+  		time_last = ros::Time::now().toSec();
 
   		ros::NodeHandle imu_node_handle(node_handle_, "human_under");
 
@@ -190,7 +195,10 @@ public:
 	}
 
 	void getData(imu_common::imu& data1) {
-        IMU1->MahonyAHRSupdateIMU();
+		time_now = ros::Time::now().toSec();
+		float dt = time_now - time_last;
+
+        IMU1->MahonyAHRSupdateIMU_t(dt);
 
         data1.linear_acceleration.x = IMU1->v_acc[0];
         data1.linear_acceleration.y = IMU1->v_acc[1];
@@ -210,6 +218,8 @@ public:
         data1.orientation.z = IMU1->v_quat[3];
 
         data1.header.stamp = ros::Time::now();
+
+        time_last = ros::Time::now().toSec();
 	}
 
 	bool calibrate1(std_srvs::Empty::Request  &req,

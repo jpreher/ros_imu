@@ -581,7 +581,7 @@ void MPU9150::MahonyAHRSupdate() {
 //---------------------------------------------------------------------------------------------------
 // IMU algorithm update
 
-void MPU9150::MahonyAHRSupdateIMU() {
+void MPU9150::MahonyAHRSupdateIMU(float dt) {
     float recipNorm;
     float halfvx, halfvy, halfvz;
     float halfex, halfey, halfez;
@@ -603,16 +603,6 @@ void MPU9150::MahonyAHRSupdateIMU() {
     float tempgx;
     float tempgy;
     float tempgz;
-
-    float tempg[3];
-    tempg[0] = gx;
-    tempg[1] = gy;
-    tempg[2] = gz;
-
-    rotateVec(tempg, v_quat, tempg);
-    gx = tempg[0];
-    gy = tempg[1];
-    gz = tempg[2];
 
     // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
     if(!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))) {
@@ -663,10 +653,104 @@ void MPU9150::MahonyAHRSupdateIMU() {
     qa = q0;
     qb = q1;
     qc = q2;
-    q0 += (-qb * tempgx - qc * tempgy - q3 * tempgz) * (0.5f * (1.0f / sampleFreq));
-    q1 += (qa * tempgx + qc * tempgz - q3 * tempgy) * (0.5f * (1.0f / sampleFreq));
-    q2 += (qa * tempgy - qb * tempgz + q3 * tempgx) * (0.5f * (1.0f / sampleFreq));
-    q3 += (qa * tempgz + qb * tempgy - qc * tempgx) * (0.5f * (1.0f / sampleFreq));
+    q0 += (-qb * tempgx - qc * tempgy - q3 * tempgz) * (0.5f * dt);
+    q1 += (qa * tempgx + qc * tempgz - q3 * tempgy) * (0.5f * dt);
+    q2 += (qa * tempgy - qb * tempgz + q3 * tempgx) * (0.5f * dt);
+    q3 += (qa * tempgz + qb * tempgy - qc * tempgx) * (0.5f * dt);
+
+    // Normalise quaternion
+    recipNorm = invSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
+    q0 *= recipNorm;
+    q1 *= recipNorm;
+    q2 *= recipNorm;
+    q3 *= recipNorm;
+
+    v_quat[0] = q0;
+    v_quat[1] = q1;
+    v_quat[2] = q2;
+    v_quat[3] = 0.f;
+
+    quat::eulerXZY(v_quat,v_euler);
+}
+
+void MPU9150::MahonyAHRSupdateIMU() {
+    float recipNorm;
+    float halfvx, halfvy, halfvz;
+    float halfex, halfey, halfez;
+    float qa, qb, qc;
+
+    float dt = sampleFreq;
+
+    read6DOF(); //Updates IMU readings. Uses filtered accel data.
+
+    float ax = v_acc[0];
+    float ay = v_acc[1];
+    float az = v_acc[2];
+    float gx = v_gyr[0];
+    float gy = v_gyr[1];
+    float gz = 0.f; // Assume zero yaw.
+    float q0 = v_quat[0];
+    float q1 = v_quat[1];
+    float q2 = v_quat[2];
+    float q3 = v_quat[3];
+
+    float tempgx;
+    float tempgy;
+    float tempgz;
+
+    // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
+    if(!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))) {
+
+        // Normalise accelerometer measurement
+        recipNorm = invSqrt(ax * ax + ay * ay + az * az);
+        ax *= recipNorm;
+        ay *= recipNorm;
+        az *= recipNorm;
+
+        // Estimated direction of gravity and vector perpendicular to magnetic flux
+        halfvx = q1 * q3 - q0 * q2;
+        halfvy = q0 * q1 + q2 * q3;
+        halfvz = q0 * q0 - 0.5f + q3 * q3;
+
+        // Error is sum of cross product between estimated and measured direction of gravity
+        halfex = (ay * halfvz - az * halfvy);
+        halfey = (az * halfvx - ax * halfvz);
+        halfez = (ax * halfvy - ay * halfvx);
+
+        // Compute and apply integral feedback if enabled
+        if(twoKi > 0.0f) {
+            integralFBx += halfex;  // integral error scaled by Ki
+            integralFBy += halfey;
+            //integralFBz += twoKi * halfez * (1.0f / sampleFreq);
+            integralFBz = 0.0; //Preventing integral windup of yaw. This is causing problems.
+            gx += twoKi * integralFBx;  // apply integral feedback
+            gy += twoKi * integralFBy;
+            gz += twoKi * integralFBz;
+        }
+        else {
+            integralFBx = 0.0f; // prevent integral windup
+            integralFBy = 0.0f;
+            integralFBz = 0.0f;
+        }
+
+        // Apply proportional feedback
+        gx += twoKp * halfex;
+        gy += twoKp * halfey;
+        //gz += twoKp * halfez;
+        gz += 0.f; //Preventing linear error buildup of yaw.
+    }
+
+    // Integrate rate of change of quaternion
+    tempgx = gx;        // pre-multiply common factors
+    tempgy = gy;
+    tempgz = gz;
+    qa = q0;
+    qb = q1;
+    qc = q2;
+    q0 += (-qb * tempgx - qc * tempgy - q3 * tempgz) * (0.5f * dt);
+    q1 += (qa * tempgx + qc * tempgz - q3 * tempgy) * (0.5f * dt);
+    q2 += (qa * tempgy - qb * tempgz + q3 * tempgx) * (0.5f * dt);
+    q3 += (qa * tempgz + qb * tempgy - qc * tempgx) * (0.5f * dt);
 
     // Normalise quaternion
     recipNorm = invSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);

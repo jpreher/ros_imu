@@ -408,12 +408,33 @@ void MPU9150::read9DOF() {
     v_mag[1] = MAGscale[4] * (tempf[1] - MAGbias[1]) + MAGscale[5] * (tempf[2] - MAGbias[2]);
     v_mag[2] = MAGscale[8] * (tempf[2] - MAGbias[2]);
 
+    float temp1, temp2;
+    temp1 = v_mag[0];
+    temp2 = v_mag[1];
+
+    v_mag[0] = temp2;
+    v_mag[1] = -temp1;
+
     //If the IMU has been defined as a vertical IMU switch the X and Z axes.
     if (vert_orient == true) {
         float temp = v_mag[0];
         v_mag[0] = -1.f * v_mag[2];
         v_mag[2] = temp;
     }
+
+    if (v_mag[0] > 1.f)
+        v_mag[0] = 1.f;
+    if (v_mag[0] < -1.f)
+        v_mag[0] = -1.f;
+    if (v_mag[1] > 1.f)
+        v_mag[1] = 1.f;
+    if (v_mag[1] < -1.f)
+        v_mag[1] = -1.f;
+    if (v_mag[2] > 1.f)
+        v_mag[2] = 1.f;
+    if (v_mag[2] < -1.f)
+        v_mag[2] = -1.f;
+
 }
 
 /* FUNCTION initOrientation()

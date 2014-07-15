@@ -22,7 +22,6 @@
 #include <iostream>
 #include <math.h>
 
-
 class BBBI2C {
 public:
     BBBI2C();
@@ -36,6 +35,5 @@ public:
     static bool writeBits(uint8_t bus, uint8_t devAddress, uint8_t regAddress, uint8_t bitStart, uint8_t length, uint8_t data);
     static bool writeByte(uint8_t bus, uint8_t devAddress, uint8_t regAddress, uint8_t data);
 };
-
 
 #endif // BBB_I2C_H

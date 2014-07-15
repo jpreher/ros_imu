@@ -6,6 +6,7 @@
  */
 
 #include "MPU9150.h"
+#include "pca9547.h"
 #include "quaternion_util.h"
 
 #include <assert.h>
@@ -69,6 +70,9 @@ public:
 		desired_freq_(sampleFreq),
   		rate(sampleFreq) 
   	{
+  		int temp;
+  		temp = pca9547::probe_mux();
+  		std::cout << temp << std::endl;
 
   		time_last = ros::Time::now().toSec();
 

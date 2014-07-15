@@ -167,13 +167,13 @@ bool BBBI2C::writeByte(uint8_t bus, uint8_t devAddress, uint8_t regAddress, uint
     //Opens the path to device
     if ((file = open(namebuf, O_RDWR)) < 0){
             printf("%s did not open at address %d.\n", namebuf, devAddress);
-            exit(1);
+            return false;
     }
 
     //Joins to the device.
     if (ioctl(file, I2C_SLAVE, devAddress) < 0){
             printf("Can't join the I2C Bus at address %d.\n", devAddress);
-            exit(1);
+            return false;;
     }
 
     char buffer[2];
@@ -181,7 +181,7 @@ bool BBBI2C::writeByte(uint8_t bus, uint8_t devAddress, uint8_t regAddress, uint
     buffer[1] = data;
     if (write(file, buffer, 2) != 2) {
         printf("Failed to write to I2C Device at address %d.\n", devAddress);
-        exit(1);
+        return false;
     }
 
     return true;

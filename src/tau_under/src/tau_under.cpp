@@ -259,12 +259,12 @@ public:
   bool checkReset() {
     // Check the butterworth filter magnitudes and publish true if reset is to be applied
     if ( RightIsStance ) {
-      if ( right_impact_checker > switch_threshold ) {
+      if ( right_impact_checker > switch_threshold && tau_clamp > 0.8f ) {
         std::cout << "switching to left stance" << std::endl;
         return true;
       } else { return false; }
     } else {
-      if ( left_impact_checker > switch_threshold ) {
+      if ( left_impact_checker > switch_threshold && tau_clamp > 0.8f ) {
         std::cout << "switching to right stance" << std::endl;
         return true;
       } else { return false; }

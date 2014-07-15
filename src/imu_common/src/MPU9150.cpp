@@ -69,6 +69,9 @@ MPU9150::MPU9150(uint8_t bus, uint8_t address, const char *bias, float freq, boo
                     configfile >> MAGscale[i-3];
                 }
             }
+            for (int i=0; i<9; i++){
+                configfile >> Rmat[i];
+            }
         }
     }
     configfile.close();
@@ -400,14 +403,6 @@ void MPU9150::read9DOF() {
         v_mag[i] = 0.3f * (float)tempi[i];
     }
 
-    tempf[0] = v_mag[0];
-    tempf[1] = v_mag[1];
-    tempf[2] = v_mag[2];
-
-    v_mag[0] = MAGscale[0] * (tempf[0] - MAGbias[0]) + MAGscale[1] * (tempf[1] - MAGbias[1]) + MAGscale[2] * (tempf[2] - MAGbias[2]);
-    v_mag[1] = MAGscale[4] * (tempf[1] - MAGbias[1]) + MAGscale[5] * (tempf[2] - MAGbias[2]);
-    v_mag[2] = MAGscale[8] * (tempf[2] - MAGbias[2]);
-
     float temp1, temp2;
     temp1 = v_mag[0];
     temp2 = v_mag[1];
@@ -422,19 +417,26 @@ void MPU9150::read9DOF() {
         v_mag[2] = temp;
     }
 
-    if (v_mag[0] > 1.f)
-        v_mag[0] = 1.f;
-    if (v_mag[0] < -1.f)
-        v_mag[0] = -1.f;
-    if (v_mag[1] > 1.f)
-        v_mag[1] = 1.f;
-    if (v_mag[1] < -1.f)
-        v_mag[1] = -1.f;
-    if (v_mag[2] > 1.f)
-        v_mag[2] = 1.f;
-    if (v_mag[2] < -1.f)
-        v_mag[2] = -1.f;
+    tempf[0] = Rmat[0] * v_mag[0] + Rmat[1] * v_mag[1] + Rmat[2] * v_mag[2];
+    tempf[1] = Rmat[3] * v_mag[0] + Rmat[4] * v_mag[1] + Rmat[5] * v_mag[2];
+    tempf[2] = Rmat[6] * v_mag[0] + Rmat[7] * v_mag[1] + Rmat[8] * v_mag[2];
 
+    v_mag[0] = MAGscale[0] * (tempf[0] - MAGbias[0]) + MAGscale[1] * (tempf[1] - MAGbias[1]) + MAGscale[2] * (tempf[2] - MAGbias[2]);
+    v_mag[1] = MAGscale[3] * (tempf[0] - MAGbias[0]) + MAGscale[4] * (tempf[1] - MAGbias[1]) + MAGscale[5] * (tempf[2] - MAGbias[2]);
+    v_mag[2] = MAGscale[6] * (tempf[0] - MAGbias[0]) + MAGscale[7] * (tempf[1] - MAGbias[1]) + MAGscale[8] * (tempf[2] - MAGbias[2]);
+
+    if (v_mag[0] > 1.2f)
+        v_mag[0] = 1.2f;
+    if (v_mag[0] < -1.2f)
+        v_mag[0] = -1.2f;
+    if (v_mag[1] > 1.2f)
+        v_mag[1] = 1.2f;
+    if (v_mag[1] < -1.2f)
+        v_mag[1] = -1.2f;
+    if (v_mag[2] > 1.2f)
+        v_mag[2] = 1.2f;
+    if (v_mag[2] < -1.2f)
+        v_mag[2] = -1.2f;
 }
 
 /* FUNCTION initOrientation()
@@ -615,7 +617,7 @@ void MPU9150::MahonyAHRSupdateIMU(float dt) {
     float az = v_acc[2];
     float gx = v_gyr[0];
     float gy = v_gyr[1];
-    float gz = 0.f; // Assume zero yaw.
+    float gz = v_gyr[2]; // Assume zero yaw.
     float q0 = v_quat[0];
     float q1 = v_quat[1];
     float q2 = v_quat[2];
@@ -646,10 +648,10 @@ void MPU9150::MahonyAHRSupdateIMU(float dt) {
 
         // Compute and apply integral feedback if enabled
         if(twoKi > 0.0f) {
-            integralFBx = halfex;	// integral error scaled by Ki
-            integralFBy = halfey;
-            //integralFBz += twoKi * halfez * (1.0f / sampleFreq);
-            integralFBz = 0.0; //Preventing integral windup of yaw. This is causing problems.
+            integralFBx += twoKi * halfex * (1.0f / sampleFreq);	// integral error scaled by Ki
+            integralFBy += twoKi * halfey * (1.0f / sampleFreq);
+            integralFBz += twoKi * halfez * (1.0f / sampleFreq);
+            //integralFBz = 0.0; //Preventing integral windup of yaw. This is causing problems.
             gx += integralFBx;	// apply integral feedback
             gy += integralFBy;
             gz += integralFBz;
@@ -665,7 +667,7 @@ void MPU9150::MahonyAHRSupdateIMU(float dt) {
         gx += twoKp * halfex;
         gy += twoKp * halfey;
         //gz += twoKp * halfez;
-        gz += 0.f; //Preventing linear error buildup of yaw.
+        gz += twoKp * halfez; //Preventing linear error buildup of yaw.
     }
 
     // Integrate rate of change of quaternion
@@ -678,7 +680,7 @@ void MPU9150::MahonyAHRSupdateIMU(float dt) {
     q0 += (-qb * tempgx - qc * tempgy - q3 * tempgz) * (0.5f * dt);
     q1 += (qa * tempgx + qc * tempgz - q3 * tempgy) * (0.5f * dt);
     q2 += (qa * tempgy - qb * tempgz + q3 * tempgx) * (0.5f * dt);
-    q3 += (qa * tempgz + qb * tempgy - qc * tempgx) * (0.5f * dt);
+    q3 = 0.f; //(qa * tempgz + qb * tempgy - qc * tempgx) * (0.5f * dt);
 
     // Normalise quaternion
     recipNorm = invSqrt(q0 * q0 + q1 * q1 + q2 * q2);

@@ -8,7 +8,7 @@ main(int argc, char** argv)
     ros::NodeHandle nh;
 
     ambcap AC(nh,frequency);
-
-
+    AC.spin();
+    
     return 0;
 }

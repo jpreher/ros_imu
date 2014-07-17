@@ -284,7 +284,7 @@ bool ambcap::calibrate_gyro(imu& device) {
  */
 bool ambcap::update(imu& device) {
     double time_now = ros::Time::now().toSec();
-    float dt = (float)(time_now - device.time_last_run);
+    float dt = (time_now - device.time_last_run);
 
     device.MPU.MahonyAHRSupdateIMU(dt);
     device.data.linear_acceleration.x = device.MPU.v_acc[0];

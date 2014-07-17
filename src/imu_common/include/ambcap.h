@@ -54,7 +54,7 @@ public:
                 iscalibrated,
                 running;
 
-        float   time_last_run;
+        double  time_last_run;
 
         std::string bias_path;
 

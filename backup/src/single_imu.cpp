@@ -19,7 +19,7 @@
 #include "ros/ros.h"
 #include "ros/time.h"
 
-#include <imu_common/imu.h>
+#include <imu_comon/imu.h>
 #include "std_srvs/Empty.h"
 
 #include "std_msgs/Bool.h"
@@ -29,8 +29,8 @@ float sampleFreq = 200.0f;
 
 typedef std::shared_ptr<MPU9150> MPUptr;
 
-class imuNode {
-public:
+class imuNode 
+{public:
 	// Placeholders for the IMU classes
 	MPUptr IMU1;
 
@@ -38,6 +38,7 @@ public:
 	int numIMU;
 	int imu1_bus;
 	int imu1_addr;
+	int imu1_chan;
 	bool imu1_isvert;
 	std::string imu1_name;
 
@@ -70,9 +71,6 @@ public:
 		desired_freq_(sampleFreq),
   		rate(sampleFreq) 
   	{
-  		int temp;
-  		temp = pca9547::probe_mux();
-  		std::cout << temp << std::endl;
 
   		time_last = ros::Time::now().toSec();
 
@@ -101,6 +99,7 @@ public:
 		ros::param::get("/imu/imu1/name", imu1_name);
 		ros::param::get("/imu/imu1/bus", imu1_bus);
 		ros::param::get("/imu/imu1/addr", imu1_addr);
+		ros::param::get("/imu/imu1/chan", imu1_chan);
 		ros::param::get("/imu/imu1/bias_path", bias_path1);
 		ros::param::get("/imu/imu1/isvertical", imu1_isvert);
 
@@ -110,7 +109,7 @@ public:
 
 		// Set up the proper classes for the IMUs
 		ROS_INFO("Loading left IMU1 bias and setting up class.");
-		IMU1.reset(new MPU9150(imu1_bus, imu1_addr, imu1_biasPath, sampleFreq, imu1_isvert, true));
+		IMU1.reset(new MPU9150(imu1_bus, imu1_addr, imu1_chan, sampleFreq, imu1_isvert, true));
   	}
 
 	~imuNode()
@@ -140,7 +139,6 @@ public:
 	  		} else {
 	  			ROS_INFO("Not calibrating IMU 1, use service to calibrate.");
 	  		}
-
 
 	  		ROS_INFO("All IMU sensors initialized.");
 

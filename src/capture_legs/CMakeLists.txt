@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(imu_common)
+project(capture_legs)
 add_definitions(-std=c++0x)
+
+set(IMU_COMMON_PATH "../imu_common")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -8,24 +10,15 @@ add_definitions(-std=c++0x)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
-  message_generation
   std_msgs
-  sensor_msgs
+  std_srvs
+  imu_common
 )
 
-## Generate messages in the 'msg' folder
- add_message_files(
-   FILES
-   imu.msg
- )
-
- ## Generate added messages and services with any dependencies listed here
- generate_messages(
-   DEPENDENCIES
-   std_msgs
-   geometry_msgs
- )
-
+include_directories(
+	${IMU_COMMON_PATH}
+	${IMU_COMMON_PATH}/include
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -39,7 +32,9 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES imu_common
+  LIBRARIES capture_legs
+  CATKIN_DEPENDS roscpp rospy sensor_msgs std_msgs imu_common
+#  DEPENDS system_lib
 )
 
 ###########
@@ -48,20 +43,11 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include)
+# include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(imu_common src/MPU9150.cpp include/MPU9150.h 
-	src/BBB_I2C.cpp include/BBB_I2C.h 
-	src/quaternion_util.cpp include/quaternion_util.h
-	include/butterworth_util.h include/MPU_RegMap.h
-	include/limits.hpp include/common_assert.hpp
-  include/pca9547.h src/pca9547.cpp
-  include/ambcap.h src/ambcap.cpp)
-
-
-
-
-
+add_executable(capture_legs src/capture_legs.cpp)
+target_link_libraries(capture_legs ${catkin_LIBRARIES} imu_common)
+add_dependencies(capture_legs cap_gencpp)

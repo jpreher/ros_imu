@@ -17,15 +17,21 @@ int pca9547::probe_mux() {
 	return temp;
 }
 
-
+/* FUNCTION: select_chan(int chan)
+ * Writes to the control register of the PCA9547 mux to select current channel.
+ * @PARAM chan: integer channel 0-7 user desired to select.
+ * RETURN: Integer identifier of new mux channel selection.
+ */
 int pca9547::select_chan(int chan) {
 	chan += 8;
 	if ( !BBBI2C::writeByte( PCA9547_BBB_BUS, PCA9547_DEV_ADDR, PCA9547_CONTROL_REG, (uint8_t)chan ) )
 		return -1;
 
-	return chan;
+    return chan;
 }
 
 int pca9547::deselect_mux() {
 	return select_chan(PCA9547_DESL);
 }
+
+

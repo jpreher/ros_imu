@@ -2,7 +2,7 @@
 #ifndef MPU9150_H
 #define MPU9150_H
 
-#include "BBB_I2C.h"
+#include "pca9547.h"
 #include "MPU_RegMap.h"
 #include "butterworth_util.h"
 #include "quaternion_util.h"
@@ -25,13 +25,14 @@ private:
     ButterPtr butterY;
     ButterPtr butterZ;
 
-    uint8_t bus, devAddress;
+    uint8_t bus, devAddress, chan;
     uint8_t buffer[64]; //Data buffer for read/write operations with AHRS hardware
     float ACCbias[3];   //Bias for accelerometer
     float IMUscale[9];  //Scaling matrix for accelerometer
     float MAGbias[3];   //Bias subtracted from magnetometer reading
     float MAGscale[9];  //Scaling factors multiplied to magnetometer reading
     float Rmat[9];      //Rotation matrix applied to magnetometer
+    bool magnetometer;  
 
     float twoKp, twoKi; //Proportional and integral gains.
 
@@ -60,9 +61,10 @@ public:
     float ref_quat[4];      
     float integralFBx, integralFBy, integralFBz;
 
-    MPU9150(uint8_t bus, uint8_t address, const char *bias, float freq, bool vertical, bool magnetometer);
+    MPU9150();
+    MPU9150(uint8_t bus, uint8_t address, uint8_t chan, float freq, bool vertical, bool magnetometer);
     virtual ~MPU9150();
-    void initialize();
+    void initialize(const char *bias);
     void read6DOF();
     void read9DOF();
     void initOrientation();

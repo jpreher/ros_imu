@@ -1,0 +1,29 @@
+capture_setting: 2
+
+imu/l_shank/bus: 1
+imu/l_shank/addr: 0x68
+imu/l_shank/chan: 0
+imu/l_shank/bias_path: "/home/debian/ros_imu/bias/9a.txt"
+imu/l_shank/isvertical: true
+imu/l_shank/freq: 200
+
+imu/l_thigh/bus: 1
+imu/l_thigh/addr: 0x68
+imu/l_thigh/chan: 0
+imu/l_thigh/bias_path: "/home/debian/ros_imu/bias/9a.txt"
+imu/l_thigh/isvertical: true
+imu/l_thigh/freq: 200
+
+imu/r_shank/bus: 1
+imu/r_shank/addr: 0x68
+imu/r_shank/chan: 0
+imu/r_shank/bias_path: "/home/debian/ros_imu/bias/9a.txt"
+imu/r_shank/isvertical: true
+imu/r_shank/freq: 200
+
+imu/r_thigh/bus: 1
+imu/r_thigh/addr: 0x68
+imu/r_thigh/chan: 0
+imu/r_thigh/bias_path: "/home/debian/ros_imu/bias/9a.txt"
+imu/r_thigh/isvertical: true
+imu/r_thigh/freq: 200

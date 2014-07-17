@@ -12,6 +12,7 @@
 //                              error buildup on z axis of quaternion in 6DOF measurement cases.
 // 06/06/2014   Jake Reher      Changed accelerometer range to +/- 4 g's. 
 // 06/17/2014   Jake Reher      Added magnetometer biasing and vertical orientation capabilities.
+// 07/14/2014   Jake Reher      All functions now work thorugh the pca9547 I2C multiplexer.
 //
 //=====================================================================================================*/
 //---------------------------------------------------------------------------------------------------
@@ -24,17 +25,35 @@
 #include <fstream>
 #include <math.h>
 
+MPU9150::MPU9150(){} //Not even a constructor
+
 /* CONSTRUCTOR
  *
  */
-MPU9150::MPU9150(uint8_t bus, uint8_t address, const char *bias, float freq, bool vertical, bool magnetometer) {
+MPU9150::MPU9150(uint8_t bus, uint8_t address, uint8_t chan, float freq, bool vertical, bool magnetometer) {
     // Sets the bus, address, and bias of the IMU.
     this->bus = bus;
+    this->chan = chan;
     devAddress = address;
     sampleFreq = freq;
     this->vert_orient = vertical;
+}
 
-	// Loads the config file for the sensor and assigns the bias.
+/* DESTRUCTOR
+ *
+ */
+MPU9150::~MPU9150() {
+    //TODO destructor
+}
+
+/* FUNCTION initialize()
+ * Initialize the IMU.
+ * Sets sleep mode off. Sets accel/gyro range.
+ * Sets digital low pass filter settings.
+ * Sets the clock to the x-gyro (this was found by others online to be more reliable).
+ */
+void MPU9150::initialize(const char *bias) {
+    // Loads the config file for the sensor and assigns the bias.
     ifstream configfile;
     configfile.open(bias);
     if ( !configfile.is_open() ){
@@ -50,7 +69,7 @@ MPU9150::MPU9150(uint8_t bus, uint8_t address, const char *bias, float freq, boo
             } else if (i < 6) {
                 configfile >> ACCbias[i-3];
             }
-        	else {
+            else {
                 configfile >> IMUscale[i-6];
             }
         }
@@ -85,27 +104,14 @@ MPU9150::MPU9150(uint8_t bus, uint8_t address, const char *bias, float freq, boo
     butterY.reset(new Butter(b, a));
     butterZ.reset(new Butter(b, a));
 
-    twoKp = twoKpDef;	// 2 * proportional gain (Kp)
-    twoKi = twoKiDef;	// 2 * integral gain (Ki)
+    twoKp = twoKpDef;   // 2 * proportional gain (Kp)
+    twoKi = twoKiDef;   // 2 * integral gain (Ki)
     integralFBx = 0.0f;
     integralFBy = 0.0f;
-    integralFBz = 0.0f;	// integral error terms scaled by Ki.
-}
+    integralFBz = 0.0f; // integral error terms scaled by Ki.
 
-/* DESTRUCTOR
- *
- */
-MPU9150::~MPU9150() {
-    //TODO destructor
-}
 
-/* FUNCTION initialize()
- * Initialize the IMU.
- * Sets sleep mode off. Sets accel/gyro range.
- * Sets digital low pass filter settings.
- * Sets the clock to the x-gyro (this was found by others online to be more reliable).
- */
-void MPU9150::initialize() {
+
     setSleep(false);
 
     //Initialize the compass
@@ -128,7 +134,7 @@ void MPU9150::initialize() {
  * @PARAM enabled - If false, turn sleep mode off.
  */
 void MPU9150::setSleep(bool enabled) {
-    BBBI2C::writeBit(bus, devAddress, MPU6050_RA_PWR_MGMT_1, MPU6050_PWR1_SLEEP_BIT, enabled);
+    pca9547::writeBit(bus, chan, devAddress, MPU6050_RA_PWR_MGMT_1, MPU6050_PWR1_SLEEP_BIT, enabled);
 }
 
 /* FUNCTION setClock()
@@ -136,7 +142,7 @@ void MPU9150::setSleep(bool enabled) {
  * @PARAM source - Register id of clock source.
  */
 void MPU9150::setClock(uint8_t source) {
-    BBBI2C::writeBits(bus, devAddress, MPU6050_RA_PWR_MGMT_1, MPU6050_PWR1_CLKSEL_BIT, MPU6050_PWR1_CLKSEL_LENGTH, source);
+    pca9547::writeBits(bus, chan, devAddress, MPU6050_RA_PWR_MGMT_1, MPU6050_PWR1_CLKSEL_BIT, MPU6050_PWR1_CLKSEL_LENGTH, source);
 }
 
 /* FUNCTION setGyroRange()
@@ -144,7 +150,7 @@ void MPU9150::setClock(uint8_t source) {
  * @PARAM range - Gyro range setting.
  */
 void MPU9150::setGyroRange(uint8_t range) {
-    BBBI2C::writeBits(bus, devAddress, MPU6050_RA_GYRO_CONFIG, MPU6050_GCONFIG_FS_SEL_BIT, MPU6050_GCONFIG_FS_SEL_LENGTH, range);
+    pca9547::writeBits(bus, chan, devAddress, MPU6050_RA_GYRO_CONFIG, MPU6050_GCONFIG_FS_SEL_BIT, MPU6050_GCONFIG_FS_SEL_LENGTH, range);
     this->GYRO_CURRENT_SETTING = range;
 }
 
@@ -153,7 +159,7 @@ void MPU9150::setGyroRange(uint8_t range) {
  * @PARAM range - Accel range setting.
  */
 void MPU9150::setAccelRange(uint8_t range) {
-    BBBI2C::writeBits(bus, devAddress, MPU6050_RA_ACCEL_CONFIG, MPU6050_ACONFIG_AFS_SEL_BIT, MPU6050_ACONFIG_AFS_SEL_LENGTH, range);
+    pca9547::writeBits(bus, chan, devAddress, MPU6050_RA_ACCEL_CONFIG, MPU6050_ACONFIG_AFS_SEL_BIT, MPU6050_ACONFIG_AFS_SEL_LENGTH, range);
     this->ACCEL_CURRENT_SETTING = range;
 }
 
@@ -189,7 +195,7 @@ void MPU9150::setAccelRange(uint8_t range) {
  * @see MPU6050_CFG_DLPF_CFG_LENGTH
  */
 void MPU9150::setDLPFMode(uint8_t mode) {
-    BBBI2C::writeBits(bus, devAddress, MPU6050_RA_CONFIG, MPU6050_CFG_DLPF_CFG_BIT, MPU6050_CFG_DLPF_CFG_LENGTH, mode);
+    pca9547::writeBits(bus, chan, devAddress, MPU6050_RA_CONFIG, MPU6050_CFG_DLPF_CFG_BIT, MPU6050_CFG_DLPF_CFG_LENGTH, mode);
 }
 
 /* FUNCTION initCompass()
@@ -198,47 +204,47 @@ void MPU9150::setDLPFMode(uint8_t mode) {
  */
 void MPU9150::initCompass() {
     //Enable master I2C mode
-    BBBI2C::writeBit(bus,devAddress, MPU6050_RA_USER_CTRL, MPU6050_USERCTRL_I2C_MST_EN_BIT, 1);
+    pca9547::writeBit(bus, chan, devAddress, MPU6050_RA_USER_CTRL, MPU6050_USERCTRL_I2C_MST_EN_BIT, 1);
 
     //Slave0 is set as the magnetometer registers to be read from (0x02-0x08)
     //Slave1 is set as the magnetometer registers to be written from (used to power on/off and enable).
     //-------------------------------------------------------------------------------------------------
     //Sets the MPU9150 to wait for ext sensor data before data ready interrupt triggered.
-    BBBI2C::writeBit(bus, devAddress, MPU6050_RA_I2C_MST_CTRL, MPU6050_WAIT_FOR_ES_BIT, 1);
+    pca9547::writeBit(bus, chan, devAddress, MPU6050_RA_I2C_MST_CTRL, MPU6050_WAIT_FOR_ES_BIT, 1);
     //Sets slave0 to read.
-    BBBI2C::writeBit(bus,devAddress, MPU6050_RA_I2C_SLV0_ADDR, MPU6050_I2C_SLV_RW_BIT, 1);
+    pca9547::writeBit(bus, chan, devAddress, MPU6050_RA_I2C_SLV0_ADDR, MPU6050_I2C_SLV_RW_BIT, 1);
     //Sets slave0 to the Magnetometer I2C address (default 0x0C).
-    BBBI2C::writeBits(bus, devAddress, MPU6050_RA_I2C_SLV0_ADDR, MPU6050_I2C_SLV_ADDR_BIT, MPU6050_I2C_SLV_ADDR_LENGTH, 0x0C);
+    pca9547::writeBits(bus, chan, devAddress, MPU6050_RA_I2C_SLV0_ADDR, MPU6050_I2C_SLV_ADDR_BIT, MPU6050_I2C_SLV_ADDR_LENGTH, 0x0C);
     //Sets the start point for slave0 read (0x03 is mag_X_L)
-    BBBI2C::writeByte(bus, devAddress, MPU6050_RA_I2C_SLV0_REG, 0x02);
+    pca9547::writeByte(bus, chan, devAddress, MPU6050_RA_I2C_SLV0_REG, 0x02);
     //Sets the slave0 status to enable I2C data transaction.
-    BBBI2C::writeBit(bus, devAddress, MPU6050_RA_I2C_SLV0_CTRL, MPU6050_I2C_SLV_EN_BIT, 1);
+    pca9547::writeBit(bus, chan, devAddress, MPU6050_RA_I2C_SLV0_CTRL, MPU6050_I2C_SLV_EN_BIT, 1);
     //Specifies number of bytes to be read from magnetometer (6 - x,y,z H and L).
-    BBBI2C::writeBits(bus, devAddress, MPU6050_RA_I2C_SLV0_CTRL, MPU6050_I2C_SLV_LEN_BIT, MPU6050_I2C_SLV_LEN_LENGTH, 8);
+    pca9547::writeBits(bus, chan, devAddress, MPU6050_RA_I2C_SLV0_CTRL, MPU6050_I2C_SLV_LEN_BIT, MPU6050_I2C_SLV_LEN_LENGTH, 8);
 
     //Sets slave1 to the Magnetometer I2C address (default 0x0C).
-    BBBI2C::writeBits(bus, devAddress, MPU6050_RA_I2C_SLV1_ADDR, MPU6050_I2C_SLV_ADDR_BIT, MPU6050_I2C_SLV_ADDR_LENGTH, 0x0C);
+    pca9547::writeBits(bus, chan, devAddress, MPU6050_RA_I2C_SLV1_ADDR, MPU6050_I2C_SLV_ADDR_BIT, MPU6050_I2C_SLV_ADDR_LENGTH, 0x0C);
     //Sets slave1 to write and which register the write is to start from.
-    BBBI2C::writeBit(bus,devAddress, MPU6050_RA_I2C_SLV1_ADDR, MPU6050_I2C_SLV_RW_BIT, 0);
-    BBBI2C::writeByte(bus, devAddress, MPU6050_RA_I2C_SLV1_REG, 0x0A);
+    pca9547::writeBit(bus,chan, devAddress, MPU6050_RA_I2C_SLV1_ADDR, MPU6050_I2C_SLV_RW_BIT, 0);
+    pca9547::writeByte(bus, chan, devAddress, MPU6050_RA_I2C_SLV1_REG, 0x0A);
     //Enable and set byte length to one.
-    BBBI2C::writeBit(bus, devAddress, MPU6050_RA_I2C_SLV1_CTRL, MPU6050_I2C_SLV_EN_BIT, 1);
-    BBBI2C::writeBits(bus, devAddress, MPU6050_RA_I2C_SLV1_CTRL, MPU6050_I2C_SLV_LEN_BIT, MPU6050_I2C_SLV_LEN_LENGTH, 1);
+    pca9547::writeBit(bus, chan, devAddress, MPU6050_RA_I2C_SLV1_CTRL, MPU6050_I2C_SLV_EN_BIT, 1);
+    pca9547::writeBits(bus, chan, devAddress, MPU6050_RA_I2C_SLV1_CTRL, MPU6050_I2C_SLV_LEN_BIT, MPU6050_I2C_SLV_LEN_LENGTH, 1);
     //Populate the container register for slave write (0x64) with enable command.
-    BBBI2C::writeByte(bus, devAddress, MPU6050_RA_I2C_SLV1_DO, 0x01);
+    pca9547::writeByte(bus, chan, devAddress, MPU6050_RA_I2C_SLV1_DO, 0x01);
 
     //Specify slave0 and slave1 as having a delay rate.
-    BBBI2C::writeBits(bus, devAddress, MPU6050_RA_I2C_MST_DELAY_CTRL, MPU6050_DELAYCTRL_I2C_SLV1_DLY_EN_BIT, 2, 0x03);
+    pca9547::writeBits(bus, chan, devAddress, MPU6050_RA_I2C_MST_DELAY_CTRL, MPU6050_DELAYCTRL_I2C_SLV1_DLY_EN_BIT, 2, 0x03);
     //Specify master I2C delay.
-    BBBI2C::writeBits(bus, devAddress, MPU6050_RA_I2C_SLV4_CTRL, 4, 5, 0x04);
+    pca9547::writeBits(bus, chan, devAddress, MPU6050_RA_I2C_SLV4_CTRL, 4, 5, 0x04);
     //Clear write container.
-    BBBI2C::writeByte(bus, devAddress, MPU6050_RA_I2C_SLV1_DO, 0x01);
+    pca9547::writeByte(bus, chan, devAddress, MPU6050_RA_I2C_SLV1_DO, 0x01);
     //Reset user settings
-    BBBI2C::writeByte(bus,devAddress, MPU6050_RA_USER_CTRL, 0x00);
+    pca9547::writeByte(bus,chan, devAddress, MPU6050_RA_USER_CTRL, 0x00);
     //Populate write container.
-    BBBI2C::writeByte(bus, devAddress, MPU6050_RA_I2C_SLV1_DO, 0x01);
+    pca9547::writeByte(bus, chan, devAddress, MPU6050_RA_I2C_SLV1_DO, 0x01);
     //Enable master I2C mode
-    BBBI2C::writeBit(bus,devAddress, MPU6050_RA_USER_CTRL, MPU6050_USERCTRL_I2C_MST_EN_BIT, 1);
+    pca9547::writeBit(bus,chan, devAddress, MPU6050_RA_USER_CTRL, MPU6050_USERCTRL_I2C_MST_EN_BIT, 1);
 
     ////////////TODO: add unittest code for checking if compass working properly
 }
@@ -251,7 +257,7 @@ void MPU9150::read6DOF() {
     float tempf[3];
     int16_t tempi[6];
 
-    BBBI2C::readBytes(bus, devAddress, MPU6050_RA_ACCEL_XOUT_H, 14, buffer);
+    pca9547::readBytes(bus, chan, devAddress, MPU6050_RA_ACCEL_XOUT_H, 14, buffer);
     tempi[0] = ((int16_t)buffer[0]) << 8 | buffer[1];
     tempi[1] = ((int16_t)buffer[2]) << 8 | buffer[3];
     tempi[2] = ((int16_t)buffer[4]) << 8 | buffer[5];
@@ -388,7 +394,7 @@ void MPU9150::read9DOF() {
     read6DOF();
 
     //Read 6 bytes from the magnetometer.
-    BBBI2C::readBytes(bus, devAddress, MPU9150_RA_MAG_XOUT_L, 6, buffer);
+    pca9547::readBytes(bus, chan, devAddress, MPU9150_RA_MAG_XOUT_L, 6, buffer);
     int16_t tempi[3];
 
     //Output the magnetometer readings.

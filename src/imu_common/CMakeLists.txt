@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Generate messages in the 'msg' folder
  add_message_files(
+   DIRECTORY msg
    FILES
    imu.msg
  )
@@ -60,6 +61,8 @@ add_library(imu_common src/MPU9150.cpp include/MPU9150.h
 	include/limits.hpp include/common_assert.hpp
   include/pca9547.h src/pca9547.cpp
   include/ambcap.h src/ambcap.cpp)
+
+add_dependencies(imu_common imu_common_gencpp)
 
 
 

@@ -1,8 +1,36 @@
+/*=====================================================================================================
+// AMBCAP tools to enable easy configurability of reading from and number of imu devices in ROS.
+//=====================================================================================================
+//
+// ROS class with objects and functionality to easily collect data from IMU's on the BBB.
+//
+// Date         Author          Notes
+// 07/15/2014   Jake Reher      Initial Release
+//
+//=====================================================================================================*/
+//---------------------------------------------------------------------------------------------------
+
 #include "ambcap.h"
 
+/* CONSTRUCTOR ambcap(ros::NodeHandle nh, int freq)
+ * Assigns the node handle to the class. Initializes with provided frequency.
+ *  First assigns all devices to uncalibrated. Loads in desired capture setting.
+ *  Finally initializes all device objects corresponding to the capture setting.
+ * @PARAM nh - Node handle of ROS node using AMBCAP.
+ * @PARAM freq - User selected frequency, used in ros::rate timer.
+ */
 ambcap::ambcap(ros::NodeHandle nh, int freq): rate((float)freq) {
     frequency = freq;
     node_handle_ = nh;
+
+    L_foot.iscalibrated = false;
+    L_shank.iscalibrated = false;
+    L_thigh.iscalibrated = false;
+    R_foot.iscalibrated = false;
+    R_shank.iscalibrated = false;
+    R_thigh.iscalibrated = false;
+    Torso.iscalibrated = false;
+    Single.iscalibrated = false;
 
     //Settings options.
     // 0: Full body
@@ -14,6 +42,11 @@ ambcap::ambcap(ros::NodeHandle nh, int freq): rate((float)freq) {
     setting_select();
 }
 
+/* FUNCTION spin()
+ * Main while loop of AMBCAP.
+ * Checks calibration, if OK it updates and publishes and enabled
+ *  devices and then spins ROS.
+ */
 bool ambcap::spin() {
     while(!ros::isShuttingDown()) {
         while(node_handle_.ok()) {
@@ -25,6 +58,9 @@ bool ambcap::spin() {
     }
 }
 
+/* FUNCTION readBit()
+ * Uses user defined setting to establish appropriate IMU objects
+ */
 bool ambcap::setting_select() {
     switch(setting) {
     case 0:
@@ -56,6 +92,8 @@ bool ambcap::setting_select() {
         Torso.imu_location = ambcap::torso;
         Torso.frequency = frequency;
         initialize(node_handle_, Torso);
+
+        Single.running = false;
         break;
     case 1:
         ROS_INFO("Setting up objects for Full Legs Capture");
@@ -82,6 +120,9 @@ bool ambcap::setting_select() {
         R_thigh.imu_location = ambcap::r_thigh;
         R_thigh.frequency = frequency;
         initialize(node_handle_, R_thigh);
+
+        Torso.running = false;
+        Single.running = false;
         break;
     case 2:
         ROS_INFO("Setting up objects for Under-Actuated Legs Capture");
@@ -100,6 +141,11 @@ bool ambcap::setting_select() {
         R_thigh.imu_location = ambcap::r_thigh;
         R_thigh.frequency = frequency;
         initialize(node_handle_, R_thigh);
+
+        L_foot.running = false;
+        R_foot.running = false;
+        Torso.running = false;
+        Single.running = false;
         break;
     case 3:
         ROS_INFO("Setting up objects for Prosthetic IMUs");
@@ -118,18 +164,37 @@ bool ambcap::setting_select() {
         R_thigh.imu_location = ambcap::r_thigh;
         R_thigh.frequency = frequency;
         initialize(node_handle_, R_thigh);
+
+        L_foot.running = false;
+        L_shank.running = false;
+        Torso.running = false;
+        Single.running = false;
         break;
     case 4:
         ROS_INFO("Setting up objects for single IMU");
         Single.imu_location = ambcap::single;
         Single.frequency = frequency;
         initialize(node_handle_, Single);
+
+        L_foot.running = false;
+        L_shank.running = false;
+        L_thigh.running = false;
+        R_foot.running = false;
+        R_shank.running = false;
+        R_thigh.running = false;
+        Torso.running = false;
+        break;
     default:
         ROS_INFO("NO VALID USER SETTINGS FOR CAPTURE TYPE!");
         exit(1);
     }
 }
 
+/* FUNCTION initialize(ros::NodeHandle& nh, imu& device)
+ * Initializes provided imu object and starts the associated ros services on the node.
+ * @PARAM nh - Node handle that the ROS services will be assosciated to.
+ * @PARAM device - IMU device which will be initialized.
+ */
 bool ambcap::initialize(ros::NodeHandle& nh, imu& device) {
     std::string param_base_path = "/imu/";
     std::string param_device;
@@ -165,6 +230,7 @@ bool ambcap::initialize(ros::NodeHandle& nh, imu& device) {
     MPU9150 tempMPU(device.bus, device.addr, device.chan, device.frequency, device.isvertical, false);
     device.MPU = tempMPU;
     device.MPU.initialize(temppath);
+    ROS_INFO("%s initialized on bus %d, chan %d, address %d", param_device.c_str(), device.bus, device.chan, device.addr);
     device.iscalibrated = false;
     device.time_last_run = ros::Time::now().toSec();
 
@@ -177,6 +243,10 @@ bool ambcap::initialize(ros::NodeHandle& nh, imu& device) {
     return true;
 }
 
+/* FUNCTION calibrate_gyro(imu& device)
+ * Calibrates the gyroscope on the provided IMU device.
+ * @PARAM device - IMU object which will be calibrated.
+ */
 bool ambcap::calibrate_gyro(imu& device) {
     float tempx = 0.f;
     float tempy = 0.f;
@@ -188,6 +258,7 @@ bool ambcap::calibrate_gyro(imu& device) {
         tempx += device.MPU.v_gyr[0];
         tempy += device.MPU.v_gyr[1];
         tempz += device.MPU.v_gyr[2];
+        usleep(100);
     }
 
     if ( device.isvertical ) {
@@ -207,6 +278,10 @@ bool ambcap::calibrate_gyro(imu& device) {
     return true;
 }
 
+/* FUNCTION update(imu& device)
+ * Read values from the imu device hardware.
+ * @PARAM device - IMU object which will be populated with hardware readings.
+ */
 bool ambcap::update(imu& device) {
     double time_now = ros::Time::now().toSec();
     float dt = (float)(time_now - device.time_last_run);
@@ -238,10 +313,17 @@ bool ambcap::update(imu& device) {
     return true;
 }
 
+/* FUNCTION publish(imu& device)
+ * Publish current stored values in IMU object.
+ * @PARAM device - IMU object which will publish values to its assigned node.
+ */
 bool ambcap::publish(imu& device) {
     device.data_pub_.publish(device.data);
 }
 
+/* FUNCTION publishRunning()
+ * Checks all devices for running status, updates then publishes in that order.
+ */
 bool ambcap::publishRunning() {
     //Update all running components first
     if ( L_foot.running )
@@ -282,6 +364,10 @@ bool ambcap::publishRunning() {
     return true;
 }
 
+/* FUNCTION checkCalibration()
+ * Checks all possible devices for running status and calibration status.
+ * If running and not calibrated sends object to calibrate_gyro function.
+ */
 bool ambcap::checkCalibration() {
     if ( !L_foot.iscalibrated && L_foot.running )
         calibrate_gyro(L_foot);

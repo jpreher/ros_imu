@@ -6,6 +6,7 @@
 //
 // Date			Author			Notes
 // 02/10/2014 	Jake Reher		Initial Release
+// 07/15/2014   Jake Reher      Patched I2C write function
 //
 //=====================================================================================================*/
 //---------------------------------------------------------------------------------------------------
@@ -183,6 +184,7 @@ bool BBBI2C::writeByte(uint8_t bus, uint8_t devAddress, uint8_t regAddress, uint
         printf("Failed to write to I2C Device at address %d.\n", devAddress);
         return false;
     }
+    close(file);
 
     return true;
 }

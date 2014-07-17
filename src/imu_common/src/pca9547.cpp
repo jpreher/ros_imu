@@ -1,5 +1,18 @@
+/*=====================================================================================================
+// I2C Tools overlay to enable channel switching for the PCA9547 mux.
+//=====================================================================================================
+//
+// Set of tools for to utilize the I2C interface of BBB.
+//
+// Date         Author          Notes
+// 07/15/2014   Jake Reher      Initial Release
+//
+//=====================================================================================================*/
+//---------------------------------------------------------------------------------------------------
+
 #include "pca9547.h"
 
+// Not even a constructor
 pca9547::pca9547() {
 }
 
@@ -30,6 +43,10 @@ int pca9547::select_chan(int chan) {
     return chan;
 }
 
+/* FUNCTION: deselect_mux(int chan)
+ * Writes to the control register of the PCA9547 mux to switch to disable mode.
+ * RETURN: Integer identifier of new mux channel selection (should be PCA9547_DESL = 0x00).
+ */
 int pca9547::deselect_mux() {
 	return select_chan(PCA9547_DESL);
 }

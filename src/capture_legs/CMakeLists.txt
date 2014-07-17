@@ -31,7 +31,7 @@ include_directories(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 
 catkin_package(
-  INCLUDE_DIRS include
+#  INCLUDE_DIRS include
   LIBRARIES capture_legs
   CATKIN_DEPENDS roscpp rospy sensor_msgs std_msgs imu_common
 #  DEPENDS system_lib

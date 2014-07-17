@@ -34,8 +34,8 @@ MPU9150::MPU9150(uint8_t bus, uint8_t address, uint8_t chan, float freq, bool ve
     // Sets the bus, address, and bias of the IMU.
     this->bus = bus;
     this->chan = chan;
-    devAddress = address;
-    sampleFreq = freq;
+    this->devAddress = address;
+    this->sampleFreq = freq;
     this->vert_orient = vertical;
 }
 

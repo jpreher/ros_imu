@@ -1,3 +1,15 @@
+/*=====================================================================================================
+// AMBCAP tools to enable easy configurability of reading from and number of imu devices in ROS.
+//=====================================================================================================
+//
+// ROS class with objects and functionality to easily collect data from IMU's on the BBB.
+//
+// Date         Author          Notes
+// 07/15/2014   Jake Reher      Initial Release
+//
+//=====================================================================================================*/
+//---------------------------------------------------------------------------------------------------
+
 #ifndef AMBCAP_H
 #define AMBCAP_H
 

@@ -15,7 +15,7 @@
 
 #include "BBB_I2C.h"
 
-#define PCA9547_BBB_BUS		1
+#define PCA9547_BBB_BUS		2
 #define PCA9547_DEV_ADDR 	0x70
 #define PCA9547_CONTROL_REG 0x04
 #define PCA9547_CURRENT_REG	0x00

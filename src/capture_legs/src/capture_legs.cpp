@@ -12,7 +12,7 @@
 
 #include "ambcap.h"
 
-int frequency = 200;
+int frequency = 150;
 
 main(int argc, char** argv)
 {

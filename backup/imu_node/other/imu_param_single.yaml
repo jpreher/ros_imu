@@ -1,6 +1,0 @@
-
-imu/name: 'test_imu'
-imu/bus: 1
-imu/addr: 0x69
-imu/bias_path: '/home/debian/catkin_ws/src/imu_node/bias.txt'
-imu/isvertical: false

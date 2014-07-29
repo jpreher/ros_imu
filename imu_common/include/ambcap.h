@@ -21,6 +21,7 @@
 #include "imu_common/imu.h"
 #include "std_srvs/Empty.h"
 #include "std_msgs/Bool.h"
+#include "quaternion_util.h"
 
 class ambcap {
 
@@ -52,23 +53,39 @@ public:
         bool    isvertical,
                 isinitalized,
                 iscalibrated,
+                doPR,
+                doYaw,
                 running;
 
         double  time_last_run;
+
+        float   q_sensor_cal[4];
 
         std::string bias_path;
 
         ros::Publisher      data_pub_;
         ros::ServiceServer  calibrate_serv_;
+        ros::ServiceServer  pitch_roll_ref_;
+        ros::ServiceServer  yaw_ref_;
         imu_common::imu     data;
+
+        bool initialize(ros::NodeHandle& nh);
+        void check_cal();
+        bool calibrate_gyro();
+        void pitch_roll_ref();
+        void yaw_ref();
+        bool cal_gyr(std_srvs::Empty::Request  &req,
+                     std_srvs::Empty::Response &resp);
+        bool pitch_roll_serv(std_srvs::Empty::Request  &req,
+                             std_srvs::Empty::Response &resp);
+        bool yaw_serv(std_srvs::Empty::Request  &req,
+                      std_srvs::Empty::Response &resp);
     };
 
     bool setting_select();
     bool spin();
     bool publishRunning();
     bool checkCalibration();
-    static bool initialize(ros::NodeHandle& nh, imu& device);
-    static bool calibrate_gyro(imu& device);
     static bool update(imu& device);
     static bool publish(imu& device);
 

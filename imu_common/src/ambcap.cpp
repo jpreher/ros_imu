@@ -67,31 +67,31 @@ bool ambcap::setting_select() {
         ROS_INFO("Setting up objects for Full Body Capture");
         L_foot.imu_location = ambcap::l_foot;
         L_foot.frequency = frequency;
-        initialize(node_handle_, L_foot);
+        L_foot.initialize(node_handle_);
 
         L_shank.imu_location = ambcap::l_shank;
         L_shank.frequency = frequency;
-        initialize(node_handle_, L_shank);
+        L_shank.initialize(node_handle_);
 
         L_thigh.imu_location = ambcap::l_thigh;
         L_thigh.frequency = frequency;
-        initialize(node_handle_, L_thigh);
+        L_thigh.initialize(node_handle_);
 
         R_foot.imu_location = ambcap::r_foot;
         R_foot.frequency = frequency;
-        initialize(node_handle_, R_foot);
+        R_foot.initialize(node_handle_);
 
         R_shank.imu_location = ambcap::r_shank;
         R_shank.frequency = frequency;
-        initialize(node_handle_, R_shank);
+        R_shank.initialize(node_handle_);
 
         R_thigh.imu_location = ambcap::r_thigh;
         R_thigh.frequency = frequency;
-        initialize(node_handle_, R_thigh);
+        R_thigh.initialize(node_handle_);
 
         Torso.imu_location = ambcap::torso;
         Torso.frequency = frequency;
-        initialize(node_handle_, Torso);
+        Torso.initialize(node_handle_);
 
         Single.running = false;
         break;
@@ -99,27 +99,27 @@ bool ambcap::setting_select() {
         ROS_INFO("Setting up objects for Full Legs Capture");
         L_foot.imu_location = ambcap::l_foot;
         L_foot.frequency = frequency;
-        initialize(node_handle_, L_foot);
+        L_foot.initialize(node_handle_);
 
         L_shank.imu_location = ambcap::l_shank;
         L_shank.frequency = frequency;
-        initialize(node_handle_, L_shank);
+        L_shank.initialize(node_handle_);
 
         L_thigh.imu_location = ambcap::l_thigh;
         L_thigh.frequency = frequency;
-        initialize(node_handle_, L_thigh);
+        L_thigh.initialize(node_handle_);
 
         R_foot.imu_location = ambcap::r_foot;
         R_foot.frequency = frequency;
-        initialize(node_handle_, R_foot);
+        R_foot.initialize(node_handle_);
 
         R_shank.imu_location = ambcap::r_shank;
         R_shank.frequency = frequency;
-        initialize(node_handle_, R_shank);
+        R_shank.initialize(node_handle_);
 
         R_thigh.imu_location = ambcap::r_thigh;
         R_thigh.frequency = frequency;
-        initialize(node_handle_, R_thigh);
+        R_thigh.initialize(node_handle_);
 
         Torso.running = false;
         Single.running = false;
@@ -128,19 +128,19 @@ bool ambcap::setting_select() {
         ROS_INFO("Setting up objects for Under-Actuated Legs Capture");
         L_shank.imu_location = ambcap::l_shank;
         L_shank.frequency = frequency;
-        initialize(node_handle_, L_shank);
+        L_shank.initialize(node_handle_);
 
         L_thigh.imu_location = ambcap::l_thigh;
         L_thigh.frequency = frequency;
-        initialize(node_handle_, L_thigh);
+        L_thigh.initialize(node_handle_);
 
         R_shank.imu_location = ambcap::r_shank;
         R_shank.frequency = frequency;
-        initialize(node_handle_, R_shank);
+        R_shank.initialize(node_handle_);
 
         R_thigh.imu_location = ambcap::r_thigh;
         R_thigh.frequency = frequency;
-        initialize(node_handle_, R_thigh);
+        R_thigh.initialize(node_handle_);
 
         L_foot.running = false;
         R_foot.running = false;
@@ -151,19 +151,19 @@ bool ambcap::setting_select() {
         ROS_INFO("Setting up objects for Prosthetic IMUs");
         L_thigh.imu_location = ambcap::l_thigh;
         L_thigh.frequency = frequency;
-        initialize(node_handle_, L_thigh);
+        L_thigh.initialize(node_handle_);
 
         R_foot.imu_location = ambcap::r_foot;
         R_foot.frequency = frequency;
-        initialize(node_handle_, R_foot);
+        R_foot.initialize(node_handle_);
 
         R_shank.imu_location = ambcap::r_shank;
         R_shank.frequency = frequency;
-        initialize(node_handle_, R_shank);
+        R_shank.initialize(node_handle_);
 
         R_thigh.imu_location = ambcap::r_thigh;
         R_thigh.frequency = frequency;
-        initialize(node_handle_, R_thigh);
+        R_thigh.initialize(node_handle_);
 
         L_foot.running = false;
         L_shank.running = false;
@@ -174,7 +174,7 @@ bool ambcap::setting_select() {
         ROS_INFO("Setting up objects for single IMU");
         Single.imu_location = ambcap::single;
         Single.frequency = frequency;
-        initialize(node_handle_, Single);
+        Single.initialize(node_handle_);
 
         L_foot.running = false;
         L_shank.running = false;
@@ -195,86 +195,90 @@ bool ambcap::setting_select() {
  * @PARAM nh - Node handle that the ROS services will be assosciated to.
  * @PARAM device - IMU device which will be initialized.
  */
-bool ambcap::initialize(ros::NodeHandle& nh, imu& device) {
+bool ambcap::imu::initialize(ros::NodeHandle& nh) {
     std::string param_base_path = "/imu/";
     std::string param_device;
     //Address the imu to the proper parameters on the parameter server.
-    if ( device.imu_location == l_foot )
+    if ( imu_location == l_foot ) {
         param_device = "l_foot";
-    if ( device.imu_location == l_shank )
+        calibrate_serv_ = nh.advertiseService("l_foot_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("l_foot_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("l_foot_yaw", &ambcap::imu::yaw_serv, this);
+    }
+    if ( imu_location == l_shank ) {
         param_device = "l_shank";
-    if ( device.imu_location == l_thigh )
+        calibrate_serv_ = nh.advertiseService("l_shank_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("l_shank_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("l_shank_yaw", &ambcap::imu::yaw_serv, this);
+    }
+    if ( imu_location == l_thigh ) {
         param_device = "l_thigh";
-    if ( device.imu_location == r_foot )
+        calibrate_serv_ = nh.advertiseService("l_thigh_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("l_thigh_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("l_thigh_yaw", &ambcap::imu::yaw_serv, this);
+    }
+    if ( imu_location == r_foot ) {
         param_device = "r_foot";
-    if ( device.imu_location == r_shank )
+        calibrate_serv_ = nh.advertiseService("r_foot_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("r_foot_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("r_foot_yaw", &ambcap::imu::yaw_serv, this);
+    }
+    if ( imu_location == r_shank ) {
         param_device = "r_shank";
-    if ( device.imu_location == r_thigh )
+        calibrate_serv_ = nh.advertiseService("r_shank_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("r_shank_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("r_shakn_yaw", &ambcap::imu::yaw_serv, this);
+    }
+    if ( imu_location == r_thigh ) {
         param_device = "r_thigh";
-    if ( device.imu_location == torso )
+        calibrate_serv_ = nh.advertiseService("r_thigh_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("r_thigh_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("r_thigh_yaw", &ambcap::imu::yaw_serv, this);
+    }
+    if ( imu_location == torso ) {
         param_device = "torso";
-    if ( device.imu_location == single )
+        calibrate_serv_ = nh.advertiseService("torso_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("torso_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("torso_yaw", &ambcap::imu::yaw_serv, this);
+    }
+    if ( imu_location == single ) {
         param_device = "single";
+        calibrate_serv_ = nh.advertiseService("single_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("single_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("single_yaw", &ambcap::imu::yaw_serv, this);
+    }
+
+    q_sensor_cal[0] = 1.f;
+    q_sensor_cal[1] = 0.f;
+    q_sensor_cal[2] = 0.f;
+    q_sensor_cal[3] = 0.f;
 
     //Load in the parameters and assign them to the struct.
     param_base_path += param_device;
-    ros::param::get(param_base_path + "/bus", device.bus);
-    ros::param::get(param_base_path + "/addr", device.addr);
-    ros::param::get(param_base_path + "/chan", device.chan);
-    ros::param::get(param_base_path + "/bias_path", device.bias_path);
-    ros::param::get(param_base_path + "/isvertical", device.isvertical);
-    ros::param::get(param_base_path + "/freq", device.frequency);
+    ros::param::get(param_base_path + "/bus", bus);
+    ros::param::get(param_base_path + "/addr", addr);
+    ros::param::get(param_base_path + "/chan", chan);
+    ros::param::get(param_base_path + "/bias_path", bias_path);
+    ros::param::get(param_base_path + "/isvertical", isvertical);
+    ros::param::get(param_base_path + "/freq", frequency);
 
     //Copy contents of newly established MPU9150 object to the device.
-    const char* temppath = device.bias_path.c_str();
-    MPU9150 tempMPU(device.bus, device.addr, device.chan, device.frequency, device.isvertical, false);
-    device.MPU = tempMPU;
-    device.MPU.initialize(temppath);
-    ROS_INFO("%s initialized on bus %d, chan %d, address %d", param_device.c_str(), device.bus, device.chan, device.addr);
-    device.iscalibrated = false;
-    device.time_last_run = ros::Time::now().toSec();
+    const char* temppath = bias_path.c_str();
+    MPU9150 tempMPU(bus, addr, chan, frequency, isvertical, false);
+    MPU = tempMPU;
+    MPU.initialize(temppath);
+    ROS_INFO("%s initialized on bus %d, chan %d, address %d", param_device.c_str(), bus, chan, addr);
+    iscalibrated = false;
+    doPR = false;
+    doYaw = false;
+    time_last_run = ros::Time::now().toSec();
 
     //Set up the publisher and servicer.
-    device.data_pub_ = nh.advertise<imu_common::imu>(param_device, device.frequency);
+    data_pub_ = nh.advertise<imu_common::imu>(param_device, frequency);
     //device.calibrate_serv_ = nh.advertiseService("calibrate_" + param_device, device.calibrate_callback);
 
-    calibrate_gyro(device);
-    device.running = true;
-    return true;
-}
-
-/* FUNCTION calibrate_gyro(imu& device)
- * Calibrates the gyroscope on the provided IMU device.
- * @PARAM device - IMU object which will be calibrated.
- */
-bool ambcap::calibrate_gyro(imu& device) {
-    float tempx = 0.f;
-    float tempy = 0.f;
-    float tempz = 0.f;
-
-    //Take 500 readings and average the values.
-    for ( int i=0; i<500; i++ ) {
-        device.MPU.read6DOF();
-        tempx += device.MPU.v_gyr[0];
-        tempy += device.MPU.v_gyr[1];
-        tempz += device.MPU.v_gyr[2];
-        usleep(100);
-    }
-
-    if ( device.isvertical ) {
-        //If the imu is vertical exchange x and z
-        device.MPU.GYRbias[0] += tempz / 500.0f;
-        device.MPU.GYRbias[2] -= tempx / 500.0f;
-    } else {
-        //Otherwise just average
-        device.MPU.GYRbias[0] += tempx / 500.0f;
-        device.MPU.GYRbias[2] += tempz / 500.0f;
-    }
-    //Y axis does not change.
-    device.MPU.GYRbias[1] += tempy / 500.0f;
-
-    ROS_INFO("Finished Calibration with offsets %f, %f", tempx/500.f, tempz/500.f);
-    device.iscalibrated = true;
+    calibrate_gyro();
+    running = true;
     return true;
 }
 
@@ -304,9 +308,10 @@ bool ambcap::update(imu& device) {
     device.data.orientation.y = device.MPU.v_quat[2];
     device.data.orientation.z = device.MPU.v_quat[3];
 
-    device.data.integralE.x = device.MPU.integralFBx;
-    device.data.integralE.y = device.MPU.integralFBy;
-    device.data.integralE.z = device.MPU.integralFBz;
+    device.data.orientation_REF.w = device.q_sensor_cal[0];
+    device.data.orientation_REF.x = device.q_sensor_cal[1];
+    device.data.orientation_REF.y = device.q_sensor_cal[2];
+    device.data.orientation_REF.z = device.q_sensor_cal[3];
 
     device.data.header.stamp = ros::Time::now();
     device.time_last_run = time_now;
@@ -369,20 +374,158 @@ bool ambcap::publishRunning() {
  * If running and not calibrated sends object to calibrate_gyro function.
  */
 bool ambcap::checkCalibration() {
-    if ( !L_foot.iscalibrated && L_foot.running )
-        calibrate_gyro(L_foot);
-    if ( !L_shank.iscalibrated && L_shank.running )
-        calibrate_gyro(L_shank);
-    if ( !L_thigh.iscalibrated && L_thigh.running )
-        calibrate_gyro(L_thigh);
-    if ( !R_foot.iscalibrated && R_foot.running )
-        calibrate_gyro(R_foot);
-    if ( !R_shank.iscalibrated && R_shank.running )
-        calibrate_gyro(R_shank);
-    if ( !R_thigh.iscalibrated && R_thigh.running )
-        calibrate_gyro(R_thigh);
-    if ( !Torso.iscalibrated && Torso.running )
-        calibrate_gyro(Torso);
-    if ( !Single.iscalibrated && Single.running )
-        calibrate_gyro(Single);
+    if ( L_foot.running )
+        L_foot.check_cal();
+    if ( L_shank.running )
+        L_shank.check_cal();
+    if ( L_thigh.running )
+        L_thigh.check_cal();
+    if ( R_foot.running )
+        R_foot.check_cal();
+    if ( R_shank.running )
+        R_shank.check_cal();
+    if ( R_thigh.running )
+        R_thigh.check_cal();
+    if ( Torso.running )
+        Torso.check_cal();
+    if ( Single.running )
+        Single.check_cal();
 }
+
+void ambcap::imu::check_cal() {
+    if ( !iscalibrated )
+        calibrate_gyro();
+    if ( doPR )
+        pitch_roll_ref();
+    if ( doYaw )
+        yaw_ref();
+}
+
+/* FUNCTION calibrate_gyro(imu& device)
+ * Calibrates the gyroscope on the provided IMU device.
+ * @PARAM device - IMU object which will be calibrated.
+ */
+bool ambcap::imu::calibrate_gyro() {
+    float tempx = 0.f;
+    float tempy = 0.f;
+    float tempz = 0.f;
+
+    //Take 500 readings and average the values.
+    for ( int i=0; i<500; i++ ) {
+        MPU.read6DOF();
+        tempx += MPU.v_gyr[0];
+        tempy += MPU.v_gyr[1];
+        tempz += MPU.v_gyr[2];
+        usleep(100);
+    }
+
+    if ( isvertical ) {
+        //If the imu is vertical exchange x and z
+        MPU.GYRbias[0] += tempz / 500.0f;
+        MPU.GYRbias[2] -= tempx / 500.0f;
+    } else {
+        //Otherwise just average
+        MPU.GYRbias[0] += tempx / 500.0f;
+        MPU.GYRbias[2] += tempz / 500.0f;
+    }
+    //Y axis does not change.
+    MPU.GYRbias[1] += tempy / 500.0f;
+
+    ROS_INFO("Finished Calibration with offsets %f, %f", tempx/500.f, tempz/500.f);
+    iscalibrated = true;
+    return true;
+}
+
+void ambcap::imu::pitch_roll_ref() {
+    float q_ref[4];
+    q_ref[0] = 1.f;
+    q_ref[1] = 0.f;
+    q_ref[2] = 0.f;
+    q_ref[3] = 0.f;
+
+    MPU.MahonyAHRSupdateIMU();
+    quat::inv(MPU.v_quat, q_sensor_cal);
+    quat::prod(q_sensor_cal, q_ref, q_sensor_cal);
+    ROS_INFO("Sensor Initialized at %f, %f, %f, %f", q_sensor_cal[0], q_sensor_cal[1], q_sensor_cal[2], q_sensor_cal[3]);
+    doPR = false;
+}
+
+void ambcap::imu::yaw_ref() {
+    float fixed_vel_x[1000], fixed_vel_y[1000], fixed_vel_z[1000];
+    float norm_fixed[1000];
+    float pin_velocity_y[1000];
+    float theta[1000];
+    float yaw;
+    float numerator, denominator;
+    float temp[3], sign, temp_q[4];
+    ROS_INFO("Started capturing movement, swing leg foreward and back");
+
+    for (int i=0; i<1000; i++) {
+        MPU.MahonyAHRSupdateIMU();
+        temp[0] = MPU.v_gyr[0];
+        temp[1] = MPU.v_gyr[1];
+        temp[2] = MPU.v_gyr[2];
+        quat::rotateVec(temp, q_sensor_cal, temp);
+        fixed_vel_x[i] = temp[0];
+        fixed_vel_y[i] = temp[1];
+        fixed_vel_z[i] = temp[2];
+
+        norm_fixed[i] = sqrt(fixed_vel_x[i]*fixed_vel_x[i] + fixed_vel_y[i]*fixed_vel_y[i]);
+        sign = copysignf(1.f, temp[1]);
+        pin_velocity_y[i] = sign * sqrt(fixed_vel_x[i]*fixed_vel_x[i] + fixed_vel_y[i]*fixed_vel_y[i] + fixed_vel_z[i]*fixed_vel_z[i]);
+        temp[0] = fixed_vel_x[i] * pin_velocity_y[i];
+        sign = copysignf(1.0, temp[0]);
+        theta[i] = sign * acos((fixed_vel_y[i] * pin_velocity_y[i]) / (norm_fixed[i] * fabs(pin_velocity_y[i])));
+        usleep(5000);
+    }
+
+    numerator = 0.f;
+    denominator = 0.f;
+    for (int i=0; i<1000; i++) {
+        numerator += norm_fixed[i] * theta[i];
+        denominator += norm_fixed[i];
+    }
+    yaw = numerator / denominator;
+    ROS_INFO("Yaw angle found as %f", yaw);
+
+    temp[0] = 0.f;
+    temp[1] = 0.f;
+    temp[2] = yaw;
+
+    quat::euler2quatXYZ(temp, temp_q);
+    quat::inv(temp_q, temp_q);
+    quat::prod(temp_q, q_sensor_cal, q_sensor_cal);
+    ROS_INFO("Sensor Initialized at %f, %f, %f, %f", q_sensor_cal[0], q_sensor_cal[1], q_sensor_cal[2], q_sensor_cal[3]);
+
+    doYaw = false;
+}
+
+bool ambcap::imu::cal_gyr(std_srvs::Empty::Request &req, std_srvs::Empty::Response &resp) {
+    iscalibrated = false;
+    return true;
+}
+
+bool ambcap::imu::pitch_roll_serv(std_srvs::Empty::Request &req, std_srvs::Empty::Response &resp) {
+    doPR = true;
+    return true;
+}
+
+bool ambcap::imu::yaw_serv(std_srvs::Empty::Request &req, std_srvs::Empty::Response &resp) {
+    doYaw = true;
+    return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

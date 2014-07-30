@@ -686,7 +686,7 @@ void MPU9150::MahonyAHRSupdateIMU(float dt) {
     q0 += (-qb * tempgx - qc * tempgy - q3 * tempgz) * (0.5f * dt);
     q1 += (qa * tempgx + qc * tempgz - q3 * tempgy) * (0.5f * dt);
     q2 += (qa * tempgy - qb * tempgz + q3 * tempgx) * (0.5f * dt);
-    q3 = 0.f; //(qa * tempgz + qb * tempgy - qc * tempgx) * (0.5f * dt);
+    q3 += 0.f; //(qa * tempgz + qb * tempgy - qc * tempgx) * (0.5f * dt);
 
     // Normalise quaternion
     recipNorm = invSqrt(q0 * q0 + q1 * q1 + q2 * q2);
@@ -698,7 +698,7 @@ void MPU9150::MahonyAHRSupdateIMU(float dt) {
     v_quat[0] = q0;
     v_quat[1] = q1;
     v_quat[2] = q2;
-    v_quat[3] = 0.f;
+    v_quat[3] = q3;
 
     quat::eulerXZY(v_quat,v_euler);
 }
@@ -718,7 +718,7 @@ void MPU9150::MahonyAHRSupdateIMU() {
     float az = v_acc[2];
     float gx = v_gyr[0];
     float gy = v_gyr[1];
-    float gz = 0.f; // Assume zero yaw.
+    float gz = v_gyr[2]; // Assume zero yaw.
     float q0 = v_quat[0];
     float q1 = v_quat[1];
     float q2 = v_quat[2];
@@ -780,7 +780,7 @@ void MPU9150::MahonyAHRSupdateIMU() {
     q0 += (-qb * tempgx - qc * tempgy - q3 * tempgz) * (0.5f * dt);
     q1 += (qa * tempgx + qc * tempgz - q3 * tempgy) * (0.5f * dt);
     q2 += (qa * tempgy - qb * tempgz + q3 * tempgx) * (0.5f * dt);
-    q3 += (qa * tempgz + qb * tempgy - qc * tempgx) * (0.5f * dt);
+    q3 += 0.f;//(qa * tempgz + qb * tempgy - qc * tempgx) * (0.5f * dt);
 
     // Normalise quaternion
     recipNorm = invSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
@@ -792,7 +792,7 @@ void MPU9150::MahonyAHRSupdateIMU() {
     v_quat[0] = q0;
     v_quat[1] = q1;
     v_quat[2] = q2;
-    v_quat[3] = 0.f;
+    v_quat[3] = q3;
 
     quat::eulerXZY(v_quat,v_euler);
 }

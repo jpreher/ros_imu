@@ -27,7 +27,6 @@ find_package(catkin REQUIRED COMPONENTS
    geometry_msgs
  )
 
-
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -39,9 +38,13 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 
 catkin_package(
-  INCLUDE_DIRS include
+  INCLUDE_DIRS
+    include
   LIBRARIES imu_common
+
 )
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 ###########
 ## Build ##
@@ -49,8 +52,8 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -61,7 +64,8 @@ add_library(imu_common src/MPU9150.cpp include/MPU9150.h
 	include/limits.hpp include/common_assert.hpp
   include/pca9547.h src/pca9547.cpp
   include/ambcap.h src/ambcap.cpp
-  include/ambcap_pros.h src/ambcap_pros.cpp)
+  include/ambcap_pros.h src/ambcap_pros.cpp
+  ${catkin_Libraries})
 
 add_dependencies(imu_common imu_common_gencpp)
 

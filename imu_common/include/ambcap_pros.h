@@ -39,7 +39,6 @@ public:
   float switch_threshold;
 
   // Right leg variables
-  float qRf_e_ref[4], qRs_e_ref[4], qRt_e_ref[4]; // Link to earth reference frame.
   float qRf_s[4], qRs_s[4], qRt_s[4];             // Link body frame to sensor frame rotation.
   float qRf_e[4], qRs_e[4], qRt_e[4];             // Link body frame to earth frame rotation.
   float qRfs[4];                    // Foot to shank rotation.
@@ -53,7 +52,6 @@ public:
   float Rf_vel[3], Rs_vel[3], Rt_vel[3], Lt_vel[3];
 
   // Left leg variables
-  float qLt_e_ref[4]; // Link to earth reference frame.
   float qLs_s[4], qLt_s[4];         // Link body frame to sensor frame rotation.
   float qLs_e[4], qLt_e[4];         // Link body frame to earth frame rotation.
   float hLte[3];                   // Euler angle shank to earth.
@@ -65,15 +63,11 @@ public:
   ros::Rate rate;
 
   ambcap_pros(ros::NodeHandle h);
-  void initPose();
   void updatePose();
   void RshankCall(const imu_common::imu& reading);
   void RthighCall(const imu_common::imu& reading);
   void RfootCall(const imu_common::imu& reading);
   void LthighCall(const imu_common::imu& reading);
-  void check_srvs();
-  bool reset_pose(std_srvs::Empty::Request  &req,
-                  std_srvs::Empty::Response &resp);
   void spinOnce();
 };
 

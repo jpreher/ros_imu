@@ -202,34 +202,50 @@ bool ambcap::imu::initialize(ros::NodeHandle& nh) {
     if ( imu_location == l_foot ) {
         param_device = "l_foot";
         calibrate_serv_ = nh.advertiseService("l_foot_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("l_foot_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("l_foot_yaw", &ambcap::imu::yaw_serv, this);
     }
     if ( imu_location == l_shank ) {
         param_device = "l_shank";
         calibrate_serv_ = nh.advertiseService("l_shank_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("l_shank_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("l_shank_yaw", &ambcap::imu::yaw_serv, this);
     }
     if ( imu_location == l_thigh ) {
         param_device = "l_thigh";
         calibrate_serv_ = nh.advertiseService("l_thigh_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("l_thigh_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("l_thigh_yaw", &ambcap::imu::yaw_serv, this);
     }
     if ( imu_location == r_foot ) {
         param_device = "r_foot";
         calibrate_serv_ = nh.advertiseService("r_foot_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("r_foot_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("r_foot_yaw", &ambcap::imu::yaw_serv, this);
     }
     if ( imu_location == r_shank ) {
         param_device = "r_shank";
         calibrate_serv_ = nh.advertiseService("r_shank_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("r_shank_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("r_shakn_yaw", &ambcap::imu::yaw_serv, this);
     }
     if ( imu_location == r_thigh ) {
         param_device = "r_thigh";
         calibrate_serv_ = nh.advertiseService("r_thigh_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("r_thigh_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("r_thigh_yaw", &ambcap::imu::yaw_serv, this);
     }
     if ( imu_location == torso ) {
         param_device = "torso";
         calibrate_serv_ = nh.advertiseService("torso_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("torso_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("torso_yaw", &ambcap::imu::yaw_serv, this);
     }
     if ( imu_location == single ) {
         param_device = "single";
         calibrate_serv_ = nh.advertiseService("single_gyr_cal", &ambcap::imu::cal_gyr, this);
+        pitch_roll_ref_ = nh.advertiseService("single_PR", &ambcap::imu::pitch_roll_serv, this);
+        yaw_ref_        = nh.advertiseService("single_yaw", &ambcap::imu::yaw_serv, this);
     }
 
     q_sensor_cal[0] = 1.f;
@@ -253,6 +269,8 @@ bool ambcap::imu::initialize(ros::NodeHandle& nh) {
     MPU.initialize(temppath);
     ROS_INFO("%s initialized on bus %d, chan %d, address %d", param_device.c_str(), bus, chan, addr);
     iscalibrated = false;
+    doPR = false;
+    doYaw = false;
     time_last_run = ros::Time::now().toSec();
 
     //Set up the publisher and servicer.
@@ -428,6 +446,7 @@ void ambcap::imu::pitch_roll_ref() {
     quat::inv(MPU.v_quat, q_sensor_cal);
     quat::prod(q_sensor_cal, q_ref, q_sensor_cal);
     ROS_INFO("Sensor Initialized at %f, %f, %f, %f", q_sensor_cal[0], q_sensor_cal[1], q_sensor_cal[2], q_sensor_cal[3]);
+    doPR = false;
 }
 
 void ambcap::imu::yaw_ref() {
@@ -440,7 +459,7 @@ void ambcap::imu::yaw_ref() {
     float temp[3], sign;
     ROS_INFO("Started capturing movement, swing leg foreward and back");
 
-    for (int i=0; i<500; i++) {
+    for (int i=0; i<1000; i++) {
         MPU.read6DOF();
         temp[0] = MPU.v_gyr[0];
         temp[1] = MPU.v_gyr[1];
@@ -456,15 +475,18 @@ void ambcap::imu::yaw_ref() {
         temp[0] = fixed_vel_x[i] * pin_velocity_y[i];
         sign = copysignf(1.0, temp[0]);
         theta[i] = sign * acos((fixed_vel_y[i] * pin_velocity_y[i]) / (norm_fixed[i] * pin_velocity_y[i]));
+        usleep(5000);
     }
 
     numerator = 0.f;
     denominator = 0.f;
-    for (int i=0; i<500; i++) {
+    for (int i=0; i<1000; i++) {
         numerator += norm_fixed[i] * theta[i];
         denominator += norm_fixed[i];
     }
     yaw = numerator / denominator;
+    ROS_INFO("Yaw angle found as %f", yaw);
+    doYaw = false;
 }
 
 bool ambcap::imu::cal_gyr(std_srvs::Empty::Request &req, std_srvs::Empty::Response &resp) {

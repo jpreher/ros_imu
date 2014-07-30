@@ -308,9 +308,10 @@ bool ambcap::update(imu& device) {
     device.data.orientation.y = device.MPU.v_quat[2];
     device.data.orientation.z = device.MPU.v_quat[3];
 
-    device.data.integralE.x = device.MPU.integralFBx;
-    device.data.integralE.y = device.MPU.integralFBy;
-    device.data.integralE.z = device.MPU.integralFBz;
+    device.data.orientation_REF.w = device.q_sensor_cal[0];
+    device.data.orientation_REF.x = device.q_sensor_cal[1];
+    device.data.orientation_REF.y = device.q_sensor_cal[2];
+    device.data.orientation_REF.z = device.q_sensor_cal[3];
 
     device.data.header.stamp = ros::Time::now();
     device.time_last_run = time_now;

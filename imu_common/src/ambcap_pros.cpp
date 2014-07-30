@@ -13,48 +13,12 @@
     newDataRShank = false;
     newDataRThigh = false;
     newDataLThigh = false;
-    qRf_e_ref[0] = qRs_e_ref[0] = qRt_e_ref[0] = 1.0f;
-    qRf_e_ref[1] = qRs_e_ref[1] = qRt_e_ref[1] = 0.0f;
-    qRf_e_ref[2] = qRs_e_ref[2] = qRt_e_ref[2] = 0.0f;
-    qRf_e_ref[3] = qRs_e_ref[3] = qRt_e_ref[3] = 0.0f;
-
-    qLt_e_ref[0] = 1.0f;
-    qLt_e_ref[1] = 0.0f;
-    qLt_e_ref[2] = 0.0f;
-    qLt_e_ref[3] = 0.0f;
-
-    reset_pose_serv_ = node_handle_.advertiseService("reset_pose", &ambcap_pros::reset_pose, this);
 
     Rshank_sub_ = node_handle_.subscribe("r_shank", 1, &ambcap_pros::RshankCall, this);
     Rthigh_sub_ = node_handle_.subscribe("r_thigh", 1, &ambcap_pros::RthighCall, this);
     Rfoot_sub_ = node_handle_.subscribe("r_foot", 1, &ambcap_pros::RfootCall, this);
     Lthigh_sub_ = node_handle_.subscribe("l_thigh", 1, &ambcap_pros::LthighCall, this);
   }
-
-  void ambcap_pros::initPose() { //DONE
-    float qRfs_e_inv[4];
-    float qRss_e_inv[4], qRts_e_inv[4];
-    float qLts_e_inv[4];
-
-    ROS_INFO("Setting up initial pose.");
-    // Invert the measured reference pose measurement.
-    quat::inv(qR_f_meas, qRfs_e_inv);
-    quat::inv(qR_s_meas, qRss_e_inv);
-    quat::inv(qR_t_meas, qRts_e_inv);
-    quat::inv(qL_t_meas, qLts_e_inv);
-
-    // Create composite quaternion for reference pose.
-    quat::prod(qRfs_e_inv, qRf_e_ref, qRf_s);
-    quat::prod(qRss_e_inv, qRs_e_ref, qRs_s);
-    quat::prod(qRts_e_inv, qRt_e_ref, qRt_s);
-    quat::prod(qLts_e_inv, qLt_e_ref, qLt_s);
-
-    ROS_INFO("Foot Initialized at %f, %f, %f, %f", qRf_s[0], qRf_s[1], qRf_s[2], qRf_s[3]);
-    ROS_INFO("Shank Initialized at %f, %f, %f, %f", qRs_s[0], qRs_s[1], qRs_s[2], qRs_s[3]);
-    ROS_INFO("RThigh Initialized at %f, %f, %f, %f", qRt_s[0], qRt_s[1], qRt_s[2], qRt_s[3]);
-    ROS_INFO("LThigh Initialized at %f, %f, %f, %f", qLt_s[0], qLt_s[1], qLt_s[2], qLt_s[3]);
-
- }
 
   void ambcap_pros::updatePose() { //
     // Left: Quaternion in Earth Fixed Frame.
@@ -98,6 +62,11 @@
     qR_s_meas[2] = reading.orientation.y;
     qR_s_meas[3] = reading.orientation.z;
 
+    qRs_s[0] = reading.orientation_REF.w;
+    qRs_s[1] = reading.orientation_REF.x;
+    qRs_s[2] = reading.orientation_REF.y;
+    qRs_s[3] = reading.orientation_REF.z;
+
     Rs_vel[0] = reading.angular_velocity.x;
     Rs_vel[1] = reading.angular_velocity.y;
     Rs_vel[2] = reading.angular_velocity.z;
@@ -112,6 +81,11 @@
     qR_t_meas[2] = reading.orientation.y;
     qR_t_meas[3] = reading.orientation.z;
 
+    qRt_s[0] = reading.orientation_REF.w;
+    qRt_s[1] = reading.orientation_REF.x;
+    qRt_s[2] = reading.orientation_REF.y;
+    qRt_s[3] = reading.orientation_REF.z;
+
     Rt_vel[0] = reading.angular_velocity.x;
     Rt_vel[1] = reading.angular_velocity.y;
     Rt_vel[2] = reading.angular_velocity.z;
@@ -124,6 +98,11 @@
     qR_f_meas[1] = reading.orientation.x;
     qR_f_meas[2] = reading.orientation.y;
     qR_f_meas[3] = reading.orientation.z;
+
+    qRf_s[0] = reading.orientation_REF.w;
+    qRf_s[1] = reading.orientation_REF.x;
+    qRf_s[2] = reading.orientation_REF.y;
+    qRf_s[3] = reading.orientation_REF.z;
 
     Rf_vel[0] = reading.angular_velocity.x;
     Rf_vel[1] = reading.angular_velocity.y;
@@ -138,6 +117,11 @@
     qL_t_meas[2] = reading.orientation.y;
     qL_t_meas[3] = reading.orientation.z;   
 
+    qLt_s[0] = reading.orientation_REF.w;
+    qLt_s[1] = reading.orientation_REF.x;
+    qLt_s[2] = reading.orientation_REF.y;
+    qLt_s[3] = reading.orientation_REF.z;
+
     Lt_vel[0] = reading.angular_velocity.x;
     Lt_vel[1] = reading.angular_velocity.y;
     Lt_vel[2] = reading.angular_velocity.z;
@@ -145,23 +129,9 @@
     newDataLThigh = true;
   }
 
-  void ambcap_pros::check_srvs() {
-    if ( reset_pose_ ) {
-      ROS_INFO("Re-initializing pose.");
-      initPose();
-      reset_pose_ = false;
-    }
-  }
-
-  bool ambcap_pros::reset_pose(std_srvs::Empty::Request  &req,
-                  std_srvs::Empty::Response &resp) {
-    reset_pose_ = true;
-    return true;
-  }
 
   void ambcap_pros::spinOnce() { 
     if ( newDataRShank && newDataRThigh && newDataRFoot && newDataLThigh ) {
-        check_srvs();
         updatePose();
     }
   }

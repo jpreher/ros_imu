@@ -11,7 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   std_msgs
   sensor_msgs
-  yaml_eigen_utilities
 )
 
 ## Generate messages in the 'msg' folder
@@ -28,8 +27,6 @@ find_package(catkin REQUIRED COMPONENTS
    geometry_msgs
  )
 
-find_package(eigen3 REQUIRED)
-
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -43,10 +40,8 @@ find_package(eigen3 REQUIRED)
 catkin_package(
   INCLUDE_DIRS
     include
-    ${EIGEN3_INCLUDE_DIR}
   LIBRARIES imu_common
-  DEPENDS eigen3
-  CATKIN_DEPENDS yaml_eigen_utilities
+
 )
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -60,7 +55,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIR}
 )
 
 add_library(imu_common src/MPU9150.cpp include/MPU9150.h 

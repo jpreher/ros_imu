@@ -451,17 +451,17 @@ void ambcap::imu::pitch_roll_ref() {
 }
 
 void ambcap::imu::yaw_ref() {
-    float fixed_vel_x[500], fixed_vel_y[500], fixed_vel_z[500];
-    float norm_fixed[500];
-    float pin_velocity_y[500];
-    float theta[500];
+    float fixed_vel_x[1000], fixed_vel_y[1000], fixed_vel_z[1000];
+    float norm_fixed[1000];
+    float pin_velocity_y[1000];
+    float theta[1000];
     float yaw;
     float numerator, denominator;
-    float temp[3], sign;
+    float temp[3], sign, temp_q[4];
     ROS_INFO("Started capturing movement, swing leg foreward and back");
 
     for (int i=0; i<1000; i++) {
-        MPU.read6DOF();
+        MPU.MahonyAHRSupdateIMU();
         temp[0] = MPU.v_gyr[0];
         temp[1] = MPU.v_gyr[1];
         temp[2] = MPU.v_gyr[2];
@@ -475,7 +475,7 @@ void ambcap::imu::yaw_ref() {
         pin_velocity_y[i] = sign * sqrt(fixed_vel_x[i]*fixed_vel_x[i] + fixed_vel_y[i]*fixed_vel_y[i] + fixed_vel_z[i]*fixed_vel_z[i]);
         temp[0] = fixed_vel_x[i] * pin_velocity_y[i];
         sign = copysignf(1.0, temp[0]);
-        theta[i] = sign * acos((fixed_vel_y[i] * pin_velocity_y[i]) / (norm_fixed[i] * pin_velocity_y[i]));
+        theta[i] = sign * acos((fixed_vel_y[i] * pin_velocity_y[i]) / (norm_fixed[i] * fabs(pin_velocity_y[i])));
         usleep(5000);
     }
 
@@ -487,6 +487,16 @@ void ambcap::imu::yaw_ref() {
     }
     yaw = numerator / denominator;
     ROS_INFO("Yaw angle found as %f", yaw);
+
+    temp[0] = 0.f;
+    temp[1] = 0.f;
+    temp[2] = yaw;
+
+    quat::euler2quatXYZ(temp, temp_q);
+    quat::inv(temp_q, temp_q);
+    quat::prod(temp_q, q_sensor_cal, q_sensor_cal);
+    ROS_INFO("Sensor Initialized at %f, %f, %f, %f", q_sensor_cal[0], q_sensor_cal[1], q_sensor_cal[2], q_sensor_cal[3]);
+
     doYaw = false;
 }
 

@@ -83,7 +83,7 @@
 
     // Right: Convert to fixed angles.
     quat::eulerXZY(qRst, hRst);
-    quat::eulerXZY(qRfs, hRfs);
+    quat::eulerXZY(qRs_e, hRfs);
     quat::eulerXZY(qRf_e, hRfe);
 
     newDataRShank = false;

@@ -44,8 +44,6 @@ catkin_package(
 
 )
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
 ###########
 ## Build ##
 ###########
@@ -68,8 +66,3 @@ add_library(imu_common src/MPU9150.cpp include/MPU9150.h
   ${catkin_Libraries})
 
 add_dependencies(imu_common imu_common_gencpp)
-
-
-
-
-

@@ -25,6 +25,11 @@ public:
   ros::Subscriber Rthigh_sub_;  
   ros::Subscriber Rfoot_sub_;
   ros::Subscriber Lthigh_sub_;
+
+  ros::Publisher Joints_pos;
+  ros::Publisher Joints_vel;
+  geometry_msgs::Vector3 Joints_msg;
+
   bool first;
   bool newDataRShank, newDataRThigh, newDataRFoot, newDataLThigh;
   bool RightIsStance;

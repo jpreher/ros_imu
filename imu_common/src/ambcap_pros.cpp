@@ -65,7 +65,7 @@
     Joints_pos.publish(Joints_msg);
 
     Joints_msg.x = Rt_vel[1] - Rs_vel[1]; // right knee joint velocity = thigh - shank
-    Joints_msg.y = Rs_vel[2] - 0.f; // right ankle joint velocity  = shank - foot*0.0
+    Joints_msg.y = Rs_vel[1] - 0.f; // right ankle joint velocity  = shank - foot*0.0
     Joints_msg.z = 0.f; //Same convention as huihua = 0.f
     Joints_vel.publish(Joints_msg);
 

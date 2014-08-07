@@ -269,7 +269,7 @@ bool ambcap::imu::initialize(ros::NodeHandle& nh) {
     MPU.initialize(temppath);
     ROS_INFO("%s initialized on bus %d, chan %d, address %d", param_device.c_str(), bus, chan, addr);
     iscalibrated = false;
-    doPR = false;
+    doPR = true;
     doYaw = false;
     time_last_run = ros::Time::now().toSec();
 

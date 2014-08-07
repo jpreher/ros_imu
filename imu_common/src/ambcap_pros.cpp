@@ -42,8 +42,8 @@
     quat::inv(qRt_e, qRt_e_inv);
 
     // Right: Relative rotation between joints.
-    quat::prod(qRs_e_inv, qRf_e, qRfs); // Foot to shank
-    quat::prod(qRt_e_inv, qRs_e, qRst); // Shank to thigh
+    quat::prod(qRf_e_inv, qRs_e, qRfs); // Foot to shank
+    quat::prod(qRs_e_inv, qRt_e, qRst); // Shank to thigh
 
     // Right: Convert to fixed angles.
     quat::eulerXZY(qRst, hRst);

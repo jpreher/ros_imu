@@ -16,11 +16,36 @@
 
     Rshank_sub_ = node_handle_.subscribe("r_shank", 1, &ambcap_pros::RshankCall, this);
     Rthigh_sub_ = node_handle_.subscribe("r_thigh", 1, &ambcap_pros::RthighCall, this);
-    Rfoot_sub_ = node_handle_.subscribe("r_foot", 1, &ambcap_pros::RfootCall, this);
-    Lthigh_sub_ = node_handle_.subscribe("l_thigh", 1, &ambcap_pros::LthighCall, this);
+    //Rfoot_sub_ = node_handle_.subscribe("r_foot", 1, &ambcap_pros::RfootCall, this);
+    //Lthigh_sub_ = node_handle_.subscribe("l_thigh", 1, &ambcap_pros::LthighCall, this);
 
     Joints_pos = h.advertise<geometry_msgs::Vector3>("joints_pos", desired_freq_);
     Joints_vel = h.advertise<geometry_msgs::Vector3>("joints_vel", desired_freq_);
+
+    // REMOVE THE FOOT AND PROS THIGH FROM FEEDBACK
+    qR_f_meas[0] = 1.f;
+    qR_f_meas[1] = 0.f;
+    qR_f_meas[2] = 0.f;
+    qR_f_meas[3] = 0.f;
+    qRf_s[0] = 1.f;
+    qRf_s[1] = 0.f;
+    qRf_s[2] = 0.f;
+    qRf_s[3] = 0.f;
+    Rf_vel[0] = 0.f;
+    Rf_vel[1] = 0.f;
+    Rf_vel[2] = 0.f;
+
+    qL_t_meas[0] = 1.f;
+    qL_t_meas[1] = 0.f;
+    qL_t_meas[2] = 0.f;
+    qL_t_meas[3] = 0.f;
+    qLt_s[0] = 1.f;
+    qLt_s[1] = 0.f;
+    qLt_s[2] = 0.f;
+    qLt_s[3] = 0.f;
+    Lt_vel[0] = 0.f;
+    Lt_vel[1] = 0.f;
+    Lt_vel[2] = 0.f;
   }
 
   void ambcap_pros::updatePose() { //

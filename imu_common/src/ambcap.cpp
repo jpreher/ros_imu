@@ -231,7 +231,7 @@ bool ambcap::imu::initialize(ros::NodeHandle& nh) {
         param_device = "r_shank";
         calibrate_serv_ = nh.advertiseService("r_shank_gyr_cal", &ambcap::imu::cal_gyr, this);
         pitch_roll_ref_ = nh.advertiseService("r_shank_PR", &ambcap::imu::pitch_roll_serv, this);
-        yaw_ref_        = nh.advertiseService("r_shakn_yaw", &ambcap::imu::yaw_serv, this);
+        yaw_ref_        = nh.advertiseService("r_shank_yaw", &ambcap::imu::yaw_serv, this);
     }
     if ( imu_location == r_thigh ) {
         param_device = "r_thigh";

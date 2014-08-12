@@ -8,7 +8,7 @@
     left_butter_.reset(new Butter(b, a));
     right_butter_.reset(new Butter(b, a));
 
-    first = true;
+    first_run = true;
     newDataRFoot  = false;
     newDataRShank = false;
     newDataRThigh = false;

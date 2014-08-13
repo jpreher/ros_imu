@@ -89,7 +89,6 @@ public:
     static bool update(imu& device);
     static bool publish(imu& device);
 
-
 private:
     imu L_foot;
     imu L_shank;

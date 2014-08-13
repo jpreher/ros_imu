@@ -51,3 +51,6 @@ include_directories(
 add_executable(capture_legs src/capture_legs.cpp)
 target_link_libraries(capture_legs ${catkin_LIBRARIES} imu_common)
 add_dependencies(capture_legs cap_gencpp)
+
+add_executable(proxi_tau src/proxi_tau.cpp)
+target_link_libraries(proxi_tau ${catkin_LIBRARIES} imu_common)

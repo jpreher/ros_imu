@@ -149,6 +149,7 @@ bool ambcap::setting_select() {
         break;
     case 3:
         ROS_INFO("Setting up objects for Prosthetic IMUs");
+        /*
         L_thigh.imu_location = ambcap::l_thigh;
         L_thigh.frequency = frequency;
         L_thigh.initialize(node_handle_);
@@ -156,6 +157,9 @@ bool ambcap::setting_select() {
         R_foot.imu_location = ambcap::r_foot;
         R_foot.frequency = frequency;
         R_foot.initialize(node_handle_);
+        */
+        L_thigh.running = false;
+        R_foot.running = false;
 
         R_shank.imu_location = ambcap::r_shank;
         R_shank.frequency = frequency;
@@ -227,7 +231,7 @@ bool ambcap::imu::initialize(ros::NodeHandle& nh) {
         param_device = "r_shank";
         calibrate_serv_ = nh.advertiseService("r_shank_gyr_cal", &ambcap::imu::cal_gyr, this);
         pitch_roll_ref_ = nh.advertiseService("r_shank_PR", &ambcap::imu::pitch_roll_serv, this);
-        yaw_ref_        = nh.advertiseService("r_shakn_yaw", &ambcap::imu::yaw_serv, this);
+        yaw_ref_        = nh.advertiseService("r_shank_yaw", &ambcap::imu::yaw_serv, this);
     }
     if ( imu_location == r_thigh ) {
         param_device = "r_thigh";

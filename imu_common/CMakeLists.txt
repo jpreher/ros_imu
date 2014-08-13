@@ -63,6 +63,7 @@ add_library(imu_common src/MPU9150.cpp include/MPU9150.h
   include/pca9547.h src/pca9547.cpp
   include/ambcap.h src/ambcap.cpp
   include/ambcap_pros.h src/ambcap_pros.cpp
+  include/ambcap_proxi.h src/ambcap_proxi.cpp
   ${catkin_Libraries})
 
 add_dependencies(imu_common imu_common_gencpp)

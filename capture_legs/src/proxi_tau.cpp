@@ -16,6 +16,7 @@ int frequency = 400;
 
 main(int argc, char** argv)
 {
+    float L_foot, L_shank, L_thigh;
     ros::init(argc, argv, "proxi_tau");
     ros::NodeHandle nh;
 

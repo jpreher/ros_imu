@@ -171,7 +171,7 @@
 
 
   void ambcap_pros::spinOnce() { 
-    if ( newDataRShank && newDataRThigh && newDataRFoot && newDataLThigh ) {
+    if ( newDataRShank && newDataRThigh ) {
         updatePose();
     }
   }

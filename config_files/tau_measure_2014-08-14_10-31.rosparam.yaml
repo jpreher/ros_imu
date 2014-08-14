@@ -1,0 +1,25 @@
+capture_setting: 0
+imu:
+  l_foot: {addr: 104, bias_path: /home/debian/catkin_ws/src/ros_imu/config_files/bias/9a.txt,
+    bus: 2, chan: 0, freq: 150, isvertical: false}
+  l_shank: {addr: 104, bias_path: /home/debian/catkin_ws/src/ros_imu/config_files/bias/9f.txt,
+    bus: 2, chan: 1, freq: 150, isvertical: true}
+  l_thigh: {addr: 105, bias_path: /home/debian/catkin_ws/src/ros_imu/config_files/bias/9e.txt,
+    bus: 2, chan: 2, freq: 150, isvertical: true}
+  r_foot: {addr: 105, bias_path: /home/debian/catkin_ws/src/ros_imu/config_files/bias/9c.txt,
+    bus: 2, chan: 6, freq: 150, isvertical: true}
+  r_shank: {addr: 104, bias_path: /home/debian/catkin_ws/src/ros_imu/config_files/bias/9b.txt,
+    bus: 2, chan: 4, freq: 150, isvertical: true}
+  r_thigh: {addr: 104, bias_path: /home/debian/catkin_ws/src/ros_imu/config_files/bias/9d.txt,
+    bus: 2, chan: 5, freq: 150, isvertical: true}
+  torso: {addr: 104, bias_path: /home/debian/catkin_ws/src/ros_imu/config_files/bias/9t.txt,
+    bus: 2, chan: 3, freq: 150, isvertical: true}
+rosdistro: 'hydro
+
+  '
+roslaunch:
+  uris: {host_aames_laptop_eacousineau__52549: 'http://aames-laptop-eacousineau:52549/'}
+rosversion: '1.10.10
+
+  '
+run_id: 550ca262-23c7-11e4-8173-843a4b12edc2

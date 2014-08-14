@@ -5,7 +5,13 @@ bag="${prefix}.bag"
 param="${prefix}.rosparam.yaml"
 
 rosbag record -j -O $bag \
-	/human_under/data1 \
+	/r_foot \
+	/r_shank \
+	/r_thigh \
+	/l_foot \
+	/l_shank \
+	/l_thigh \
+	/torso
 
 rosparam dump $param &
 

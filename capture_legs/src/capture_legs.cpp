@@ -12,12 +12,12 @@
 
 #include "ambcap.h"
 
-int frequency = 200;
-
 main(int argc, char** argv)
 {
+	int frequency = 100; // Default value of frequency is 100hz
     ros::init(argc, argv, "capture_legs");
     ros::NodeHandle nh;
+    ros::param::get("/frequency", frequency);
 
     ambcap AC(nh,frequency);
     AC.spin();

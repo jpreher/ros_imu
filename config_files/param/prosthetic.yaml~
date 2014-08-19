@@ -1,5 +1,4 @@
 capture_setting: 3
-frequency: 200
 
 imu/l_thigh/bus: 2
 imu/l_thigh/addr: 0x68

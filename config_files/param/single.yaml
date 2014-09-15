@@ -1,8 +1,8 @@
 capture_setting: 4
 
-imu/single/bus: 1
+imu/single/bus: 2
 imu/single/addr: 0x68
 imu/single/chan: 0
-imu/single/bias_path: "/home/debian/ros_imu/bias/9a.txt"
+imu/single/bias_path: "/home/debian/ros_imu/bias/9f.txt"
 imu/single/isvertical: false
 imu/single/freq: 200

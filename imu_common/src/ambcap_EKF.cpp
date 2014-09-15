@@ -375,8 +375,8 @@ void ambcap_EKF::filter(imu& device) {
 
     quat::rotateVec(device.MPU.v_gyr, device.q_sensor_cal, tempa);
 
-    device.velocity = Vector3d( 0., tempa[1], 0.);
-    device.Dvelocity = Vector3d( 0., (device.velocity(1) + tempa[1]) / 0.005, 0.);
+    device.velocity = Vector3d( 0., -tempa[1], 0.);
+    device.Dvelocity = Vector3d( 0., (device.velocity(1) + -tempa[1]) / 0.005, 0.);
 
     // Get previous joint acceleration.
     if ( device.imu_location == l_foot ) {

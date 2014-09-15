@@ -16,15 +16,15 @@ imu/r_foot/isvertical: true
 imu/r_foot/freq: 200
 
 imu/r_shank/bus: 2
-imu/r_shank/addr: 0x69
+imu/r_shank/addr: 0x68
 imu/r_shank/chan: 0
 imu/r_shank/bias_path: "/home/debian/catkin_ws/src/ros_imu/config_files/bias/9e.txt"
 imu/r_shank/isvertical: true
 imu/r_shank/freq: 200
 
 imu/r_thigh/bus: 2
-imu/r_thigh/addr: 0x68
+imu/r_thigh/addr: 0x69
 imu/r_thigh/chan: 6
-imu/r_thigh/bias_path: "/home/debian/catkin_ws/src/ros_imu/config_files/bias/9d.txt"
+imu/r_thigh/bias_path: "/home/debian/catkin_ws/src/ros_imu/config_files/bias/9a.txt"
 imu/r_thigh/isvertical: true
 imu/r_thigh/freq: 200

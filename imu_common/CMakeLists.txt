@@ -11,6 +11,10 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   std_msgs
   sensor_msgs
+  common_cmake
+  roslib_utilities
+  yaml_eigen_utilities
+  control_utilities
 )
 
 ## Generate messages in the 'msg' folder
@@ -41,7 +45,10 @@ catkin_package(
   INCLUDE_DIRS
     include
   LIBRARIES imu_common
+)
 
+find_package(
+  eigen3 REQUIRED
 )
 
 ###########
@@ -53,6 +60,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIR}
 )
 
 add_library(imu_common src/MPU9150.cpp include/MPU9150.h 
@@ -64,6 +72,8 @@ add_library(imu_common src/MPU9150.cpp include/MPU9150.h
   include/ambcap.h src/ambcap.cpp
   include/ambcap_pros.h src/ambcap_pros.cpp
   include/ambcap_proxi.h src/ambcap_proxi.cpp
+  include/EKF.h src/EKF.cpp
+  include/ambcap_EKF.h src/ambcap_EKF.cpp
   ${catkin_Libraries})
 
 add_dependencies(imu_common imu_common_gencpp)

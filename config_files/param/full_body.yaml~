@@ -1,4 +1,5 @@
 capture_setting: 0
+frequency: 100
 
 imu/l_foot/bus: 2
 imu/l_foot/addr: 0x68

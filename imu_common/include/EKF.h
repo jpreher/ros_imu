@@ -1,9 +1,11 @@
 #ifndef EKF_H
 #define EKF_H
 
+#include <ros/ros.h>
 #include "MPU9150.h"
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Eigen>
+#include <eigen3/Eigen/Geometry>
 
 using namespace Eigen;
 
@@ -25,8 +27,8 @@ private:
 	MatrixXd R_;
 	MatrixXd A_;
 	MatrixXd H_;
-	MatrixXd P_;
-	MatrixXd P_minus_;
+    MatrixXd P_;
+    MatrixXd P_minus_;
 	MatrixXd I_;
     double g;
 

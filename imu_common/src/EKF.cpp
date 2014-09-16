@@ -1,11 +1,24 @@
 #include "EKF.h"
 
 EKF::EKF() {
+    r.resize(3);
+    P_.resize(14,14);
+    P_minus_.resize(14,14);
+    Q_.resize(14,14);
+    R_.resize(9,9);
+    x_hat.resize(14);
+    A_.resize(14,14);
+    K_.resize(14,9);
+    x_minus.resize(14);
+    h.resize(9);
+
+    h = VectorXd::Zero(9);
+    x_minus = VectorXd::Zero(14);
     r = VectorXd::Zero(3);
     P_ = MatrixXd::Zero(14, 14);
     Q_ = MatrixXd::Zero(14, 14);
     R_ = MatrixXd::Zero(9, 9);
-    K_ = MatrixXd::Zero(14, 14);
+    K_ = MatrixXd::Zero(14, 9);
     A_ = MatrixXd::Zero(14, 14);
     H_ = MatrixXd::Zero(9, 14);
     P_minus_ = MatrixXd::Zero(14, 14);
@@ -18,6 +31,7 @@ void EKF::initialize(VectorXd &x_init, MatrixXd &P_init, MatrixXd &Q_init, Matri
     P_ = P_init;
     Q_ = Q_init;
     R_ = R_init;
+    x_hat = x_init;
 }
 
 void EKF::update(double dt, VectorXd &acc, VectorXd &measurement) {
@@ -73,10 +87,9 @@ void EKF::update(double dt, VectorXd &acc, VectorXd &measurement) {
                x_hat(7) + x_hat(11)*dt,
                x_hat(8) + x_hat(12)*dt,
                x_hat(9) + x_hat(13)*dt,
-
-               0.5*q[0]; // time derivative of quaternion
-               0.5*q[1];
-               0.5*q[2];
+               0.5*q[0], // time derivative of quaternion
+               0.5*q[1],
+               0.5*q[2],
                0.5*q[3];
 
     wx = x_minus(0); wy = x_minus(1); wz = x_minus(2);
@@ -100,25 +113,25 @@ void EKF::update(double dt, VectorXd &acc, VectorXd &measurement) {
     H_.row(5) << 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0.;
     H_.row(6) << (wy*ry + wz*rz),       (wx*ry - 2.*wy*rx),   (-2.*wz*rx + wx*rz),    0.,   rz,   -ry,        2.*g*q2,    2.*g*q3,    2.*g*q0,   2.*g*q1,       0., 0., 0., 0.;
     H_.row(7) << (-2.*wx*ry + wy*rx),   (wz*rz + wx*rx),      (wy*rz - 2.*wz*ry),     -rz,  0.,   rx,         -2.*g*q1,  -2.*g*q0,    2.*g*q3,   2.*g*q2,       0., 0., 0., 0.;
-    H_.row(8) << (wz*rx - 2.*wz*rz),    (-2.*wy*rz + wz*ry),  (wx*rx + wy*ry),        ry,   -rx,  0.,         2.*g*q0,   -2.*g*q1,   -2.*g*q2,   2.*g*q3,       0., 0., 0., 0.;
+    H_.row(8) << (wz*rx - 2.*wx*rz),    (-2.*wy*rz + wz*ry),  (wx*rx + wy*ry),        ry,   -rx,  0.,         2.*g*q0,   -2.*g*q1,   -2.*g*q2,   2.*g*q3,       0., 0., 0., 0.;
 
     // Calculate the Kalman gain
-    MatrixXd denom;
+    MatrixXd denom(9,9);
     denom = H_ * P_minus_ * H_.transpose() + R_;
     K_ = (P_minus_ * H_.transpose()) * denom.inverse();
 
     // Calculate the a posteriori state
-    h <<    x_minus(1),
+    h <<    x_minus(0),
+            x_minus(1),
             x_minus(2),
             x_minus(3),
             x_minus(4),
             x_minus(5),
-            x_minus(6),
-            acc(0) + (rz*wdoty - ry*wdotz) + (ry*wx*wy - rx*wy*wy - rx*wz*wz + rz*wx*wz) + -(2.*g*(q1*q3 + q0*q2)),
+            acc(0) + (rz*wdoty - ry*wdotz) + (ry*wx*wy - rx*wy*wy - rx*wz*wz + rz*wx*wz) + (2.*g*(q1*q3 + q0*q2)),
             acc(1) + (rx*wdotz - rz*wdotx) + (rz*wy*wz - ry*wz*wz - ry*wx*wx + rx*wx*wy) + (2.*g*(q2*q3 - q0*q1)),
-            acc(2) + (ry*wdotx - rx*wdoty) + (rx*wx*wz - rz*wx*wz - rz*wy*wy + ry*wy*wz) + (g*(q0*q0 - q1*q1 - q2*q2 + q3*q3));
+            acc(2) + (ry*wdotx - rx*wdoty) + (rx*wx*wz - rz*wx*wx - rz*wy*wy + ry*wy*wz) + (g*(q0*q0 - q1*q1 - q2*q2 + q3*q3));
 
-    x_hat = x_minus.transpose() + K_ * (z.transpose() - h.transpose());
+    x_hat = x_minus + K_ * (z - h);
 
     nrm = invSqrt((x_hat(6)*x_hat(6) + x_hat(7)*x_hat(7) + x_hat(8)*x_hat(8) + x_hat(9)*x_hat(9)));
     x_hat(6) = x_hat(6) * nrm;

@@ -209,6 +209,12 @@ bool ambcap_EKF::setting_select() {
  * @PARAM device - IMU device which will be initialized.
  */
 bool ambcap_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
+    // Initialize all the things
+    velocity.resize(3);
+    Dvelocity.resize(3);
+    acc.resize(3);
+    a0.resize(3);
+
     std::string param_base_path = "/imu/";
     std::string param_device;
     r_init = rad;
@@ -285,6 +291,7 @@ bool ambcap_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
     ROS_INFO("%s initialized on bus %d, chan %d, address %d", param_device.c_str(), bus, chan, addr);
 
     // Setup ekf
+    x_init.resize(14);
     x_init << 0.,
               0.0001,
               0.,
@@ -299,14 +306,19 @@ bool ambcap_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
               0.,
               0.,
               0.;
+
     // Process Variance
+    processVar.resize(14);
     processVar << 0.001, 0.001, 0.001, 0.1, 0.1, 0.1, 0.0001, 0.0001, 0.0001, 0.0001, 0.001, 0.001, 0.001, 0.001;
     // Measurement Variance
+    measureVar.resize(9);
     measureVar << 10, 10, 10, 300, 300, 300, 900, 900, 900;
+
     // Matrices
+    P_init.resize(14,14); Q_init.resize(14,14); R_init.resize(9,9);
     P_init = MatrixXd::Identity(14,14);
-    Q_init = MatrixXd::Identity(14,14) * processVar.transpose();
-    R_init = MatrixXd::Identity(9,9) * measureVar.transpose();
+    Q_init = MatrixXd(processVar.asDiagonal());
+    R_init = MatrixXd(measureVar.asDiagonal());
 
     Filter.initialize(x_init, P_init, Q_init, R_init, r_init);
 
@@ -335,15 +347,11 @@ bool ambcap_EKF::update(imu& device) {
     VectorXd measurement;
 
     device.MPU.read6DOF();
-    device.dt = dt;
+    device.dt = 0.005;
 
     //device.data.linear_acceleration.x = device.MPU.v_acc[0];
     //device.data.linear_acceleration.y = device.MPU.v_acc[1];
     //device.data.linear_acceleration.z = device.MPU.v_acc[2];
-
-    //device.data.angular_velocity.x = device.MPU.v_gyr[0];
-    //device.data.angular_velocity.y = device.MPU.v_gyr[1];
-    //device.data.angular_velocity.z = device.MPU.v_gyr[2];
 
     device.data.magnetometer.x = device.MPU.v_mag[0];
     device.data.magnetometer.y = device.MPU.v_mag[1];
@@ -361,6 +369,7 @@ bool ambcap_EKF::update(imu& device) {
 
     device.data.header.stamp = ros::Time::now();
     device.time_last_run = time_now;
+
     return true;
 }
 
@@ -375,10 +384,11 @@ void ambcap_EKF::filter(imu& device) {
 
     quat::rotateVec(device.MPU.v_gyr, device.q_sensor_cal, tempa);
 
+    device.Dvelocity = Vector3d( 0., (-tempa[1] - device.velocity(1)) / 0.005, 0.);
     device.velocity = Vector3d( 0., -tempa[1], 0.);
-    device.Dvelocity = Vector3d( 0., (device.velocity(1) + -tempa[1]) / 0.005, 0.);
 
     // Get previous joint acceleration.
+    device.a0.resize(3);
     if ( device.imu_location == l_foot ) {
         //TODO
         device.a0 << 0., 0., 0.;
@@ -436,22 +446,44 @@ void ambcap_EKF::filter(imu& device) {
         device.a0 << 0., 0., 0.;
     }
 
-    VectorXd measurement;
+    VectorXd measurement(9);
     measurement << device.velocity, device.Dvelocity, device.acc;
+
     device.Filter.update(device.dt, device.a0, measurement);
 
     device.data.linear_acceleration.x = device.acc(0);
     device.data.linear_acceleration.y = device.acc(1);
     device.data.linear_acceleration.z = device.acc(2);
 
+    device.data.linear_acceleration_model.x = device.Filter.h(6);
+    device.data.linear_acceleration_model.y = device.Filter.h(7);
+    device.data.linear_acceleration_model.z = device.Filter.h(8);
+
+    device.data.angular_acceleration_model.x = device.Filter.x_hat(3);
+    device.data.angular_acceleration_model.y = device.Filter.x_hat(4);
+    device.data.angular_acceleration_model.z = device.Filter.x_hat(5);
+
+    device.data.angular_acceleration_measure.x = device.Dvelocity(0);
+    device.data.angular_acceleration_measure.y = device.Dvelocity(1);
+    device.data.angular_acceleration_measure.z = device.Dvelocity(2);
+
     device.data.angular_velocity.x = device.Filter.x_hat(0);
     device.data.angular_velocity.y = device.Filter.x_hat(1);
     device.data.angular_velocity.z = device.Filter.x_hat(2);
+
+    device.data.angular_velocity_measure.x = device.velocity(0);
+    device.data.angular_velocity_measure.y = device.velocity(1);
+    device.data.angular_velocity_measure.z = device.velocity(2);
 
     device.data.orientation.w = device.Filter.x_hat(6);
     device.data.orientation.x = device.Filter.x_hat(7);
     device.data.orientation.y = device.Filter.x_hat(8);
     device.data.orientation.z = device.Filter.x_hat(9);
+
+    device.data.quaternion_velocity_model.w = device.Filter.x_hat(10);
+    device.data.quaternion_velocity_model.x = device.Filter.x_hat(11);
+    device.data.quaternion_velocity_model.y = device.Filter.x_hat(12);
+    device.data.quaternion_velocity_model.z = device.Filter.x_hat(13);
 }
 
 /* FUNCTION publish(imu& device)
@@ -481,8 +513,10 @@ bool ambcap_EKF::publishRunning() {
         update(R_thigh);
     if ( Torso.running )
         update(Torso);
-    if ( Single.running )
+    if ( Single.running ) {
         update(Single);
+        filter(Single);
+    }
 
     //Then filter and publish (keeps timing tighter).
     if ( L_foot.running )

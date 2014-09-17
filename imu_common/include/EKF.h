@@ -21,7 +21,7 @@ public:
     void initialize(VectorXd &x_init, MatrixXd &P_init, MatrixXd &Q_init, MatrixXd &R_init, VectorXd &r_init);
     void update(double dt, VectorXd &acc, VectorXd &measurement);
 
-private:
+//private:
 	MatrixXd K_;
 	MatrixXd Q_;
 	MatrixXd R_;

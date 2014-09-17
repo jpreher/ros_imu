@@ -33,12 +33,12 @@ ambcap_EKF::ambcap_EKF(ros::NodeHandle nh, int freq): rate((float)freq) {
     Single.iscalibrated = false;
 
     // Body lengths
-    Len_shank << 0, 0, -0.4318;
-    Len_thigh << 0, 0, -0.4318;
-    Rad_foot << 0.1016, 0, -0.0254;
-    Rad_shank << 0.0508, 0, -0.3556;
-    Rad_thigh << 0.0762, 0, -0.3048;
-    Rad_torso << 0.1270, 0, 0.3556;
+    Len_shank << 0., 0., -0.4318;
+    Len_thigh << 0., 0., -0.4318;
+    Rad_foot << 0.1016, 0., -0.0254;
+    Rad_shank << 0.0508, 0., -0.3556;
+    Rad_thigh << 0.0762, 0., -0.3048;
+    Rad_torso << 0.1270, 0., 0.3556;
     Rad_single << 0., 0., 0.;
 
     //Settings options.
@@ -214,10 +214,11 @@ bool ambcap_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
     Dvelocity.resize(3);
     acc.resize(3);
     a0.resize(3);
+    r_init.resize(3);
 
     std::string param_base_path = "/imu/";
     std::string param_device;
-    r_init = rad;
+    r_init << rad(0), rad(1), rad(2);
 
     //Address the imu to the proper parameters on the parameter server.
     if ( imu_location == l_foot ) {
@@ -322,6 +323,9 @@ bool ambcap_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
 
     Filter.initialize(x_init, P_init, Q_init, R_init, r_init);
 
+    velocity << 0., 0., 0.;
+    Dvelocity << 0., 0., 0.;
+
     // Set up calibration steps
     iscalibrated = false;
     doPR = true;
@@ -334,6 +338,7 @@ bool ambcap_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
 
     calibrate_gyro();
     running = true;
+    usleep(50000);
     return true;
 }
 
@@ -499,20 +504,36 @@ bool ambcap_EKF::publish(imu& device) {
  */
 bool ambcap_EKF::publishRunning() {
     //Update all running components first
-    if ( L_foot.running )
+    if ( L_foot.running ) {
         update(L_foot);
-    if ( L_shank.running )
+        filter(L_foot);
+    }
+    if ( L_shank.running ) {
         update(L_shank);
-    if ( L_thigh.running )
+        filter(L_shank);
+    }
+    if ( L_thigh.running ) {
         update(L_thigh);
-    if ( R_foot.running )
+        filter(L_thigh);
+    }
+    if ( R_foot.running ) {
         update(R_foot);
-    if ( R_shank.running )
-        update(R_shank);
-    if ( R_thigh.running )
+        filter(R_foot);
+    }
+    if ( R_thigh.running ) {
         update(R_thigh);
-    if ( Torso.running )
+        filter(R_thigh);
+        publish(R_thigh);
+    }
+    if ( R_shank.running ) {
+        update(R_shank);
+        filter(R_shank);
+        publish(R_shank);
+    }
+    if ( Torso.running ) {
         update(Torso);
+        filter(Torso);
+    }
     if ( Single.running ) {
         update(Single);
         filter(Single);
@@ -527,10 +548,8 @@ bool ambcap_EKF::publishRunning() {
         publish(L_thigh);
     if ( R_foot.running )
         publish(R_foot);
-    if ( R_shank.running )
-        publish(R_shank);
-    if ( R_thigh.running )
-        publish(R_thigh);
+    //if ( R_shank.running )
+    //if ( R_thigh.running )
     if ( Torso.running )
         publish(Torso);
     if ( Single.running )

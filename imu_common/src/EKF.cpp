@@ -111,9 +111,9 @@ void EKF::update(double dt, VectorXd &acc, VectorXd &measurement) {
     H_.row(3) << 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.;
     H_.row(4) << 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.;
     H_.row(5) << 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0.;
-    H_.row(6) << (wy*ry + wz*rz),       (wx*ry - 2.*wy*rx),   (-2.*wz*rx + wx*rz),    0.,   rz,   -ry,        2.*g*q2,    2.*g*q3,    2.*g*q0,   2.*g*q1,       0., 0., 0., 0.;
-    H_.row(7) << (-2.*wx*ry + wy*rx),   (wz*rz + wx*rx),      (wy*rz - 2.*wz*ry),     -rz,  0.,   rx,         -2.*g*q1,  -2.*g*q0,    2.*g*q3,   2.*g*q2,       0., 0., 0., 0.;
-    H_.row(8) << (wz*rx - 2.*wx*rz),    (-2.*wy*rz + wz*ry),  (wx*rx + wy*ry),        ry,   -rx,  0.,         2.*g*q0,   -2.*g*q1,   -2.*g*q2,   2.*g*q3,       0., 0., 0., 0.;
+    H_.row(6) << (-ry*wy + rz*wz),      (ry*wx + 2.*rx*wy),   (-2.*rx*wz + rz*wx),    0.,   -rz,   ry,        2.*g*q2,    2.*g*q3,    2.*g*q0,   2.*g*q1,       0., 0., 0., 0.;
+    H_.row(7) << (-2.*ry*wx - rx*wy),   (rz*wz + rx*wx),      (-rz*wy - 2.*ry*wz),     rz,  0.,   -rx,         -2.*g*q1,  -2.*g*q0,    2.*g*q3,   2.*g*q2,       0., 0., 0., 0.;
+    H_.row(8) << (rx*wz - 2.*rz*wx),    (2.*rz*wy + ry*wz),   (rx*wx - ry*wy),        -ry,   rx,  0.,         2.*g*q0,   -2.*g*q1,   -2.*g*q2,   2.*g*q3,       0., 0., 0., 0.;
 
     // Calculate the Kalman gain
     MatrixXd denom(9,9);
@@ -127,9 +127,9 @@ void EKF::update(double dt, VectorXd &acc, VectorXd &measurement) {
             x_minus(3),
             x_minus(4),
             x_minus(5),
-            acc(0) + (rz*wdoty - ry*wdotz) + (ry*wx*wy - rx*wy*wy - rx*wz*wz + rz*wx*wz) + (2.*g*(q1*q3 + q0*q2)),
+            acc(0) + (-rz*wdoty - ry*wdotz) + (-ry*wx*wy + rx*wy*wy - rx*wz*wy + rz*wx*wz) + (2.*g*(q1*q3 + q0*q2)),
             acc(1) + (rx*wdotz - rz*wdotx) + (rz*wy*wz - ry*wz*wz - ry*wx*wx + rx*wx*wy) + (2.*g*(q2*q3 - q0*q1)),
-            acc(2) + (ry*wdotx - rx*wdoty) + (rx*wx*wz - rz*wx*wx - rz*wy*wy + ry*wy*wz) + (g*(q0*q0 - q1*q1 - q2*q2 + q3*q3));
+            acc(2) + (ry*wdotx + rx*wdoty) + (rx*wx*wz - rz*wx*wx + rz*wy*wy + ry*wy*wz) + (g*(q0*q0 - q1*q1 - q2*q2 + q3*q3));
 
     x_hat = x_minus + K_ * (z - h);
 

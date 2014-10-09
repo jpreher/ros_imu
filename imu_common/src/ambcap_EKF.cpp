@@ -310,10 +310,10 @@ bool ambcap_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
 
     // Process Variance
     processVar.resize(14);
-    processVar << 0.001, 0.001, 0.001, 0.1, 0.1, 0.1, 0.0001, 0.0001, 0.0001, 0.0001, 0.001, 0.001, 0.001, 0.001;
+    processVar << 0.05, 0.05, 0.05,    3., 3., 3.,   0.001, 0.001, 0.001, 0.001,    0.001, 0.001, 0.001, 0.001;
     // Measurement Variance
     measureVar.resize(9);
-    measureVar << 10, 10, 10, 300, 300, 300, 900, 900, 900;
+    measureVar << 5., 5., 5., 200., 200., 200., 20., 20., 20.;
 
     // Matrices
     P_init.resize(14,14); Q_init.resize(14,14); R_init.resize(9,9);
@@ -402,7 +402,7 @@ void ambcap_EKF::filter(imu& device) {
         Vector3d tempThighW, tempThighWdot;
         float temp[3], tempq[4];
         tempThighW << -Len_thigh(0) * L_thigh.velocity(1) * L_thigh.velocity(1), 0., -Len_thigh(2) * L_thigh.velocity(1) * L_thigh.velocity(1);
-        tempThighWdot << Len_thigh(2) * L_thigh.Dvelocity(1), 0., -Len_thigh(0) * L_thigh.Dvelocity(1);
+        tempThighWdot << Len_thigh(2) * -L_thigh.Dvelocity(1), 0., -Len_thigh(0) * -L_thigh.Dvelocity(1);
 
         // Bad jake, bad, need to update utilities to use Eigen..
         temp[0] = tempThighW(0) + tempThighWdot(0);
@@ -632,7 +632,10 @@ void ambcap_EKF::imu::pitch_roll_ref() {
     q_ref[2] = 0.f;
     q_ref[3] = 0.f;
 
-    MPU.MahonyAHRSupdateIMU();
+    for (int i=0; i<100; i++) {
+        MPU.MahonyAHRSupdateIMU();
+        usleep(5000);
+    }
     quat::inv(MPU.v_quat, q_sensor_cal);
     quat::prod(q_sensor_cal, q_ref, q_sensor_cal);
     ROS_INFO("Sensor Initialized at %f, %f, %f, %f", q_sensor_cal[0], q_sensor_cal[1], q_sensor_cal[2], q_sensor_cal[3]);
@@ -682,7 +685,7 @@ void ambcap_EKF::imu::yaw_ref() {
     temp[2] = yaw;
 
     quat::euler2quatXYZ(temp, temp_q);
-    quat::inv(temp_q, temp_q);
+    //quat::inv(temp_q, temp_q);
     quat::prod(q_sensor_cal, temp_q, q_sensor_cal);
     ROS_INFO("Sensor Initialized at %f, %f, %f, %f", q_sensor_cal[0], q_sensor_cal[1], q_sensor_cal[2], q_sensor_cal[3]);
 

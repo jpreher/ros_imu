@@ -33,6 +33,8 @@ ambcap_EKF::ambcap_EKF(ros::NodeHandle nh, int freq): rate((float)freq) {
     Single.iscalibrated = false;
 
     // Body lengths
+    // Jake
+
     Len_shank << 0., 0., -0.4318;
     Len_thigh << 0., 0., -0.4318;
     Rad_foot << 0.1016, 0., -0.0254;
@@ -40,6 +42,17 @@ ambcap_EKF::ambcap_EKF(ros::NodeHandle nh, int freq): rate((float)freq) {
     Rad_thigh << 0.0762, 0., -0.3048;
     Rad_torso << 0.1270, 0., 0.3556;
     Rad_single << 0., 0., 0.;
+
+    // Jon
+    /*
+    Len_shank << 0., 0., -0.413;
+    Len_thigh << 0., 0., -0.419;
+    Rad_foot << 0.1016, 0., -0.0254; // Dont use
+    Rad_shank << 0.0635, 0., -0.3302; //
+    Rad_thigh << 0.08255, 0., -0.381; //
+    Rad_torso << 0.1270, 0., 0.3556; // Dont use
+    Rad_single << 0., 0., 0.;
+    */
 
     //Settings options.
     // 0: Full body
@@ -310,10 +323,16 @@ bool ambcap_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
 
     // Process Variance
     processVar.resize(14);
-    processVar << 0.05, 0.05, 0.05,    3., 3., 3.,   0.001, 0.001, 0.001, 0.001,    0.001, 0.001, 0.001, 0.001;
+    processVar << 0.01, 0.01, 0.01,
+                  10., 10., 10.,
+                  0.0001, 0.0001, 0.0001, 0.0001,
+                  0.001, 0.001, 0.001, 0.001;
+
     // Measurement Variance
     measureVar.resize(9);
-    measureVar << 5., 5., 5., 200., 200., 200., 20., 20., 20.;
+    measureVar << 6., 6., 6.,
+                  3000., 3000., 3000.,
+                  600., 600., 600.;
 
     // Matrices
     P_init.resize(14,14); Q_init.resize(14,14); R_init.resize(9,9);
@@ -425,10 +444,17 @@ void ambcap_EKF::filter(imu& device) {
     if ( device.imu_location == r_shank ) {
         Vector3d tempThighW, tempThighWdot;
         float temp[3], tempq[4];
-        tempThighW << -Len_thigh(0) * R_thigh.velocity(1) * R_thigh.velocity(1), 0., -Len_thigh(2) * R_thigh.velocity(1) * R_thigh.velocity(1);
-        tempThighWdot << Len_thigh(2) * R_thigh.Dvelocity(1), 0., -Len_thigh(0) * R_thigh.Dvelocity(1);
 
-        // Bad jake, bad, need to update utilities to use Eigen..
+
+        tempThighW << -Len_thigh(0) * R_thigh.velocity(1) * R_thigh.velocity(1),
+                      0.,
+                      -Len_thigh(2) * R_thigh.velocity(1) * R_thigh.velocity(1);
+
+        tempThighWdot << Len_thigh(2) * R_thigh.Dvelocity(1),
+                         0.,
+                         -Len_thigh(0) * R_thigh.Dvelocity(1);
+
+        // Add the two components
         temp[0] = tempThighW(0) + tempThighWdot(0);
         temp[1] = tempThighW(1) + tempThighWdot(1);
         temp[2] = tempThighW(2) + tempThighWdot(2);
@@ -439,6 +465,8 @@ void ambcap_EKF::filter(imu& device) {
 
         quat::rotateVec(temp, tempq, temp);
         device.a0 = Vector3d(temp[0], temp[1], temp[2]);
+
+        //device.a0 << 0., 0., 0.;
     }
     if ( device.imu_location == r_thigh ) {
         device.a0 << 0., 0., 0.;

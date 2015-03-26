@@ -587,7 +587,7 @@ bool ambcap_EKF::publishRunning() {
     }
 
     //Then filter and publish (keeps timing tighter).
-    if ( publishall )
+    if ( publishall ) {
         if ( L_foot.running )
             publish(L_foot);
         if ( L_shank.running )

@@ -28,7 +28,7 @@ class ambcap_EKF {
 
 public:
 
-    ambcap_EKF(ros::NodeHandle nh, int frequency);
+    ambcap_EKF(ros::NodeHandle nh, int frequency, bool ampublish);
 
     enum imu_select {
         l_foot,
@@ -94,7 +94,7 @@ public:
 
     bool setting_select();
     bool spin();
-    bool ambcap_EKF::updateEKF();
+    bool updateEKF();
     bool publishRunning();
     bool checkCalibration();
     static bool update(imu& device);

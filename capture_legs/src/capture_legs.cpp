@@ -20,7 +20,7 @@ main(int argc, char** argv)
     ros::NodeHandle nh;
     ros::param::get("/frequency", frequency);
 
-    ambcap_EKF AC(nh,frequency);
+    ambcap_EKF AC(nh, frequency, true);
     //ambcap AC(nh,frequency);
     AC.spin();
 

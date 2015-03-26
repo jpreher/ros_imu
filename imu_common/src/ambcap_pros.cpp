@@ -48,6 +48,14 @@
     Lt_vel[2] = 0.f;
   }
 
+  // Class implementation of a spinOnce() type function.
+  // Checks for new data, if both are new then update pose.
+  void ambcap_pros::spinOnce() {
+    if ( newDataRShank && newDataRThigh ) {
+        updatePose();
+    }
+  }
+
   void ambcap_pros::updatePose() { //
     // Left: Quaternion in Earth Fixed Frame.
     quat::prod(qL_t_meas, qLt_s, qLt_e); // Thigh to earth
@@ -75,7 +83,7 @@
 
     // Right: Convert to fixed angles.
     quat::eulerXZY(qRst, hRst);
-    quat::eulerXZY(qR_s_meas, hRfs);
+    quat::eulerXZY(qRs_e, hRfs);
     quat::eulerXZY(qRf_e, hRfe);
 
     newDataRShank = false;
@@ -93,9 +101,28 @@
     Joints_msg.y = -(Rs_vel[1] - 0.f); // right ankle joint velocity  = shank - foot*0.0
     Joints_msg.z = 0.f; //Same convention as huihua = 0.f
     Joints_vel.publish(Joints_msg);
-
   }
 
+  /* FUNCTION stepHeight()
+   * Function which calculates current height of human foot based on:
+   *    -Current human pose.
+   *    -Current prosthetic pose.
+   *    -An array of body dimensions.
+   * INPUT imu_data: vector of imu angles - (0) = ankle, (1) = knee.
+   * INPUT pros_data: vector of prosthetic angles - (0) = ankle, (1) = knee.
+   * INPUT links: vector of link lengths: (0) = shank, (1) = thigh.
+   * RETURN double value of height difference between prosthetic foot and human foot.
+   */
+  double ambcap_pros::stepHeight(VectorXd &imu_data, VectorXd &pros_data, VectorXd &links) {
+    double pros_h, human_h;
+    human_h = links(0)*cos(imu_data(0)) + links(1)*cos(imu_data(1) - imu_data(0));
+    pros_h  = links(0)*cos(pros_data(0)) + links(1)*cos(pros_data(1) - pros_data(0));
+
+    return (pros_h - human_h);
+  }
+
+  // CALLBACK FUNCTIONS.
+  //-------------------------------------------------------------------------------------------------------
   void ambcap_pros::RshankCall(const imu_common::imu& reading) {
     qR_s_meas[0] = reading.orientation.w;
     qR_s_meas[1] = reading.orientation.x;
@@ -112,7 +139,6 @@
     Rs_vel[2] = reading.angular_velocity.z;
 
     newDataRShank = true;
-
   }
 
   void ambcap_pros::RthighCall(const imu_common::imu& reading) {
@@ -167,11 +193,4 @@
     Lt_vel[2] = reading.angular_velocity.z;
 
     newDataLThigh = true;
-  }
-
-
-  void ambcap_pros::spinOnce() { 
-    if ( newDataRShank && newDataRThigh ) {
-        updatePose();
-    }
   }

@@ -94,13 +94,14 @@ public:
 
     bool setting_select();
     bool spin();
+    bool ambcap_EKF::updateEKF();
     bool publishRunning();
     bool checkCalibration();
     static bool update(imu& device);
     void filter(imu& device);
     static bool publish(imu& device);
+    bool publishall;
 
-private:
     imu L_foot;
     imu L_shank;
     imu L_thigh;
@@ -110,6 +111,7 @@ private:
     imu Torso;
     imu Single;
 
+private:
     Vector3d Len_shank, Len_thigh, Rad_foot, Rad_shank, Rad_thigh, Rad_torso, Rad_single;
 
     int frequency;

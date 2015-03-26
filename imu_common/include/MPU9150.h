@@ -9,11 +9,9 @@
 
 #include <memory>
 #include <fstream>
-#include <stdexcept>
-#include <stdint.h>
 
 //---------------------------------------------------------------------------------------------------
-// Mahony Filter Definitions
+// Mahony Filter Gain Definitions
 #define twoKpDef	(2.0f * 3.0f)	// 2 * proportional gain
 #define twoKiDef	(2.0f * 0.05f)	// 2 * integral gain
 

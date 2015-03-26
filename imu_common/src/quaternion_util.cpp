@@ -1,3 +1,4 @@
+//---------------------------------------------------------------------------------------------------
 /*=====================================================================================================
 // Quaternion Utilities Class for IMU
 //=====================================================================================================
@@ -5,8 +6,9 @@
 // Set of tools for easily manipulating quaternions
 //
 // Date			Author			Notes
-// 04/04/2014 	Jake Reher		Initial Release
-// 06/11/2014   Jake Reher      Added rotation of vector by quaternion
+// 04/04/2014 	Jake Reher		Initial Release.
+// 06/11/2014   Jake Reher      Added rotation of vector by quaternion.
+// 10/28/2014   Jake Reher      Cleaned up math and added documentation.
 //
 //=====================================================================================================*/
 // For more details on how the math behind these functions work read:
@@ -17,6 +19,9 @@
 
 quat::quat(){}
 
+/* FUNCTION conj(float q[4], float conjugate[4])
+ * Performs a quaternion conjugate operation on a four value float vector.
+ */
 void quat::conj(float q[4], float conjugate[4]){
     conjugate[0] = q[0];
     conjugate[1] = -q[1];
@@ -24,6 +29,10 @@ void quat::conj(float q[4], float conjugate[4]){
     conjugate[3] = -q[3];
 }
 
+/* FUNCTION norm(float q[4])
+ * Calculates the norm of a four element float array (quaternion sized)
+ * RETURN: float value of norm.
+ */
 float quat::norm(float q[4]){
     float q0,q1,q2,q3;
     q0 = q[0];
@@ -34,6 +43,10 @@ float quat::norm(float q[4]){
     return sqrt(q0*q0 + q1*q1 + q2*q2 + q3*q3);
 }
 
+/* FUNCTION inv(float q[4], float qinv[4])
+ * Calculates inverse of a quaternion.
+ * Also normalizes the result for unit quaternion size maintenance.
+ */
 void quat::inv(float q[4], float qinv[4]){
     float conj[4];
     float norm;
@@ -46,9 +59,13 @@ void quat::inv(float q[4], float qinv[4]){
     qinv[3] = conj[3] / norm;
 }
 
+/* FUNCTION prod(float q1[4], float q2[4], float q1q2[4])
+ * Performs the quaternion product of two quaternion arrays in the product order q1*q2.
+ *
+ * For more information see:
+ * http://mathworld.wolfram.com/Quaternion.html
+ */
 void quat::prod(float q1[4], float q2[4], float q1q2[4]){
-    //For more information see:
-    //http://mathworld.wolfram.com/Quaternion.html
     float a0, a1, a2, a3;
     float b0, b1, b2, b3;
 
@@ -67,6 +84,11 @@ void quat::prod(float q1[4], float q2[4], float q1q2[4]){
     q1q2[3] = a0*b3 + a1*b2 - a2*b1 + a3*b0;
 }
 
+/* FUNCTION rotateVec(float vec[3], float q[4], float rotated[3])
+ * Takes in a three dimensional vector and a quaternion array.
+ * "rotated" is a three dimensional vector which is the result of the quaternion rotation
+ *      applied to the original vector.
+ */
 void quat::rotateVec(float vec[3], float q[4], float rotated[3]) {
     float q0, q1, q2, q3;
     q0 = q[0];
@@ -79,11 +101,14 @@ void quat::rotateVec(float vec[3], float q[4], float rotated[3]) {
     v2 = vec[1];
     v3 = vec[2];
 
-    rotated[0] = v1*(1.f - 2.f*q2*q2 - 2.f*q3*q3) + 2.f*v2*(q1*q2 + q0*q3) + 2.f*v3*(q1*q3 - q0*q2);
-    rotated[1] = 2.f*v1*(q1*q2 + q0*q3) + v2*(1.f - 2.f*q1*q1 - 2.f*q3*q3) + 2.f*v3*(q2*q3 + q0*q1);
-    rotated[2] = 2.f*v1*(q1*q3 + q0*q2) + 2.f*v2*(q2*q3 - q0*q1) + v3*(1.f - 2.f*q1*q1 - 2.f*q2*q2);
+    rotated[0] = v1*(1.f - 2.f*q2*q2 - 2.f*q3*q3)   + 2.f*v2*(q1*q2 + q0*q3)                + 2.f*v3*(q1*q3 - q0*q2);
+    rotated[1] = 2.f*v1*(q1*q2 + q0*q3)             + v2*(1.f - 2.f*q1*q1 - 2.f*q3*q3)      + 2.f*v3*(q2*q3 + q0*q1);
+    rotated[2] = 2.f*v1*(q1*q3 + q0*q2)             + 2.f*v2*(q2*q3 - q0*q1)                + v3*(1.f - 2.f*q1*q1 - 2.f*q2*q2);
 }
 
+/* FUNCTION eulerXYZ(float q[4], float euler[3])
+ * Convert the quaternion to euler angles in XYZ rotation order.
+ */
 void quat::eulerXYZ(float q[4], float euler[3]){
     float q0, q1, q2, q3;
 
@@ -97,6 +122,9 @@ void quat::eulerXYZ(float q[4], float euler[3]){
     euler[2] = atan2(2.f*q1*q2 + 2.f*q0*q3, q1*q1 + q0*q0 - q3*q3 - q2*q2);
 }
 
+/* FUNCTION eulerXZY(float q[4], float euler[3])
+ * Convert the quaternion to euler angles in XZY rotation order.
+ */
 void quat::eulerXZY(float q[4], float euler[3]){
     float q0, q1, q2, q3;
 
@@ -110,6 +138,9 @@ void quat::eulerXZY(float q[4], float euler[3]){
     euler[2] = atan2(-2.f*q1*q3 + 2.f*q0*q2, q1*q1 + q0*q0 - q3*q3 - q2*q2);
 }
 
+/* FUNCTION eulerZYX(float q[4], float euler[3])
+ * Convert the quaternion to euler angles in ZYX rotation order.
+ */
 void quat::eulerZYX(float q[4], float euler[3]){
     float q0, q1, q2, q3;
 
@@ -123,6 +154,9 @@ void quat::eulerZYX(float q[4], float euler[3]){
     euler[2] = atan2(-2.f*q2*q3 + 2.f*q0*q1, q3*q3 - q2*q2 - q1*q1 + q0*q0);
 }
 
+/* FUNCTION euler2quatXYZ(float euler[3], float qout[4])
+ * Convert the XYZ rotation order euler angle set to a quaternion rotation.
+ */
 void quat::euler2quatXYZ(float euler[3], float qout[4]){
     float phi, theta, psi;
 
@@ -136,6 +170,9 @@ void quat::euler2quatXYZ(float euler[3], float qout[4]){
     qout[3] = cos(phi/2.f)*cos(theta/2.f)*sin(psi/2.f) - sin(theta/2.f)*cos(psi/2.f)*sin(phi/2.f);
 }
 
+/* FUNCTION euler2quatZYX(float euler[3], float qout[4])
+ * Convert the ZYX rotation order euler angle set to a quaternion rotation.
+ */
 void quat::euler2quatZYX(float euler[3], float qout[4]){
     float phi, theta, psi;
 
@@ -145,7 +182,7 @@ void quat::euler2quatZYX(float euler[3], float qout[4]){
 
     qout[0] = cos(phi/2.f)*cos(theta/2.f)*cos(psi/2.f) - sin(phi/2.f)*sin(theta/2.f)*sin(psi/2.f);
     qout[1] = cos(phi/2.f)*cos(theta/2.f)*sin(psi/2.f) + sin(phi/2.f)*cos(psi/2.f)*sin(theta/2.f);
-    qout[2]= cos(phi/2.f)*cos(psi/2.f)*sin(theta/2.f) - sin(phi/2.f)*cos(theta/2.f)*sin(psi/2.f);
+    qout[2] = cos(phi/2.f)*cos(psi/2.f)*sin(theta/2.f) - sin(phi/2.f)*cos(theta/2.f)*sin(psi/2.f);
     qout[3] = cos(phi/2.f)*sin(theta/2.f)*sin(psi/2.f) + cos(theta/2.f)*cos(psi/2.f)*sin(phi/2.f);
 }
 

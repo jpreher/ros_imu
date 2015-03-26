@@ -7,6 +7,10 @@
 #include "butterworth_util.h"
 #include "limits.hpp"
 #include "std_srvs/Empty.h"
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/Eigen>
+
+using Eigen::VectorXd;
 
 typedef std::shared_ptr<Butter> ButterPtr;
 typedef std::shared_ptr<control_utilities::RateLimiter> LimitPtr;
@@ -74,6 +78,7 @@ public:
   void RfootCall(const imu_common::imu& reading);
   void LthighCall(const imu_common::imu& reading);
   void spinOnce();
+  double stepHeight(VectorXd &imu_data, VectorXd &pros_data, VectorXd &links);
 };
 
 

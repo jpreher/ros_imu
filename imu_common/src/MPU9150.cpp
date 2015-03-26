@@ -1,8 +1,8 @@
 /*=====================================================================================================
-// I2C Tools for the BeagleBone Black
+// MPU9150 Tools for BBB
 //=====================================================================================================
 //
-// Set of tools for to utilize the I2C interface of BBB.
+// Set of tools for to utilize the MPU9150 sensor on the BBB.
 //
 // Date			Author			Notes
 // 02/10/2014 	Jake Reher		Initial Release
@@ -13,6 +13,7 @@
 // 06/06/2014   Jake Reher      Changed accelerometer range to +/- 4 g's. 
 // 06/17/2014   Jake Reher      Added magnetometer biasing and vertical orientation capabilities.
 // 07/14/2014   Jake Reher      All functions now work thorugh the pca9547 I2C multiplexer.
+// 10/14/2014   Jake Reher      Made code more manageable and added documentation.
 //
 //=====================================================================================================*/
 //---------------------------------------------------------------------------------------------------
@@ -28,7 +29,6 @@
 MPU9150::MPU9150(){} //Not even a constructor
 
 /* CONSTRUCTOR
- *
  */
 MPU9150::MPU9150(uint8_t bus, uint8_t address, uint8_t chan, float freq, bool vertical, bool magnetometer) {
     // Sets the bus, address, and bias of the IMU.
@@ -40,7 +40,6 @@ MPU9150::MPU9150(uint8_t bus, uint8_t address, uint8_t chan, float freq, bool ve
 }
 
 /* DESTRUCTOR
- *
  */
 MPU9150::~MPU9150() {
     //TODO destructor
@@ -99,24 +98,25 @@ void MPU9150::initialize(const char *bias) {
     const vector<float> a = {1.0, -1.56101807580072, 0.641351538057563};
     const vector<float> b = {0.0200833655642113, 0.0401667311284225, 0.0200833655642113};
 
-    //Setup butterworth filters.
+    // Setup butterworth filters.
     butterX.reset(new Butter(b, a));
     butterY.reset(new Butter(b, a));
     butterZ.reset(new Butter(b, a));
 
+    // Initialize Mahoney filter constants.
     twoKp = twoKpDef;   // 2 * proportional gain (Kp)
     twoKi = twoKiDef;   // 2 * integral gain (Ki)
     integralFBx = 0.0f;
     integralFBy = 0.0f;
     integralFBz = 0.0f; // integral error terms scaled by Ki.
 
-
-
+    // Turn on the sensor.
     setSleep(false);
 
-    //Initialize the compass
+    // Initialize the compass
     initCompass();
 
+    // Operating parameters of IMU. (ADJUSTBLE PARAMETERS).
     setClock(MPU6050_CLOCK_PLL_XGYRO);
     setAccelRange(MPU6050_ACCEL_FS_4);
     setGyroRange(MPU6050_GYRO_FS_1000);
@@ -200,7 +200,6 @@ void MPU9150::setDLPFMode(uint8_t mode) {
 
 /* FUNCTION initCompass()
  * Initializes the compass and allows the values to be read as slave to IMU.
- *
  */
 void MPU9150::initCompass() {
     //Enable master I2C mode
@@ -245,8 +244,6 @@ void MPU9150::initCompass() {
     pca9547::writeByte(bus, chan, devAddress, MPU6050_RA_I2C_SLV1_DO, 0x01);
     //Enable master I2C mode
     pca9547::writeBit(bus,chan, devAddress, MPU6050_RA_USER_CTRL, MPU6050_USERCTRL_I2C_MST_EN_BIT, 1);
-
-    ////////////TODO: add unittest code for checking if compass working properly
 }
 
 /* FUNCTION read6DOF()
@@ -257,6 +254,7 @@ void MPU9150::read6DOF() {
     float tempf[3];
     int16_t tempi[6];
 
+    // Read the integer data for all registers of the sensor.
     pca9547::readBytes(bus, chan, devAddress, MPU6050_RA_ACCEL_XOUT_H, 14, buffer);
     tempi[0] = ((int16_t)buffer[0]) << 8 | buffer[1];
     tempi[1] = ((int16_t)buffer[2]) << 8 | buffer[3];
@@ -269,6 +267,8 @@ void MPU9150::read6DOF() {
         tempi[i] = ~tempi[i] + 1;
     }
 
+    // Convert the integer values to meaningful form based on current settings.
+    // X and Y axes are flipped before biasing because of poor calibration technique!
     if (ACCEL_CURRENT_SETTING == MPU6050_ACCEL_FS_2) {
         for (int i=0; i<3; i++){
             tempf[i] = (float)tempi[i] / 16384.0 * 9.80665;//Output in m/s/s.
@@ -277,7 +277,7 @@ void MPU9150::read6DOF() {
         tempf[2] *= -1.0f;
 
         tempf[0] -= ACCbias[0];
-        tempf[1] -= ACCbias[1]; //Y and Z axes must be flipped signs as biasing is done in madgwick frame of reference.
+        tempf[1] -= ACCbias[1];
         tempf[2] -= ACCbias[2];
         v_acc[0] = IMUscale[0]*tempf[0] + IMUscale[1]*tempf[1] + IMUscale[2]*tempf[2];
         v_acc[1] = IMUscale[3]*tempf[0] + IMUscale[4]*tempf[1] + IMUscale[5]*tempf[2];
@@ -291,7 +291,7 @@ void MPU9150::read6DOF() {
         tempf[2] *= -1.0f;
 
         tempf[0] -= ACCbias[0];
-        tempf[1] -= ACCbias[1]; //Y and Z axes must be flipped signs as biasing is done in madgwick frame of reference.
+        tempf[1] -= ACCbias[1];
         tempf[2] -= ACCbias[2];
         v_acc[0] = IMUscale[0]*tempf[0] + IMUscale[1]*tempf[1] + IMUscale[2]*tempf[2];
         v_acc[1] = IMUscale[3]*tempf[0] + IMUscale[4]*tempf[1] + IMUscale[5]*tempf[2];
@@ -305,7 +305,7 @@ void MPU9150::read6DOF() {
         tempf[2] *= -1.0f;
 
         tempf[0] -= ACCbias[0];
-        tempf[1] -= ACCbias[1]; //Y and Z axes must be flipped signs as biasing is done in madgwick frame of reference.
+        tempf[1] -= ACCbias[1];
         tempf[2] -= ACCbias[2];
         v_acc[0] = IMUscale[0]*tempf[0] + IMUscale[1]*tempf[1] + IMUscale[2]*tempf[2];
         v_acc[1] = IMUscale[3]*tempf[0] + IMUscale[4]*tempf[1] + IMUscale[5]*tempf[2];
@@ -319,7 +319,7 @@ void MPU9150::read6DOF() {
         tempf[2] *= -1.0f;
 
         tempf[0] -= ACCbias[0];
-        tempf[1] -= ACCbias[1]; //Y and Z axes must be flipped signs as biasing is done in madgwick frame of reference.
+        tempf[1] -= ACCbias[1];
         tempf[2] -= ACCbias[2];
         v_acc[0] = IMUscale[0]*tempf[0] + IMUscale[1]*tempf[1] + IMUscale[2]*tempf[2];
         v_acc[1] = IMUscale[3]*tempf[0] + IMUscale[4]*tempf[1] + IMUscale[5]*tempf[2];
@@ -366,7 +366,8 @@ void MPU9150::read6DOF() {
         v_gyr[2] -= GYRbias[2];
     }
 
-    //If the IMU has been defined as a vertical IMU switch the X and Z axes.
+    // If the IMU has been defined as a vertical IMU switch the X and Z axes.
+    // Creates less potential for singularities and errors.
     if (vert_orient == true) {
         float temp = v_acc[0];
         v_acc[0] = -1.f * v_acc[2];
@@ -385,8 +386,7 @@ void MPU9150::read6DOF() {
 }
 
 /* FUNCTION read9DOF()
- * Runs the 6DOF code and also retreives magnetometer readings.
- *
+ * Runs the 6DOF code and also retreives magnetometer readings while converting them to meaningful form.
  */
 void MPU9150::read9DOF() {
     float tempf[3];
@@ -431,6 +431,7 @@ void MPU9150::read9DOF() {
     v_mag[1] = MAGscale[3] * (tempf[0] - MAGbias[0]) + MAGscale[4] * (tempf[1] - MAGbias[1]) + MAGscale[5] * (tempf[2] - MAGbias[2]);
     v_mag[2] = MAGscale[6] * (tempf[0] - MAGbias[0]) + MAGscale[7] * (tempf[1] - MAGbias[1]) + MAGscale[8] * (tempf[2] - MAGbias[2]);
 
+    // Saturate the magnetometer readings. Spikes are common and incorrect.
     if (v_mag[0] > 1.2f)
         v_mag[0] = 1.2f;
     if (v_mag[0] < -1.2f)
@@ -448,7 +449,6 @@ void MPU9150::read9DOF() {
 /* FUNCTION initOrientation()
  * Initializes the euler angles and quaternions for the IMU.
  * Reduces convergence time of filter.
- *
  */
 void MPU9150::initOrientation() {
     read6DOF();

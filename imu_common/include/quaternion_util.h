@@ -7,6 +7,7 @@
 // Date			Author			Notes
 // 04/04/2014 	Jake Reher		Initial Release
 // 06/11/2014   Jake Reher      Added rotation of vector by quaternion
+// 10/28/2014   Jake Reher      Cleaned up math and added documentation.
 //
 //=====================================================================================================*/
 //---------------------------------------------------------------------------------------------------
@@ -16,6 +17,7 @@
 
 #include <math.h>
 
+// All functions instantiated as static functions for use without needing to create class handle.
 class quat{
 private:
     static float invSqrt(float x);

@@ -20,6 +20,9 @@
  * @PARAM freq - User selected frequency, used in ros::rate timer.
  */
 ambcap::ambcap(ros::NodeHandle nh, int freq): rate((float)freq) {
+    //TELL THE USER WHICH FILTER IS IN USE
+    ROS_WARN("USING COMPLEMENTARY FILTER - FOR MOTION CAPTURE ONLY!!!!");
+
     frequency = freq;
     node_handle_ = nh;
 
@@ -142,9 +145,13 @@ bool ambcap::setting_select() {
         R_thigh.frequency = frequency;
         R_thigh.initialize(node_handle_);
 
+        Torso.imu_location = ambcap::torso;
+        Torso.frequency = frequency;
+        Torso.initialize(node_handle_);
+
         L_foot.running = false;
         R_foot.running = false;
-        Torso.running = false;
+        //Torso.running = false;
         Single.running = false;
         break;
     case 3:
@@ -447,7 +454,10 @@ void ambcap::imu::pitch_roll_ref() {
     q_ref[2] = 0.f;
     q_ref[3] = 0.f;
 
-    MPU.MahonyAHRSupdateIMU();
+    for (int i=0; i<100; i++) {
+        MPU.MahonyAHRSupdateIMU();
+        usleep(5000);
+    }
     quat::inv(MPU.v_quat, q_sensor_cal);
     quat::prod(q_sensor_cal, q_ref, q_sensor_cal);
     ROS_INFO("Sensor Initialized at %f, %f, %f, %f", q_sensor_cal[0], q_sensor_cal[1], q_sensor_cal[2], q_sensor_cal[3]);

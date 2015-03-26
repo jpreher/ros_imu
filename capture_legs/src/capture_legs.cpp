@@ -21,6 +21,7 @@ main(int argc, char** argv)
     ros::param::get("/frequency", frequency);
 
     ambcap_EKF AC(nh,frequency);
+    //ambcap AC(nh,frequency);
     AC.spin();
 
     return 0;

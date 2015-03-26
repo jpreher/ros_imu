@@ -19,7 +19,10 @@
  * @PARAM nh - Node handle of ROS node using AMBCAP.
  * @PARAM freq - User selected frequency, used in ros::rate timer.
  */
-ambcap_EKF::ambcap_EKF(ros::NodeHandle nh, int freq): rate((float)freq) {
+ambcap_EKF::ambcap_EKF(ros::NodeHandle nh, int freq, bool ampublish): rate((float)freq) {
+    // TELL THE USER WHICH FILTER IS IN USE
+    ROS_WARN("USING EKF FILTER - FOR ONLINE USE WITH PROSTHETIC");
+
     frequency = freq;
     node_handle_ = nh;
 
@@ -62,6 +65,8 @@ ambcap_EKF::ambcap_EKF(ros::NodeHandle nh, int freq): rate((float)freq) {
     // 4: Single
     ros::param::get("/capture_setting", setting);
     setting_select();
+
+    publishall = ampublish;
 }
 
 /* FUNCTION spin()
@@ -76,6 +81,20 @@ bool ambcap_EKF::spin() {
             publishRunning();
             ros::spinOnce();
             rate.sleep();
+        }
+    }
+}
+
+/* FUNCTION updateEKF()
+ * Main while loop of AMBCAP.
+ * Checks calibration, if OK it updates and publishes and enabled
+ *  devices and then spins ROS.
+ */
+bool ambcap_EKF::updateEKF() {
+    if(!ros::isShuttingDown()) {
+        if(node_handle_.ok()) {
+            checkCalibration();
+            publishRunning();
         }
     }
 }
@@ -325,14 +344,14 @@ bool ambcap_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
     processVar.resize(14);
     processVar << 0.01, 0.01, 0.01,
                   10., 10., 10.,
-                  0.0001, 0.0001, 0.0001, 0.0001,
+                  0.00001, 0.00001, 0.00001, 0.00001,
                   0.001, 0.001, 0.001, 0.001;
 
     // Measurement Variance
     measureVar.resize(9);
     measureVar << 6., 6., 6.,
                   3000., 3000., 3000.,
-                  600., 600., 600.;
+                  900., 900., 900.;
 
     // Matrices
     P_init.resize(14,14); Q_init.resize(14,14); R_init.resize(9,9);
@@ -551,12 +570,12 @@ bool ambcap_EKF::publishRunning() {
     if ( R_thigh.running ) {
         update(R_thigh);
         filter(R_thigh);
-        publish(R_thigh);
+        //publish(R_thigh);
     }
     if ( R_shank.running ) {
         update(R_shank);
         filter(R_shank);
-        publish(R_shank);
+        //publish(R_shank);
     }
     if ( Torso.running ) {
         update(Torso);
@@ -568,20 +587,24 @@ bool ambcap_EKF::publishRunning() {
     }
 
     //Then filter and publish (keeps timing tighter).
-    if ( L_foot.running )
-        publish(L_foot);
-    if ( L_shank.running )
-        publish(L_shank);
-    if ( L_thigh.running )
-        publish(L_thigh);
-    if ( R_foot.running )
-        publish(R_foot);
-    //if ( R_shank.running )
-    //if ( R_thigh.running )
-    if ( Torso.running )
-        publish(Torso);
-    if ( Single.running )
-        publish(Single);
+    if ( publishall )
+        if ( L_foot.running )
+            publish(L_foot);
+        if ( L_shank.running )
+            publish(L_shank);
+        if ( L_thigh.running )
+            publish(L_thigh);
+        if ( R_foot.running )
+            publish(R_foot);
+        if ( R_shank.running )
+            publish(R_shank);
+        if ( R_thigh.running )
+            publish(R_thigh);
+        if ( Torso.running )
+            publish(Torso);
+        if ( Single.running )
+            publish(Single);
+    }
 
     return true;
 }
@@ -734,18 +757,3 @@ bool ambcap_EKF::imu::yaw_serv(std_srvs::Empty::Request &req, std_srvs::Empty::R
     doYaw = true;
     return true;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

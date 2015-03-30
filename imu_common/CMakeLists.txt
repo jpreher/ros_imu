@@ -74,8 +74,7 @@ add_library(imu_common src/MPU9150.cpp include/MPU9150.h
   include/ambcap_proxi.h src/ambcap_proxi.cpp
   include/EKF.h src/EKF.cpp
   include/ambcap_EKF.h src/ambcap_EKF.cpp
-  include/yei_sensor.h src/yei_sensor.cpp
-  include/yei_core.h   src/yei_core.cpp
+  py/threespace_api.py py/threespace_utils.py
   ${catkin_Libraries})
 
 add_dependencies(imu_common imu_common_gencpp)

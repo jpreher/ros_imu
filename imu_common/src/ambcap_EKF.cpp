@@ -2,10 +2,12 @@
 // AMBCAP tools to enable easy configurability of reading from and number of imu devices in ROS.
 //=====================================================================================================
 //
-// ROS class with objects and functionality to easily collect data from IMU's on the BBB.
+// ROS class with objects and functionality to easily collect data from MPU 6050-9150 model IMU's
+// and filter with an EKF on the BBB.
 //
 // Date         Author          Notes
 // 09/12/2014   Jake Reher      Initial Release
+// - 2015       Jake Reher      Additional Changes for prosthetic - calibration, tuning, functionality
 //
 //=====================================================================================================*/
 //---------------------------------------------------------------------------------------------------
@@ -37,7 +39,6 @@ ambcap_EKF::ambcap_EKF(ros::NodeHandle nh, int freq, bool ampublish): rate((floa
 
     // Body lengths
     // Jake
-
     Len_shank << 0., 0., -0.4318;
     Len_thigh << 0., 0., -0.4318;
     Rad_foot << 0.1016, 0., -0.0254;

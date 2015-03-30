@@ -1,3 +1,6 @@
+// Author: Eric Cousineau
+// Updated and Debug: Jake Reher
+
 #ifndef UTIL_H
 #define UTIL_H
 

@@ -11,7 +11,7 @@
 // 10/28/2014   Jake Reher      Cleaned up math and added documentation.
 //
 //=====================================================================================================*/
-// For more details on how the math behind these functions work read:
+// For more details on how the math behind these functions works read:
 // http://www.swarthmore.edu/NatSci/mzucker1/e27/diebel2006attitude.pdf
 //---------------------------------------------------------------------------------------------------
 

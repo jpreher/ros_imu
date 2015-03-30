@@ -1,3 +1,5 @@
+// Author: Eric Cousineau
+
 #ifndef CONTROL_UTILITIES_LIMITS_HPP_
 #define CONTROL_UTILITIES_LIMITS_HPP_
 

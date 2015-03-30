@@ -1,3 +1,17 @@
+/*=====================================================================================================
+// AMBCAP tools to enable easy configurability of reading from and number of imu devices in ROS.
+//=====================================================================================================
+//
+// ROS class with objects and functionality to easily collect data from MPU 6050-9150 model IMU's
+// and filter with a complimentary filer on the BBB.
+//
+// Date         Author          Notes
+// 09/12/2014   Jake Reher      Initial Release
+// - 2015       Jake Reher      Additional Changes for prosthetic - calibration, tuning, functionality
+//
+//=====================================================================================================*/
+//---------------------------------------------------------------------------------------------------
+
 #include "ambcap_pros.h"
 
   ambcap_pros::ambcap_pros(ros::NodeHandle h) : node_handle_(h), rate(desired_freq_), reset_pose_(true)

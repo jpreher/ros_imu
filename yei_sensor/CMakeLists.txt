@@ -10,6 +10,10 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
+## Add Python Scripts Folder to editor
+FILE(GLOB yei_scripts "src/*" "bin/*")
+add_custom_target(yei_scripts_location SOURCES ${yei_scripts})
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -80,10 +84,10 @@ catkin_python_setup()
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES yei_sensor
-#  CATKIN_DEPENDS roscpp rospy std_msgs
-#  DEPENDS system_lib
+  INCLUDE_DIRS include
+  LIBRARIES yei_sensor
+  CATKIN_DEPENDS roscpp rospy std_msgs
+  DEPENDS system_lib
 )
 
 ###########

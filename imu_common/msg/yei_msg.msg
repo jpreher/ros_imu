@@ -3,4 +3,7 @@ geometry_msgs/Vector3 shin_acc
 geometry_msgs/Vector3 shin_gyr
 geometry_msgs/Vector3 shin_mag
 geometry_msgs/Vector3 shin_ref
-
+geometry_msgs/Vector3 thigh_acc
+geometry_msgs/Vector3 thigh_gyr
+geometry_msgs/Vector3 thigh_mag
+geometry_msgs/Vector3 thigh_ref

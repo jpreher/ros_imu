@@ -22,6 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
    DIRECTORY msg
    FILES
    imu.msg
+   yei_msg.msg
  )
 
  ## Generate added messages and services with any dependencies listed here

@@ -13,6 +13,7 @@ __version__ = "2.0.2.3"
 __authors__ = [
     '"Chris George" <cgeorge@yeitechnology.com>',
     '"Dan Morrison" <dmorrison@yeitechnology.com>',
+    '"Jake Reher" -additional changes for use with AMPRO <jreher@tamu.edu>'
 ]
 
 import threading

@@ -379,6 +379,7 @@ class Broadcaster(object):
         return self.broadcastMethod('stopStreaming', False, [], filter, callback_func)
     
     def setStreamingTiming(self, interval, duration, delay, delay_offset, filter=None, callback_func=None):
+        print("test set stream")
         if filter is None:
             filter = list(global_sensorlist.values())
         else:

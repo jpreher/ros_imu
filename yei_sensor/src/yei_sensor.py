@@ -128,7 +128,7 @@ if __name__ == '__main__':
 
     ## Close
     IMUshin.close()
-    IMUthigh.close()
+    #IMUthigh.close()
 
 
 

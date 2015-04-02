@@ -36,7 +36,7 @@ def checkIMUStream( sensorspace ):
         print("Could not get data")
         return [0,0,0,0,0,0,0,0]
 
-    # Pack up the data
+    # Return the data without the checksum
     return tempreadings[1]
 
 
@@ -45,7 +45,7 @@ def checkIMUStream( sensorspace ):
 def IMUtalker( shin, thigh ):
     pub = rospy.Publisher('IMUchatter', yei_msg, queue_size=0)
     rospy.init_node('IMU_pub')
-    rate = rospy.Rate(20000) #2000 hz - Make the loop go top speed
+    rate = rospy.Rate(500) #500 hz - Make the loop go fast
 
     while not rospy.is_shutdown():
         message = yei_msg()
@@ -74,6 +74,7 @@ def IMUtalker( shin, thigh ):
             message.thigh_mag.y = readings[7]
             message.thigh_mag.z = readings[8]
 
+        message.header.stamp = rospy.Time.now()
         pub.publish(message)
         rate.sleep()
 
@@ -86,7 +87,15 @@ if __name__ == '__main__':
         # Set up device
         IMUshin = threespace_api.TSUSBSensor( com_port=portSHIN, timestamp_mode=TSS_TIMESTAMP_NONE )
         print('   ' + str(IMUshin))
-        ## Put in IMU mode (speed considerations)
+        # Set the axes properly for the Kalman Filter
+        print('   Setting Axis Directions to YXZ - 002 with Z and X axis flipped about Y')
+        threespace_api.TSUSBSensor.setAxisDirections( IMUshin, 0x2A )
+        # Tare the IMU at current orientation
+        threespace_api.TSUSBSensor.setFilterMode( IMUshin, 1 )
+        time.sleep(5)
+        threespace_api.TSUSBSensor.tareWithCurrentOrientation( IMUshin )
+        print('   Tared at {0}'.format(threespace_api.TSUSBSensor.getTareAsQuaternion( IMUshin )))
+        # Put in IMU mode (speed considerations)
         print('   Setting to raw IMU mode')
         threespace_api.TSUSBSensor.setFilterMode( IMUshin, 0 )
     except:

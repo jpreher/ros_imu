@@ -75,6 +75,7 @@ add_library(imu_common src/MPU9150.cpp include/MPU9150.h
         include/ambcap_proxi.h src/ambcap_proxi.cpp
         include/EKF.h src/EKF.cpp
         include/ambcap_EKF.h src/ambcap_EKF.cpp
+        include/yei_EKF.h src/yei_EKF.cpp
   ${catkin_Libraries})
 
 add_dependencies(imu_common imu_common_gencpp)

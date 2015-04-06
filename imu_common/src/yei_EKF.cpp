@@ -52,6 +52,9 @@ yei_EKF::yei_EKF(ros::NodeHandle nh, int freq): rate((float)freq) {
     Rad_torso << 0.1270, 0., 0.3556; // Dont use
     Rad_single << 0., 0., 0.;
     */
+
+    // Set up the subscriber
+    imu_sub = node_handle_.subscribe("IMUchatter", 1000, &yei_EKF::Callback, this);
 }
 
 /* FUNCTION spin()
@@ -62,9 +65,8 @@ yei_EKF::yei_EKF(ros::NodeHandle nh, int freq): rate((float)freq) {
 bool yei_EKF::spin() {
     while(!ros::isShuttingDown()) {
         while(node_handle_.ok()) {
-            checkCalibration();
-            publishRunning();
             ros::spinOnce();
+            checkCalibration();
             rate.sleep();
         }
     }
@@ -128,20 +130,10 @@ bool yei_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
 
     // Setup ekf
     x_init.resize(14);
-    x_init << 0.,
-              0.0001,
-              0.,
-              0.,
-              0.00001,
-              0.,
-              1.,
-              0.,
-              0.,
-              0.,
-              0.,
-              0.,
-              0.,
-              0.;
+    x_init << 0., 0.0001, 0.,
+              0., 0.00001, 0.,
+              1., 0., 0., 0.,
+              0., 0., 0., 0.;
 
     // Process Variance
     processVar.resize(14);
@@ -181,55 +173,24 @@ bool yei_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
     return true;
 }
 
-/* FUNCTION update(imu& device)
- * Read values from the imu device hardware.
- * @PARAM device - IMU object which will be populated with hardware readings.
- */
-bool yei_EKF::update(imu& device) {
-    double time_now = ros::Time::now().toSec();
-    double dt = (time_now - device.time_last_run);
-    VectorXd measurement;
-
-    //device.MPU.read6DOF();
-    device.dt = 0.005;
-
-    //device.data.linear_acceleration.x = device.MPU.v_acc[0];
-    //device.data.linear_acceleration.y = device.MPU.v_acc[1];
-    //device.data.linear_acceleration.z = device.MPU.v_acc[2];
-
-    //device.data.magnetometer.x = device.MPU.v_mag[0];
-    //device.data.magnetometer.y = device.MPU.v_mag[1];
-    //device.data.magnetometer.z = device.MPU.v_mag[2];
-
-    //device.data.orientation.w = device.MPU.v_quat[0];
-    //device.data.orientation.x = device.MPU.v_quat[1];
-    //device.data.orientation.y = device.MPU.v_quat[2];
-    //device.data.orientation.z = device.MPU.v_quat[3];
-
-    //device.data.orientation_REF.w = device.q_sensor_cal[0];
-    //device.data.orientation_REF.x = device.q_sensor_cal[1];
-    //device.data.orientation_REF.y = device.q_sensor_cal[2];
-    //device.data.orientation_REF.z = device.q_sensor_cal[3];
-
-    device.data.header.stamp = ros::Time::now();
-    device.time_last_run = time_now;
-
-    return true;
-}
-
-
 void yei_EKF::filter(imu& device) {
     // Rotate the measurements
-    float tempa[3];
-    //quat::rotateVec(device.MPU.v_acc, device.q_sensor_cal, tempa);
+    float tempa[3], tempg[3];
+    tempa[0] = 9.81 * device.rawdata.linear_acceleration.x;
+    tempa[1] = 9.81 * device.rawdata.linear_acceleration.y;
+    tempa[2] = 9.81 * device.rawdata.linear_acceleration.z;
+    quat::rotateVec(tempa, device.q_sensor_cal, tempa);
     device.acc << tempa[0],
                   0.,
                   tempa[2];
 
-    //quat::rotateVec(device.MPU.v_gyr, device.q_sensor_cal, tempa);
+    tempg[0] = device.rawdata.angular_velocity.x;
+    tempg[1] = device.rawdata.angular_velocity.y;
+    tempg[2] = device.rawdata.angular_velocity.z;
+    quat::rotateVec(tempg, device.q_sensor_cal, tempg);
 
-    device.Dvelocity = Vector3d( 0., (-tempa[1] - device.velocity(1)) / 0.005, 0.);
-    device.velocity = Vector3d( 0., -tempa[1], 0.);
+    device.Dvelocity = Vector3d( 0., (-tempg[1] - device.velocity(1)) / 0.005, 0.);
+    device.velocity = Vector3d( 0., -tempg[1], 0.);
 
     // Get previous joint acceleration.
     device.a0.resize(3);
@@ -240,7 +201,6 @@ void yei_EKF::filter(imu& device) {
     if ( device.imu_location == r_shank ) {
         Vector3d tempThighW, tempThighWdot;
         float temp[3], tempq[4];
-
 
         tempThighW << -Len_thigh(0) * R_thigh.velocity(1) * R_thigh.velocity(1),
                       0.,
@@ -314,21 +274,14 @@ void yei_EKF::filter(imu& device) {
 bool yei_EKF::publishRunning() {
     //Update all running components first
     if ( L_foot.running ) {
-        update(L_foot);
         filter(L_foot);
     }
     if ( R_thigh.running ) {
-        update(R_thigh);
         filter(R_thigh);
-        //publish(R_thigh);
     }
     if ( R_shank.running ) {
-        update(R_shank);
         filter(R_shank);
-        //publish(R_shank);
     }
-
-    //Then filter and publish (keeps timing tighter).
 
     return true;
 }
@@ -355,19 +308,26 @@ void yei_EKF::imu::check_cal() {
 
 
 void yei_EKF::imu::pitch_roll_ref() {
-    float q_ref[4];
+    float q_ref[4], grav[3], acc[3];
     q_ref[0] = 1.f;
     q_ref[1] = 0.f;
     q_ref[2] = 0.f;
     q_ref[3] = 0.f;
+    grav[0] = 0.f;
+    grav[1] = 0.f;
+    grav[2] = 1.f;
 
-    for (int i=0; i<100; i++) {
-        //MPU.MahonyAHRSupdateIMU();
+    for (int i=0; i<200; i++) {
+        ros::spinOnce();
         usleep(5000);
     }
-    //quat::inv(MPU.v_quat, q_sensor_cal);
-    //quat::prod(q_sensor_cal, q_ref, q_sensor_cal);
-    //ROS_INFO("Sensor Initialized at %f, %f, %f, %f", q_sensor_cal[0], q_sensor_cal[1], q_sensor_cal[2], q_sensor_cal[3]);
+
+    acc[0] = rawdata.linear_acceleration.x;
+    acc[1] = rawdata.linear_acceleration.y;
+    acc[2] = rawdata.linear_acceleration.z;
+    quat::two_vec_q(acc, grav, q_sensor_cal);
+    quat::inv(q_sensor_cal, q_sensor_cal);
+    ROS_INFO("Sensor Initialized at %f, %f, %f, %f", q_sensor_cal[0], q_sensor_cal[1], q_sensor_cal[2], q_sensor_cal[3]);
     doPR = false;
 }
 
@@ -379,8 +339,8 @@ void yei_EKF::imu::yaw_ref() {
     float yaw;
     float numerator, denominator;
     float temp[3], sign, temp_q[4];
-    ROS_INFO("Started capturing movement, swing leg foreward and back");
-
+    ROS_INFO("Started capturing movement, swing leg forward and back");
+    // Not actually implemented right now in C++ -- Filler Function
     quat::prod(q_sensor_cal, temp_q, q_sensor_cal);
     ROS_INFO("Sensor Initialized at %f, %f, %f, %f", q_sensor_cal[0], q_sensor_cal[1], q_sensor_cal[2], q_sensor_cal[3]);
 
@@ -396,3 +356,45 @@ bool yei_EKF::imu::yaw_serv(std_srvs::Empty::Request &req, std_srvs::Empty::Resp
     doYaw = true;
     return true;
 }
+
+void yei_EKF::Callback(const imu_common::yei_msg& reading) {
+    double time_now = ros::Time::now().toSec();
+    VectorXd measurement;
+
+    // Do shank
+    R_shank.dt = 0.005;
+    R_shank.rawdata.linear_acceleration.x = reading.shin_acc.x;
+    R_shank.rawdata.linear_acceleration.y = reading.shin_acc.y;
+    R_shank.rawdata.linear_acceleration.z = reading.shin_acc.z;
+
+    R_shank.rawdata.magnetometer.x = reading.shin_mag.x;
+    R_shank.rawdata.magnetometer.y = reading.shin_mag.y;
+    R_shank.rawdata.magnetometer.z = reading.shin_mag.z;
+
+    R_shank.rawdata.angular_velocity.x = reading.shin_gyr.x;
+    R_shank.rawdata.angular_velocity.y = reading.shin_gyr.y;
+    R_shank.rawdata.angular_velocity.z = reading.shin_gyr.z;
+
+    R_shank.rawdata.header.stamp = ros::Time::now();
+    R_shank.time_last_run = time_now;
+
+    // Do thigh
+    R_thigh.dt = 0.005;
+    R_thigh.rawdata.linear_acceleration.x = reading.thigh_acc.x;
+    R_thigh.rawdata.linear_acceleration.y = reading.thigh_acc.y;
+    R_thigh.rawdata.linear_acceleration.z = reading.thigh_acc.z;
+
+    R_thigh.rawdata.magnetometer.x = reading.thigh_mag.x;
+    R_thigh.rawdata.magnetometer.y = reading.thigh_mag.y;
+    R_thigh.rawdata.magnetometer.z = reading.thigh_mag.z;
+
+    R_thigh.rawdata.angular_velocity.x = reading.thigh_gyr.x;
+    R_thigh.rawdata.angular_velocity.y = reading.thigh_gyr.y;
+    R_thigh.rawdata.angular_velocity.z = reading.thigh_gyr.z;
+
+    R_thigh.rawdata.header.stamp = ros::Time::now();
+    R_thigh.time_last_run = time_now;
+
+    publishRunning();
+}
+

@@ -7,3 +7,7 @@ geometry_msgs/Vector3 thigh_acc
 geometry_msgs/Vector3 thigh_gyr
 geometry_msgs/Vector3 thigh_mag
 geometry_msgs/Vector3 thigh_ref
+geometry_msgs/Vector3 foot_acc
+geometry_msgs/Vector3 foot_gyr
+geometry_msgs/Vector3 foot_mag
+geometry_msgs/Vector3 foot_ref

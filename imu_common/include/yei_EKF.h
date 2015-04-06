@@ -58,6 +58,7 @@ public:
         ros::ServiceServer  pitch_roll_ref_;
         ros::ServiceServer  yaw_ref_;
         imu_common::imu     data;
+        imu_common::imu     rawdata;
 
         bool initialize(ros::NodeHandle &nh, Vector3d &rad);
         void check_cal();
@@ -75,7 +76,6 @@ public:
     bool updateEKF();
     bool publishRunning();
     bool checkCalibration();
-    static bool update(imu& device);
     void filter(imu& device);
     static bool publish(imu& device);
     bool publishall;
@@ -89,6 +89,8 @@ private:
 
     int frequency;
     int setting;
+    void Callback(const imu_common::yei_msg& reading);
+    ros::Subscriber imu_sub;
     ros::NodeHandle node_handle_;
     ros::Rate rate;
 

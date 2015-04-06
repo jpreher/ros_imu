@@ -9,6 +9,7 @@
 // 04/04/2014 	Jake Reher		Initial Release.
 // 06/11/2014   Jake Reher      Added rotation of vector by quaternion.
 // 10/28/2014   Jake Reher      Cleaned up math and added documentation.
+// 04/05/2015   Jake Reher      Quaternion between two vecors added.
 //
 //=====================================================================================================*/
 // For more details on how the math behind these functions works read:
@@ -41,6 +42,16 @@ float quat::norm(float q[4]){
     q3 = q[3];
 
     return sqrt(q0*q0 + q1*q1 + q2*q2 + q3*q3);
+}
+
+/* FUNCTION norm(float q[3])
+ * Calculates the norm of a 3 element float array
+ * RETURN: float value of norm.
+ */
+float quat::norm3(float v[3]) {
+    float v1, v2, v3;
+
+    return sqrt(v1*v1 + v2*v2 + v3*v3);
 }
 
 /* FUNCTION inv(float q[4], float qinv[4])
@@ -184,6 +195,39 @@ void quat::euler2quatZYX(float euler[3], float qout[4]){
     qout[1] = cos(phi/2.f)*cos(theta/2.f)*sin(psi/2.f) + sin(phi/2.f)*cos(psi/2.f)*sin(theta/2.f);
     qout[2] = cos(phi/2.f)*cos(psi/2.f)*sin(theta/2.f) - sin(phi/2.f)*cos(theta/2.f)*sin(psi/2.f);
     qout[3] = cos(phi/2.f)*sin(theta/2.f)*sin(psi/2.f) + cos(theta/2.f)*cos(psi/2.f)*sin(phi/2.f);
+}
+
+void quat::two_vec_q(float v1[3], float v2[3], float qout[4]) {
+    float t1[3], t2[3], c[3], a, l1, l2, tempq[4];
+    // Normalize
+    t1[0] = v1[0] / norm3(v1);
+    t1[1] = v1[1] / norm3(v1);
+    t1[2] = v1[2] / norm3(v1);
+    t2[0] = v2[0] / norm3(v2);
+    t2[1] = v2[1] / norm3(v2);
+    t2[2] = v2[2] / norm3(v2);
+
+    // Calculate Cross Product
+    c[0] = t1[1]*t2[2] - t1[2]*t2[1];
+    c[1] = t1[2]*t2[0] - t1[0]*t2[2];
+    c[2] = t1[0]*t2[1] - t1[1]*t2[0];
+
+    // Quaternion sub-elements
+    a = t1[0]*t2[0] + t1[1]*t2[1] + t1[2]*t2[2];
+    l1 = t1[0]*t1[0] + t1[1]*t1[1] + t1[2]*t1[2];
+    l2 = t2[0]*t2[0] + t2[1]*t2[1] + t2[2]*t2[2];
+
+    // Quaternion elements
+    tempq[0] = sqrt(l1*l2) + a;
+    tempq[1] = c[0];
+    tempq[2] = c[1];
+    tempq[3] = c[2];
+
+    // Return
+    qout[0] = tempq[0] / norm(tempq);
+    qout[1] = tempq[1] / norm(tempq);
+    qout[2] = tempq[2] / norm(tempq);
+    qout[3] = tempq[3] / norm(tempq);
 }
 
 //---------------------------------------------------------------------------------------------------

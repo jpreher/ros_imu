@@ -43,6 +43,7 @@ public:
         double  time_last_run,
                 length,
                 radius,
+                frequency,
                 dt;
 
         float   q_sensor_cal[4];
@@ -57,10 +58,11 @@ public:
         ros::ServiceServer  calibrate_serv_;
         ros::ServiceServer  pitch_roll_ref_;
         ros::ServiceServer  yaw_ref_;
+        ros::Publisher      data_pub_;
         imu_common::imu     data;
         imu_common::imu     rawdata;
 
-        bool initialize(ros::NodeHandle &nh, Vector3d &rad);
+        bool initialize(ros::NodeHandle &nh, Vector3d &rad, int freq);
         void check_cal();
         bool calibrate_gyro();
         void pitch_roll_ref();

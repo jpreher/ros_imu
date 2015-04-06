@@ -53,6 +53,14 @@ yei_EKF::yei_EKF(ros::NodeHandle nh, int freq): rate((float)freq) {
     Rad_single << 0., 0., 0.;
     */
 
+    // Initialize the imus
+    R_shank.imu_location = r_shank;
+    R_thigh.imu_location = r_thigh;
+    L_foot.imu_location = l_foot;
+    R_shank.initialize(nh, Rad_shank, freq);
+    R_thigh.initialize(nh, Rad_thigh, freq);
+    L_foot.initialize(nh, Rad_foot, freq);
+
     // Set up the subscriber
     imu_sub = node_handle_.subscribe("IMUchatter", 1000, &yei_EKF::Callback, this);
 }
@@ -91,7 +99,7 @@ bool yei_EKF::updateEKF() {
  * @PARAM nh - Node handle that the ROS services will be assosciated to.
  * @PARAM device - IMU device which will be initialized.
  */
-bool yei_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
+bool yei_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad, int freq) {
     // Initialize all the things
     velocity.resize(3);
     Dvelocity.resize(3);
@@ -102,6 +110,7 @@ bool yei_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
     std::string param_base_path = "/imu/";
     std::string param_device;
     r_init << rad(0), rad(1), rad(2);
+    this->frequency = (double)freq;
 
     //Address the imu to the proper parameters on the parameter server.
     if ( imu_location == l_foot ) {
@@ -166,6 +175,7 @@ bool yei_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
     time_last_run = ros::Time::now().toSec();
 
     //Set up the publisher and servicer.
+    data_pub_ = nh.advertise<imu_common::imu>(param_device, 1000);
     //device.calibrate_serv_ = nh.advertiseService("calibrate_" + param_device, device.calibrate_callback);
 
     running = true;
@@ -233,6 +243,8 @@ void yei_EKF::filter(imu& device) {
 
     device.Filter.update(device.dt, device.a0, measurement);
 
+    device.data.header.stamp = ros::Time::now();
+
     device.data.linear_acceleration.x = device.acc(0);
     device.data.linear_acceleration.y = device.acc(1);
     device.data.linear_acceleration.z = device.acc(2);
@@ -275,12 +287,15 @@ bool yei_EKF::publishRunning() {
     //Update all running components first
     if ( L_foot.running ) {
         filter(L_foot);
+        L_foot.data_pub_.publish(L_foot.data);
     }
     if ( R_thigh.running ) {
         filter(R_thigh);
+        R_thigh.data_pub_.publish(R_thigh.data);
     }
     if ( R_shank.running ) {
         filter(R_shank);
+        R_shank.data_pub_.publish(R_shank.data);
     }
 
     return true;
@@ -317,9 +332,10 @@ void yei_EKF::imu::pitch_roll_ref() {
     grav[1] = 0.f;
     grav[2] = 1.f;
 
-    for (int i=0; i<200; i++) {
+    // Catch up to the buffer
+    for (int i=0; i<2000; i++) {
         ros::spinOnce();
-        usleep(5000);
+        usleep(500);
     }
 
     acc[0] = rawdata.linear_acceleration.x;
@@ -394,6 +410,23 @@ void yei_EKF::Callback(const imu_common::yei_msg& reading) {
 
     R_thigh.rawdata.header.stamp = ros::Time::now();
     R_thigh.time_last_run = time_now;
+
+    // Do foot
+    L_foot.dt = 0.005;
+    L_foot.rawdata.linear_acceleration.x = reading.foot_acc.x;
+    L_foot.rawdata.linear_acceleration.y = reading.foot_acc.y;
+    L_foot.rawdata.linear_acceleration.z = reading.foot_acc.z;
+
+    L_foot.rawdata.magnetometer.x = reading.foot_mag.x;
+    L_foot.rawdata.magnetometer.y = reading.foot_mag.y;
+    L_foot.rawdata.magnetometer.z = reading.foot_mag.z;
+
+    L_foot.rawdata.angular_velocity.x = reading.foot_gyr.x;
+    L_foot.rawdata.angular_velocity.y = reading.foot_gyr.y;
+    L_foot.rawdata.angular_velocity.z = reading.foot_gyr.z;
+
+    L_foot.rawdata.header.stamp = ros::Time::now();
+    L_foot.time_last_run = time_now;
 
     publishRunning();
 }

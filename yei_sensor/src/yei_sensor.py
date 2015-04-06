@@ -43,7 +43,7 @@ def checkIMUStream( sensorspace ):
 ###############################################################################################
 ## IMU Publisher
 def IMUtalker( shin, thigh, foot ):
-    pub = rospy.Publisher('IMUchatter', yei_msg, queue_size=0)
+    pub = rospy.Publisher('IMUchatter', yei_msg, queue_size=1000)
     rospy.init_node('IMU_pub')
     rate = rospy.Rate(200) #200 hz - Make the loop go fast
 
@@ -51,7 +51,7 @@ def IMUtalker( shin, thigh, foot ):
         message = yei_msg()
         if shin is not None:
             readings = checkIMUStream( shin )
-            # readings = pingIMUOnce( shin )
+            readings = pingIMUOnce( shin )
             message.shin_gyr.x = readings[0]
             message.shin_gyr.y = readings[1]
             message.shin_gyr.z = readings[2]
@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
     ## Main Loop
     try:
-        IMUtalker( IMUshin, None )
+        IMUtalker( IMUshin, None, None )
     except rospy.ROSInterruptException:
         pass
 

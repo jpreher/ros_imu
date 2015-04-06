@@ -50,6 +50,9 @@ float quat::norm(float q[4]){
  */
 float quat::norm3(float v[3]) {
     float v1, v2, v3;
+    v1 = v[0];
+    v2 = v[1];
+    v3 = v[2];
 
     return sqrt(v1*v1 + v2*v2 + v3*v3);
 }

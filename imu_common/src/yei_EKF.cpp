@@ -183,6 +183,9 @@ bool yei_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad, int freq) {
     return true;
 }
 
+/* FUNCTION filter()
+ * Rotates measurements according to reference and runs EKF.
+ */
 void yei_EKF::filter(imu& device) {
     // Rotate the measurements
     float tempa[3], tempg[3];
@@ -363,16 +366,25 @@ void yei_EKF::imu::yaw_ref() {
     doYaw = false;
 }
 
+/* FUNCTION pitch_roll_serv()
+ * Callback if server is activated for PR calibration. Changes flag which will be caught in spin.
+ */
 bool yei_EKF::imu::pitch_roll_serv(std_srvs::Empty::Request &req, std_srvs::Empty::Response &resp) {
     doPR = true;
     return true;
 }
 
+/* FUNCTION checkCalibration()
+ * Callback if server is activated for yaw calibration. NOTE: Will not actually calibrate at this time
+ */
 bool yei_EKF::imu::yaw_serv(std_srvs::Empty::Request &req, std_srvs::Empty::Response &resp) {
     doYaw = true;
     return true;
 }
 
+/* FUNCTION Callback()
+ * Main callback. Gets data from all three IMUs and runs the filter update/publish.
+ */
 void yei_EKF::Callback(const imu_common::yei_msg& reading) {
     double time_now = ros::Time::now().toSec();
     VectorXd measurement;

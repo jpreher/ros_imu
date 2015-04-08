@@ -10,6 +10,8 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   imu_common
 )
+find_package(PythonInterp)
+find_package(PythonLibs)
 
 ## Add Python Scripts Folder to editor
 FILE(GLOB yei_scripts "src/*" "bin/*")
@@ -100,24 +102,28 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${PYTHON_INCLUDE_DIRS}
+  include
 )
 
 ## Declare a cpp library
-# add_library(yei_sensor
-#   src/${PROJECT_NAME}/yei_sensor.cpp
-# )
+add_library(yei_sensor
+  src/yei_wrapper.cpp 
+  include/yei_wrapper.h
+)
 
 ## Declare a cpp executable
-# add_executable(yei_sensor_node src/yei_sensor_node.cpp)
+# add_executable(yei_sensor_node src/yei_wrapper.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(yei_sensor_node yei_sensor_generate_messages_cpp)
+add_dependencies(yei_sensor yei_sensor_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(yei_sensor_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(yei_sensor
+  ${catkin_LIBRARIES}
+  ${PYTHON_LIBRARIES}
+)
 
 #############
 ## Install ##

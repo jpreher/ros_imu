@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import rospy
-from imu_common.msg import yei_msg
+from yei_sensor.msg import yei_msg
 from std_msgs.msg import String
 import threespace_api
 from threespace_api import TSS_TIMESTAMP_NONE

@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 project(imu_common)
 add_definitions(-std=c++0x)
 
+set(YEI_PATH "../yei_sensor")
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -15,6 +17,12 @@ find_package(catkin REQUIRED COMPONENTS
   roslib_utilities
   yaml_eigen_utilities
   control_utilities
+  yei_sensor
+)
+
+include_directories(
+        ${YEI_PATH}
+        ${YEI_PATH}/include
 )
 
 ## Generate messages in the 'msg' folder
@@ -22,7 +30,6 @@ find_package(catkin REQUIRED COMPONENTS
    DIRECTORY msg
    FILES
    imu.msg
-   yei_msg.msg
  )
 
  ## Generate added messages and services with any dependencies listed here
@@ -46,6 +53,7 @@ catkin_package(
   INCLUDE_DIRS
     include
   LIBRARIES imu_common
+  CATKIN_DEPENDS yei_sensor
 )
 
 find_package(
@@ -79,3 +87,4 @@ add_library(imu_common src/MPU9150.cpp include/MPU9150.h
   ${catkin_Libraries})
 
 add_dependencies(imu_common imu_common_gencpp)
+target_link_libraries(imu_common ${catkin_LIBRARIES})

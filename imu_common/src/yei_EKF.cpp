@@ -385,7 +385,7 @@ bool yei_EKF::imu::yaw_serv(std_srvs::Empty::Request &req, std_srvs::Empty::Resp
 /* FUNCTION Callback()
  * Main callback. Gets data from all three IMUs and runs the filter update/publish.
  */
-void yei_EKF::Callback(const imu_common::yei_msg& reading) {
+void yei_EKF::Callback(const yei_sensor::yei_msg& reading) {
     double time_now = ros::Time::now().toSec();
     VectorXd measurement;
 

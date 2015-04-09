@@ -30,7 +30,7 @@ if os.name == 'nt': # sys.platform == 'win32':
     from win32_threespace_utils import *
 else:
     from threespace_utils import *
-    print("Linux System! Extra fancy utils not loaded!")
+    print("Linux System! Extra fancy utils not loaded! USING UNIX YEI THREESPACE API")
 
 ### Globals ###
 global_file_path = os.getcwd()

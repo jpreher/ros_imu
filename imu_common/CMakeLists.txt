@@ -87,4 +87,4 @@ add_library(imu_common src/MPU9150.cpp include/MPU9150.h
   ${catkin_Libraries})
 
 add_dependencies(imu_common imu_common_gencpp)
-target_link_libraries(imu_common ${catkin_LIBRARIES})
+target_link_libraries(imu_common ${catkin_LIBRARIES} yei_sensor)

@@ -61,8 +61,11 @@ yei_EKF::yei_EKF(ros::NodeHandle nh, int freq): rate((float)freq) {
     R_thigh.initialize(nh, Rad_thigh, freq);
     L_foot.initialize(nh, Rad_foot, freq);
 
-    // Set up the subscriber
-    imu_sub = node_handle_.subscribe("IMUchatter", 1000, &yei_EKF::Callback, this);
+    // Setup and initialize the python wrapper for the sensor API
+    char *argv[] = {"yei_sensor", "IMU_init", "IMU_callback"};
+    int argc = sizeof(argv) / sizeof(char*);
+    yei_wrapper yei_python(argc, argv);
+    yei_python.initialize();
 }
 
 /* FUNCTION spin()
@@ -89,7 +92,7 @@ bool yei_EKF::updateEKF() {
     if(!ros::isShuttingDown()) {
         if(node_handle_.ok()) {
             checkCalibration();
-            publishRunning();
+            Callback();
         }
     }
 }
@@ -383,62 +386,13 @@ bool yei_EKF::imu::yaw_serv(std_srvs::Empty::Request &req, std_srvs::Empty::Resp
 }
 
 /* FUNCTION Callback()
- * Main callback. Gets data from all three IMUs and runs the filter update/publish.
+ * Main callback. Calls python function to read sensor and populates the data.
  */
-void yei_EKF::Callback(const yei_sensor::yei_msg& reading) {
+void yei_EKF::Callback() {
     double time_now = ros::Time::now().toSec();
     VectorXd measurement;
 
-    // Do shank
-    R_shank.dt = 0.005;
-    R_shank.rawdata.linear_acceleration.x = reading.shin_acc.x;
-    R_shank.rawdata.linear_acceleration.y = reading.shin_acc.y;
-    R_shank.rawdata.linear_acceleration.z = reading.shin_acc.z;
-
-    R_shank.rawdata.magnetometer.x = reading.shin_mag.x;
-    R_shank.rawdata.magnetometer.y = reading.shin_mag.y;
-    R_shank.rawdata.magnetometer.z = reading.shin_mag.z;
-
-    R_shank.rawdata.angular_velocity.x = reading.shin_gyr.x;
-    R_shank.rawdata.angular_velocity.y = reading.shin_gyr.y;
-    R_shank.rawdata.angular_velocity.z = reading.shin_gyr.z;
-
-    R_shank.rawdata.header.stamp = ros::Time::now();
-    R_shank.time_last_run = time_now;
-
-    // Do thigh
-    R_thigh.dt = 0.005;
-    R_thigh.rawdata.linear_acceleration.x = reading.thigh_acc.x;
-    R_thigh.rawdata.linear_acceleration.y = reading.thigh_acc.y;
-    R_thigh.rawdata.linear_acceleration.z = reading.thigh_acc.z;
-
-    R_thigh.rawdata.magnetometer.x = reading.thigh_mag.x;
-    R_thigh.rawdata.magnetometer.y = reading.thigh_mag.y;
-    R_thigh.rawdata.magnetometer.z = reading.thigh_mag.z;
-
-    R_thigh.rawdata.angular_velocity.x = reading.thigh_gyr.x;
-    R_thigh.rawdata.angular_velocity.y = reading.thigh_gyr.y;
-    R_thigh.rawdata.angular_velocity.z = reading.thigh_gyr.z;
-
-    R_thigh.rawdata.header.stamp = ros::Time::now();
-    R_thigh.time_last_run = time_now;
-
-    // Do foot
-    L_foot.dt = 0.005;
-    L_foot.rawdata.linear_acceleration.x = reading.foot_acc.x;
-    L_foot.rawdata.linear_acceleration.y = reading.foot_acc.y;
-    L_foot.rawdata.linear_acceleration.z = reading.foot_acc.z;
-
-    L_foot.rawdata.magnetometer.x = reading.foot_mag.x;
-    L_foot.rawdata.magnetometer.y = reading.foot_mag.y;
-    L_foot.rawdata.magnetometer.z = reading.foot_mag.z;
-
-    L_foot.rawdata.angular_velocity.x = reading.foot_gyr.x;
-    L_foot.rawdata.angular_velocity.y = reading.foot_gyr.y;
-    L_foot.rawdata.angular_velocity.z = reading.foot_gyr.z;
-
-    L_foot.rawdata.header.stamp = ros::Time::now();
-    L_foot.time_last_run = time_now;
+    // Get measurement here
 
     publishRunning();
 }

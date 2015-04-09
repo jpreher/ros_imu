@@ -1,16 +1,13 @@
-#! /usr/bin/env python
+#! /usr/bin/env python2.7
 
-import rospy
-from yei_sensor.msg import yei_msg
-from std_msgs.msg import String
 import threespace_api
 from threespace_api import TSS_TIMESTAMP_NONE
-import serial
 import time
 import math
 import string
 import colorsys
 from socket import *
+import serial
 
 portSHIN = "/dev/ttyACM0"
 portTHIGH = "/dev/ttyACM1"
@@ -39,60 +36,55 @@ def checkIMUStream( sensorspace ):
     # Return the data without the checksum
     return tempreadings[1]
 
-
 ###############################################################################################
 ## IMU Publisher
-def IMUtalker( shin, thigh, foot ):
-    pub = rospy.Publisher('IMUchatter', yei_msg, queue_size=1000)
-    rospy.init_node('IMU_pub')
-    rate = rospy.Rate(200) #200 hz - Make the loop go fast
+def IMU_callback():
+    message = [0]*27
+    if shinIMU is not None:
+        readings = checkIMUStream( shinIMU )
+         # readings = pingIMUOnce( shin )
+        message[0] = readings[0]
+        message[1] = readings[1]
+        message[2] = readings[2]
+        message[3] = readings[3]
+        message[4] = readings[4]
+        message[5] = readings[5]
+        message[6] = readings[6]
+        message[7] = readings[7]
+        message[8] = readings[8]
+    if thighIMU is not None:
+        readings = checkIMUStream( thighIMU )
+        # readings = pingIMUOnce( thigh )
+        message[9] = readings[0]
+        message[10] = readings[1]
+        message[11] = readings[2]
+        message[12] = readings[3]
+        message[13] = readings[4]
+        message[14] = readings[5]
+        message[15] = readings[6]
+        message[16] = readings[7]
+        message[17] = readings[8]
+    if footIMU is not None:
+        readings = checkIMUStream( footIMU )
+        # readings = pingIMUOnce( foot )
+        message[18] = readings[0]
+        message[19] = readings[1]
+        message[20] = readings[2]
+        message[21] = readings[3]
+        message[22] = readings[4]
+        message[23] = readings[5]
+        message[24] = readings[6]
+        message[25] = readings[7]
+        message[26] = readings[8]
 
-    while not rospy.is_shutdown():
-        message = yei_msg()
-        if shin is not None:
-            readings = checkIMUStream( shin )
-            readings = pingIMUOnce( shin )
-            message.shin_gyr.x = readings[0]
-            message.shin_gyr.y = readings[1]
-            message.shin_gyr.z = readings[2]
-            message.shin_acc.x = readings[3]
-            message.shin_acc.y = readings[4]
-            message.shin_acc.z = readings[5]
-            message.shin_mag.x = readings[6]
-            message.shin_mag.y = readings[7]
-            message.shin_mag.z = readings[8]
-        if thigh is not None:
-            readings = checkIMUStream( thigh )
-            # readings = pingIMUOnce( thigh )
-            message.thigh_gyr.x = readings[0]
-            message.thigh_gyr.y = readings[1]
-            message.thigh_gyr.z = readings[2]
-            message.thigh_acc.x = readings[3]
-            message.thigh_acc.y = readings[4]
-            message.thigh_acc.z = readings[5]
-            message.thigh_mag.x = readings[6]
-            message.thigh_mag.y = readings[7]
-            message.thigh_mag.z = readings[8]
-        if foot is not None:
-            readings = checkIMUStream( foot )
-            # readings = pingIMUOnce( foot )
-            message.thigh_gyr.x = readings[0]
-            message.thigh_gyr.y = readings[1]
-            message.thigh_gyr.z = readings[2]
-            message.thigh_acc.x = readings[3]
-            message.thigh_acc.y = readings[4]
-            message.thigh_acc.z = readings[5]
-            message.thigh_mag.x = readings[6]
-            message.thigh_mag.y = readings[7]
-            message.thigh_mag.z = readings[8]
-
-        message.header.stamp = rospy.Time.now()
-        pub.publish(message)
-        rate.sleep()
-
+    return message
 
 ###############################################################################################
-if __name__ == '__main__':
+def IMU_init():
+    global IMUshin
+    global IMUthigh
+    global IMUfoot
+
     ## Initial setup
     print('Opening Shin IMU')
     try:
@@ -150,16 +142,3 @@ if __name__ == '__main__':
     except:
         print("   Could not start stream")
         exit()
-
-    ## Main Loop
-    try:
-        IMUtalker( IMUshin, None, None )
-    except rospy.ROSInterruptException:
-        pass
-
-    ## Close
-    IMUshin.close()
-    #IMUthigh.close()
-
-
-

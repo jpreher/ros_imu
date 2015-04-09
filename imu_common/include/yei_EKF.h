@@ -7,10 +7,11 @@
 #include "ros/time.h"
 #include "EKF.h"
 #include "imu_common/imu.h"
-#include "yei_sensor/yei_msg.h"
 #include "std_srvs/Empty.h"
 #include "std_msgs/Bool.h"
+#include "yei_sensor/yei_msg.h"
 #include "quaternion_util.h"
+#include "yei_wrapper.h"
 
 class yei_EKF {
 
@@ -91,8 +92,7 @@ private:
 
     int frequency;
     int setting;
-    void Callback(const yei_sensor::yei_msg& reading);
-    ros::Subscriber imu_sub;
+    void Callback();
     ros::NodeHandle node_handle_;
     ros::Rate rate;
 

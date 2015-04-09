@@ -67,8 +67,10 @@ yei_EKF::yei_EKF(ros::NodeHandle nh, int freq): rate((float)freq) {
     yei_python.initialize(argc, argv);
 
     // Let the sensor run for a bit before calibrating / etc
-    for (int i=0; i<500; i++)
+    for (int i=0; i<200; i++) {
+        usleep(5000);
         getYEIreading();
+    }
 
     // Clear the calibration by updating
     checkCalibration();
@@ -409,6 +411,7 @@ void yei_EKF::getYEIreading() {
     double reading[27];
 
     yei_python.getLastStream(reading);
+    ROS_INFO("Shank acceleration %f, %f, %f", reading[0], reading[1], reading[2]);
 
     R_shank.data.linear_acceleration.x = reading[0];
     R_shank.data.linear_acceleration.y = reading[1];

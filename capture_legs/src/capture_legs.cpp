@@ -25,6 +25,7 @@ main(int argc, char** argv)
     //ambcap_EKF AC(nh, frequency, true);
     //ambcap AC(nh,frequency);
     AC.spin();
+    //AC.updateEKF();
 
     return 0;
 }

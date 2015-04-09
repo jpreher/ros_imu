@@ -17,13 +17,15 @@ yei_wrapper::yei_wrapper() {
     PyList_Append((PyObject *) paths, PyString_FromString(c));
     // Append the Python directory paths
     PyList_Append((PyObject *) paths, PyString_FromString("/usr/lib/python2.7"));
+    PyList_Append((PyObject *) paths, PyString_FromString("/usr/lib/python2.7/plat-linux2"));
     PyList_Append((PyObject *) paths, PyString_FromString("/usr/lib/python2.7/lib-tk"));
     PyList_Append((PyObject *) paths, PyString_FromString("/usr/lib/python2.7/lib-old"));
     PyList_Append((PyObject *) paths, PyString_FromString("/usr/lib/python2.7/lib-dynload"));
     PyList_Append((PyObject *) paths, PyString_FromString("/usr/local/lib/python2.7/dist-packages"));
     PyList_Append((PyObject *) paths, PyString_FromString("/usr/lib/python2.7/dist-packages"));
-    PyList_Append((PyObject *) paths, PyString_FromString("/usr/lib/python2.7/ist-packages/PIL"));
+    PyList_Append((PyObject *) paths, PyString_FromString("/usr/lib/python2.7/dist-packages/PIL"));
     PyList_Append((PyObject *) paths, PyString_FromString("/usr/lib/python2.7/dist-packages/gst-0.10"));
+    PyList_Append((PyObject *) paths, PyString_FromString("/usr/lib/python2.7/dist-packages/gtk-2.0"));
     PyList_Append((PyObject *) paths, PyString_FromString("/usr/lib/pymodules/python2.7"));
 }
 
@@ -51,9 +53,16 @@ int yei_wrapper::initialize(int argc, char *argv[]) {
     ROS_INFO("Python Initialized");
     //Change the interpreter python path
     PySys_SetObject("path", (PyObject *)paths);
-    //std::string yei_path = "/usr/lib/python2.7/:" + ros::package::getPath("yei_sensor") + "/src/";
-    //char * c = const_cast<char*>(yei_path.c_str());
-    //PySys_SetPath(c);
+
+    //Set argc and argv of module to nothing
+    char *arg[0];
+    PySys_SetArgv(0, arg);
+
+    // Make sure the GIL has been created since we need to acquire it in our
+    // callback to safely call into the python application.
+    if (! PyEval_ThreadsInitialized()) {
+        PyEval_InitThreads();
+    }
 
     //Generate python string to script
     ROS_INFO("Generating Python Module");
@@ -63,7 +72,7 @@ int yei_wrapper::initialize(int argc, char *argv[]) {
     //Import the python module
     ROS_INFO("Importing Module %s", script);
     pModule = PyImport_Import(pName);
-    Py_DECREF(pName);
+    Py_DECREF(pName); //Deallocate pName - no more usage
 
     //Ensure the module is not empty
     ROS_INFO("Now checking if module is empty and imported function fidelity");
@@ -79,6 +88,7 @@ int yei_wrapper::initialize(int argc, char *argv[]) {
         ROS_INFO("Initialization Function Successfully Imported");
 
         pFunc = PyObject_GetAttrString(pModule, func);
+        Py_INCREF(pFunc); // This module now using pFunc, keep it in scope
         if (!pFunc && !PyCallable_Check(pFunc)) {
             if (PyErr_Occurred())
                 PyErr_Print();
@@ -98,9 +108,10 @@ int yei_wrapper::initialize(int argc, char *argv[]) {
     ROS_INFO("Calling Python YEI Sensor Initialization");
     pInitValue = PyObject_CallObject(pInitFunc, pArgs);
     if (pInitValue != NULL) {
-        Py_DECREF(pInitValue);
+        Py_DECREF(pInitValue); // Don't need any more
     }
     else {
+        // The initialization did not work, deallocate all the things
         Py_DECREF(pInitFunc);
         Py_DECREF(pModule);
         PyErr_Print();
@@ -113,14 +124,14 @@ int yei_wrapper::initialize(int argc, char *argv[]) {
 }
 
 int yei_wrapper::getLastStream(double *reading) {
+    PyObject *pValue;
+
     // Get the pyList from the stream
     pValue = PyObject_CallObject(pFunc, NULL);
 
     // Check for NULL
     if (pValue != NULL) {
-        //Don't DECREF, releasing ref here causes loss of hold on pValue = segfault
-        //Need to review documentation as to best INCREF DECREF usage - for now hack
-        //Py_DECREF(pValue);
+        // Do nothing
     }
     else {
         Py_DECREF(pFunc);
@@ -136,7 +147,7 @@ int yei_wrapper::getLastStream(double *reading) {
     for (int i=0; i<sizeofpy; i++) {
         reading[i] = PyFloat_AsDouble(PyList_GetItem(pValue, i));
     }
-
+    Py_DECREF(pValue); // Deallocate the pValue
     return 0;
 }
 

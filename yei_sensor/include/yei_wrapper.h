@@ -18,7 +18,7 @@ private:
     char *init;
     int  arg_count;
     PyObject *pName, *pModule, *pFunc, *pInitFunc;
-    PyObject *pArgs, *pValue, *pInitValue;
+    PyObject *pArgs, *pInitValue;
     PyGILState_STATE gstate;
     PyListObject *paths;
 };

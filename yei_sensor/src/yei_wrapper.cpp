@@ -1,10 +1,11 @@
 #include "yei_wrapper.h"
 
-yei_wrapper::yei_wrapper(int argc, char *argv[]) {
-    arg_count = argc;                       //Number of arguments
-    script    = argv[0];                    //Python Script
-    init      = argv[1];                    //Init function to Call
-    func      = argv[2];                    //Function to Call
+yei_wrapper::yei_wrapper() {
+    arg_count = NULL;
+    script    = NULL;
+    init      = NULL;
+    func      = NULL;
+
     paths = (PyListObject *)PyList_New(0);  //Set of paths for python interpreter
 
     // Populate args with NULL - Eliminates segfault
@@ -31,7 +32,12 @@ yei_wrapper::~yei_wrapper() {
     Py_Finalize();
 }
 
-int yei_wrapper::initialize() {
+int yei_wrapper::initialize(int argc, char *argv[]) {
+    arg_count = argc;                       //Number of arguments
+    script    = argv[0];                    //Python Script
+    init      = argv[1];                    //Init function to Call
+    func      = argv[2];                    //Function to Call
+
     //If arg count is less than 2 then there was no script location and function passed,
     //or there is something wrong with how this class was constructed.
     if (arg_count < 2) {
@@ -89,7 +95,7 @@ int yei_wrapper::initialize() {
     }
 
     //If all worked return 0
-    ROS_INFO("Calling YEI Sensor Initialization");
+    ROS_INFO("Calling Python YEI Sensor Initialization");
     pInitValue = PyObject_CallObject(pInitFunc, pArgs);
     if (pInitValue != NULL) {
         Py_DECREF(pInitValue);
@@ -126,7 +132,6 @@ int yei_wrapper::getLastStream(double *reading) {
 
     // Populate reading
     int sizeofpy = PyList_Size(pValue);
-    ROS_INFO("PyList is size %i", sizeofpy);
     PyObject* list_val;
     for (int i=0; i<sizeofpy; i++) {
         reading[i] = PyFloat_AsDouble(PyList_GetItem(pValue, i));

@@ -91,31 +91,31 @@ def IMU_init():
 
     ## Initial setup
     print('Opening Shin IMU')
-    #try:
-    #    # Set up device
-    #    IMUshin = threespace_api.TSUSBSensor( com_port=portSHIN, timestamp_mode=TSS_TIMESTAMP_NONE )
-    #    print('   ' + str(IMUshin))
-    #    # Set the axes properly for the Kalman Filter
-    #    print('   Setting Axis Directions to YXZ - 002 with Z and X axis flipped about Y')
-    #    threespace_api.TSUSBSensor.setAxisDirections( IMUshin, 0x2A )
-    #    # Put in IMU mode (speed considerations)
-    #    print('   Setting to raw IMU mode')
-    #    threespace_api.TSUSBSensor.setFilterMode( IMUshin, 0 )
-    #except:
-    #    print("   Could not Open Shin IMU on {0} or error in setting configuration - closing".format(portSHIN))
-    #    return 1
+    try:
+        # Set up device
+        IMUshin = threespace_api.TSUSBSensor( com_port=portSHIN, timestamp_mode=TSS_TIMESTAMP_NONE )
+        print('   ' + str(IMUshin))
+        # Set the axes properly for the Kalman Filter
+        print('   Setting Axis Directions to YXZ - 002 with Z and X axis flipped about Y')
+        threespace_api.TSUSBSensor.setAxisDirections( IMUshin, 0x2A )
+        # Put in IMU mode (speed considerations)
+        print('   Setting to raw IMU mode')
+        threespace_api.TSUSBSensor.setFilterMode( IMUshin, 0 )
+    except:
+        print("   Could not Open Shin IMU on {0} or error in setting configuration - closing".format(portSHIN))
+        return 1
 
-    #print('Opening Thigh IMU')
-    #try:
-    #    # Set up device
-    #    IMUthigh = threespace_api.TSUSBSensor( com_port=portTHIGH, timestamp_mode=TSS_TIMESTAMP_NONE )
-    #    print('   ' + str(IMUthigh))
-    #    # Put in IMU mode (speed considerations)
-    #    print('   Setting to raw IMU mode')
-    #    threespace_api.TSUSBSensor.setFilterMode( IMUthigh, 0 )
-    #except:
-    #    print("   Could not Open Thigh IMU on {0} or error in setting configuration - closing".format(portTHIGH))
-    #    return 1
+    print('Opening Thigh IMU')
+    try:
+        # Set up device
+        IMUthigh = threespace_api.TSUSBSensor( com_port=portTHIGH, timestamp_mode=TSS_TIMESTAMP_NONE )
+        print('   ' + str(IMUthigh))
+        # Put in IMU mode (speed considerations)
+        print('   Setting to raw IMU mode')
+        threespace_api.TSUSBSensor.setFilterMode( IMUthigh, 0 )
+    except:
+        print("   Could not Open Thigh IMU on {0} or error in setting configuration - closing".format(portTHIGH))
+        return 1
 
     #print('Opening Foot IMU')
     #try:
@@ -129,21 +129,23 @@ def IMU_init():
     #    print("   Could not Open Thigh IMU on {0} or error in setting configuration - closing".format(portFOOT))
     #    return 1
 
-    ## Streaming Setup
-    #try:
-    #    print("Starting Stream")
-    #    ## Set up streaming
-    #    threespace_api.TSUSBSensor.setStreamingTiming( IMUshin, interval=0, duration=0xffffffff, delay=0 )
-    #    #threespace_api.TSUSBSensor.setStreamingTiming( IMUthigh, interval=0, duration=0xffffffff, delay=0 )
+    # Streaming Setup
+    try:
+        print("Starting Stream")
+        ## Set up streaming
+        threespace_api.TSUSBSensor.setStreamingTiming( IMUshin, interval=0, duration=0xffffffff, delay=0 )
+        #threespace_api.TSUSBSensor.setStreamingTiming( IMUthigh, interval=0, duration=0xffffffff, delay=0 )
     #    #threespace_api.TSUSBSensor.setStreamingTiming( IMUfoot, interval=0, duration=0xffffffff, delay=0 )
-    #    threespace_api.TSUSBSensor.setStreamingSlots( IMUshin, slot0='getCorrectedGyroRate', slot1='getCorrectedAccelerometerVector', slot2='getCorrectedCompassVector')
-    #    #threespace_api.TSUSBSensor.setStreamingSlots( IMUthigh, slot0='getCorrectedGyroRate', slot1='getCorrectedAccelerometerVector', slot2='getCorrectedCompassVector')
+        threespace_api.TSUSBSensor.setStreamingSlots( IMUshin, slot0='getCorrectedGyroRate', slot1='getCorrectedAccelerometerVector', slot2='getCorrectedCompassVector')
+        #threespace_api.TSUSBSensor.setStreamingSlots( IMUthigh, slot0='getCorrectedGyroRate', slot1='getCorrectedAccelerometerVector', slot2='getCorrectedCompassVector')
     #    #threespace_api.TSUSBSensor.setStreamingSlots( IMUfoot, slot0='getCorrectedGyroRate', slot1='getCorrectedAccelerometerVector', slot2='getCorrectedCompassVector')
-    #    threespace_api.TSUSBSensor.startStreaming( IMUshin )
-    #   #threespace_api.TSUSBSensor.startStreaming( IMUthigh )
+        threespace_api.TSUSBSensor.startStreaming( IMUshin )
+       #threespace_api.TSUSBSensor.startStreaming( IMUthigh )
     #    #threespace_api.TSUSBSensor.startStreaming( IMUfoot )
-    #    print("   Stream Enabled on all sensors")
-    #except:
-    #    print("   Could not start stream")
-    #    exit()
+        print("   Stream Enabled on all sensors")
+    except:
+        print("   Could not start stream")
+        exit()
     return 0
+
+

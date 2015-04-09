@@ -64,15 +64,14 @@ yei_EKF::yei_EKF(ros::NodeHandle nh, int freq): rate((float)freq) {
     // Setup and initialize the python wrapper for the sensor API
     char *argv[] = {"yei_sensor", "IMU_init", "IMU_callback"};
     int argc = sizeof(argv) / sizeof(char*);
-    yei_wrapper yei_python(argc, argv);
-    yei_python.initialize();
-    double reading[27];
-    for (int i = 0; i < 27; i++) {
-            reading[i] = 1.;
-    }
+    yei_python.initialize(argc, argv);
 
-    yei_python.getLastStream(reading);
-    ROS_INFO("Stream return %f", reading[5]);
+    // Let the sensor run for a bit before calibrating / etc
+    for (int i=0; i<500; i++)
+        getYEIreading();
+
+    // Clear the calibration by updating
+    checkCalibration();
 }
 
 /* FUNCTION spin()
@@ -84,6 +83,8 @@ bool yei_EKF::spin() {
     while(!ros::isShuttingDown()) {
         while(node_handle_.ok()) {
             ros::spinOnce();
+            Callback();
+            publishRunning();
             checkCalibration();
             rate.sleep();
         }
@@ -98,8 +99,8 @@ bool yei_EKF::spin() {
 bool yei_EKF::updateEKF() {
     if(!ros::isShuttingDown()) {
         if(node_handle_.ok()) {
-            checkCalibration();
             Callback();
+            checkCalibration();
         }
     }
 }
@@ -199,17 +200,17 @@ bool yei_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad, int freq) {
 void yei_EKF::filter(imu& device) {
     // Rotate the measurements
     float tempa[3], tempg[3];
-    tempa[0] = 9.81 * device.rawdata.linear_acceleration.x;
-    tempa[1] = 9.81 * device.rawdata.linear_acceleration.y;
-    tempa[2] = 9.81 * device.rawdata.linear_acceleration.z;
+    tempa[0] = 9.81 * device.data.linear_acceleration.x;
+    tempa[1] = 9.81 * device.data.linear_acceleration.y;
+    tempa[2] = 9.81 * device.data.linear_acceleration.z;
     quat::rotateVec(tempa, device.q_sensor_cal, tempa);
     device.acc << tempa[0],
                   0.,
                   tempa[2];
 
-    tempg[0] = device.rawdata.angular_velocity.x;
-    tempg[1] = device.rawdata.angular_velocity.y;
-    tempg[2] = device.rawdata.angular_velocity.z;
+    tempg[0] = device.data.angular_velocity_measure.x;
+    tempg[1] = device.data.angular_velocity_measure.y;
+    tempg[2] = device.data.angular_velocity_measure.z;
     quat::rotateVec(tempg, device.q_sensor_cal, tempg);
 
     device.Dvelocity = Vector3d( 0., (-tempg[1] - device.velocity(1)) / 0.005, 0.);
@@ -258,10 +259,6 @@ void yei_EKF::filter(imu& device) {
 
     device.data.header.stamp = ros::Time::now();
 
-    device.data.linear_acceleration.x = device.acc(0);
-    device.data.linear_acceleration.y = device.acc(1);
-    device.data.linear_acceleration.z = device.acc(2);
-
     device.data.linear_acceleration_model.x = device.Filter.h(6);
     device.data.linear_acceleration_model.y = device.Filter.h(7);
     device.data.linear_acceleration_model.z = device.Filter.h(8);
@@ -277,10 +274,6 @@ void yei_EKF::filter(imu& device) {
     device.data.angular_velocity.x = device.Filter.x_hat(0);
     device.data.angular_velocity.y = device.Filter.x_hat(1);
     device.data.angular_velocity.z = device.Filter.x_hat(2);
-
-    device.data.angular_velocity_measure.x = device.velocity(0);
-    device.data.angular_velocity_measure.y = device.velocity(1);
-    device.data.angular_velocity_measure.z = device.velocity(2);
 
     device.data.orientation.w = device.Filter.x_hat(6);
     device.data.orientation.x = device.Filter.x_hat(7);
@@ -299,16 +292,31 @@ void yei_EKF::filter(imu& device) {
 bool yei_EKF::publishRunning() {
     //Update all running components first
     if ( L_foot.running ) {
-        filter(L_foot);
         L_foot.data_pub_.publish(L_foot.data);
     }
     if ( R_thigh.running ) {
-        filter(R_thigh);
         R_thigh.data_pub_.publish(R_thigh.data);
     }
     if ( R_shank.running ) {
-        filter(R_shank);
         R_shank.data_pub_.publish(R_shank.data);
+    }
+
+    return true;
+}
+
+/* FUNCTION filterRunning()
+ * Checks all devices for running status, updates then publishes in that order.
+ */
+bool yei_EKF::filterRunning() {
+    //Update all running components first
+    if ( L_foot.running ) {
+        filter(L_foot);
+    }
+    if ( R_thigh.running ) {
+        filter(R_thigh);
+    }
+    if ( R_shank.running ) {
+        filter(R_shank);
     }
 
     return true;
@@ -345,14 +353,8 @@ void yei_EKF::imu::pitch_roll_ref() {
     grav[1] = 0.f;
     grav[2] = 1.f;
 
-    // Catch up to the buffer
-    for (int i=0; i<2000; i++) {
-        ros::spinOnce();
-        usleep(500);
-    }
-
-    acc[0] = rawdata.linear_acceleration.x;
-    acc[1] = rawdata.linear_acceleration.y;
+    acc[0] = data.linear_acceleration.x;
+    acc[1] = data.linear_acceleration.y;
     acc[2] = rawdata.linear_acceleration.z;
     quat::two_vec_q(acc, grav, q_sensor_cal);
     quat::inv(q_sensor_cal, q_sensor_cal);
@@ -396,11 +398,46 @@ bool yei_EKF::imu::yaw_serv(std_srvs::Empty::Request &req, std_srvs::Empty::Resp
  * Main callback. Calls python function to read sensor and populates the data.
  */
 void yei_EKF::Callback() {
-    double time_now = ros::Time::now().toSec();
-    VectorXd measurement;
+    // Get measurement here and populate the message
+    getYEIreading();
 
-    // Get measurement here
+    // Run the filter
+    filterRunning();
+}
 
-    publishRunning();
+void yei_EKF::getYEIreading() {
+    double reading[27];
+
+    yei_python.getLastStream(reading);
+
+    R_shank.data.linear_acceleration.x = reading[0];
+    R_shank.data.linear_acceleration.y = reading[1];
+    R_shank.data.linear_acceleration.z = reading[2];
+    R_shank.data.angular_velocity_measure.x = reading[3];
+    R_shank.data.angular_velocity_measure.y = reading[4];
+    R_shank.data.angular_velocity_measure.z = reading[5];
+    R_shank.data.magnetometer.x = reading[6];
+    R_shank.data.magnetometer.y = reading[7];
+    R_shank.data.magnetometer.z = reading[8];
+
+    R_thigh.data.linear_acceleration.x = reading[9];
+    R_thigh.data.linear_acceleration.y = reading[10];
+    R_thigh.data.linear_acceleration.z = reading[11];
+    R_thigh.data.angular_velocity_measure.x = reading[12];
+    R_thigh.data.angular_velocity_measure.y = reading[13];
+    R_thigh.data.angular_velocity_measure.z = reading[14];
+    R_thigh.data.magnetometer.x = reading[15];
+    R_thigh.data.magnetometer.y = reading[16];
+    R_thigh.data.magnetometer.z = reading[17];
+
+    L_foot.data.linear_acceleration.x = reading[18];
+    L_foot.data.linear_acceleration.y = reading[19];
+    L_foot.data.linear_acceleration.z = reading[20];
+    L_foot.data.angular_velocity_measure.x = reading[21];
+    L_foot.data.angular_velocity_measure.y = reading[22];
+    L_foot.data.angular_velocity_measure.z = reading[23];
+    L_foot.data.magnetometer.x = reading[24];
+    L_foot.data.magnetometer.y = reading[25];
+    L_foot.data.magnetometer.z = reading[26];
 }
 

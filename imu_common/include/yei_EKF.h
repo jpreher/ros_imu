@@ -18,6 +18,7 @@ class yei_EKF {
 public:
 
     yei_EKF(ros::NodeHandle nh, int freq);
+    yei_wrapper yei_python;
 
     enum imu_select {
         l_foot,
@@ -78,10 +79,12 @@ public:
     bool spin();
     bool updateEKF();
     bool publishRunning();
+    bool filterRunning();
     bool checkCalibration();
     void filter(imu& device);
     static bool publish(imu& device);
     bool publishall;
+    void getYEIreading();
 
     imu R_shank;
     imu R_thigh;

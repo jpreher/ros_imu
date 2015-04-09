@@ -7,9 +7,9 @@
 
 class yei_wrapper {
 public:
-    yei_wrapper(int argc, char *argv[]);
+    yei_wrapper();
     ~yei_wrapper();
-    int initialize();
+    int initialize(int argc, char *argv[]);
     int getLastStream(double *reading);
 
 private:

@@ -16,7 +16,7 @@
 
 main(int argc, char** argv)
 {
-    int frequency = 400; // Default value of frequency is 100hz
+    int frequency = 200; // Default value of frequency is 100hz
     ros::init(argc, argv, "capture_legs");
     ros::NodeHandle nh;
     //ros::param::get("/frequency", frequency);

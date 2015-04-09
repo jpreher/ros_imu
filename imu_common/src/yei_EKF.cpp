@@ -66,6 +66,13 @@ yei_EKF::yei_EKF(ros::NodeHandle nh, int freq): rate((float)freq) {
     int argc = sizeof(argv) / sizeof(char*);
     yei_wrapper yei_python(argc, argv);
     yei_python.initialize();
+    double reading[27];
+    for (int i = 0; i < 27; i++) {
+            reading[i] = 1.;
+    }
+
+    yei_python.getLastStream(reading);
+    ROS_INFO("Stream return %f", reading[5]);
 }
 
 /* FUNCTION spin()

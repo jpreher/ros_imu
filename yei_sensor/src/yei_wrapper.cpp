@@ -7,6 +7,9 @@ yei_wrapper::yei_wrapper(int argc, char *argv[]) {
     func      = argv[2];                    //Function to Call
     paths = (PyListObject *)PyList_New(0);  //Set of paths for python interpreter
 
+    // Populate args with NULL - Eliminates segfault
+    pArgs = NULL;
+
     // Get the YEI path
     std::string yei_path = ros::package::getPath("yei_sensor") + "/src/";
     const char * c = yei_path.c_str();
@@ -68,6 +71,7 @@ int yei_wrapper::initialize() {
             return 1;
         }
         ROS_INFO("Initialization Function Successfully Imported");
+
         pFunc = PyObject_GetAttrString(pModule, func);
         if (!pFunc && !PyCallable_Check(pFunc)) {
             if (PyErr_Occurred())
@@ -85,11 +89,50 @@ int yei_wrapper::initialize() {
     }
 
     //If all worked return 0
+    ROS_INFO("Calling YEI Sensor Initialization");
+    pInitValue = PyObject_CallObject(pInitFunc, pArgs);
+    if (pInitValue != NULL) {
+        Py_DECREF(pInitValue);
+    }
+    else {
+        Py_DECREF(pInitFunc);
+        Py_DECREF(pModule);
+        PyErr_Print();
+        fprintf(stderr,"Initialization call failed\n");
+        return 1;
+    }
+
+
     return 0;
 }
 
-int yei_wrapper::getLastStream() {
+int yei_wrapper::getLastStream(double *reading) {
+    // Get the pyList from the stream
+    pValue = PyObject_CallObject(pFunc, NULL);
 
+    // Check for NULL
+    if (pValue != NULL) {
+        //Don't DECREF, releasing ref here causes loss of hold on pValue = segfault
+        //Need to review documentation as to best INCREF DECREF usage - for now hack
+        //Py_DECREF(pValue);
+    }
+    else {
+        Py_DECREF(pFunc);
+        Py_DECREF(pModule);
+        PyErr_Print();
+        fprintf(stderr,"Stream call failed\n");
+        return 1;
+    }
+
+    // Populate reading
+    int sizeofpy = PyList_Size(pValue);
+    ROS_INFO("PyList is size %i", sizeofpy);
+    PyObject* list_val;
+    for (int i=0; i<sizeofpy; i++) {
+        reading[i] = PyFloat_AsDouble(PyList_GetItem(pValue, i));
+    }
+
+    return 0;
 }
 
 

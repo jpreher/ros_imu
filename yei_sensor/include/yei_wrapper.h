@@ -10,7 +10,7 @@ public:
     yei_wrapper(int argc, char *argv[]);
     ~yei_wrapper();
     int initialize();
-    int getLastStream();
+    int getLastStream(double *reading);
 
 private:
     char *script;
@@ -18,7 +18,7 @@ private:
     char *init;
     int  arg_count;
     PyObject *pName, *pModule, *pFunc, *pInitFunc;
-    PyObject *pArgs, *pValue;
+    PyObject *pArgs, *pValue, *pInitValue;
     PyGILState_STATE gstate;
     PyListObject *paths;
 };

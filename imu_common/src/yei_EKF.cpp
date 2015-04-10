@@ -59,7 +59,8 @@ yei_EKF::yei_EKF(ros::NodeHandle nh, int freq): rate((float)freq) {
     L_foot.imu_location = l_foot;
     R_shank.initialize(nh, Rad_shank, freq);
     R_thigh.initialize(nh, Rad_thigh, freq);
-    L_foot.initialize(nh, Rad_foot, freq);
+    //L_foot.initialize(nh, Rad_foot, freq);
+    L_foot.running = false;
 
     // Setup and initialize the python wrapper for the sensor API
     char *argv[] = {"yei_sensor", "IMU_init", "IMU_callback"};
@@ -88,7 +89,7 @@ bool yei_EKF::spin() {
             Callback();
             publishRunning();
             checkCalibration();
-            rate.sleep();
+            //rate.sleep();
         }
     }
 }

@@ -111,7 +111,7 @@ def IMU_init():
     except IOError as e:
         print "I/O error({0}): {1}".format(e.errno, e.strerror)
     except ValueError:
-        print "Could not convert data."
+        print "Could not convert data.", traceback.format_exc()
     except:
         print "Unexpected error:", sys.exc_info()[0], traceback.format_exc()
         print("   Could not Open Shin IMU on {0} or error in setting configuration - closing".format(portSHIN))

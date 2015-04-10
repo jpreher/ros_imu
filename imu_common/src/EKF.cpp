@@ -109,7 +109,7 @@ void EKF::update(double dt, VectorXd &acc, VectorXd &measurement) {
     q0 = q0 * nrm;
     q1 = q1 * nrm;
     q2 = q2 * nrm;
-    q3 = q3* nrm;
+    q3 = q3 * nrm;
 
     // Project the error covariance ahead
     P_minus_ = A_ * P_ * A_.transpose() + Q_;
@@ -144,6 +144,12 @@ void EKF::update(double dt, VectorXd &acc, VectorXd &measurement) {
     x_hat = x_minus + K_ * (z - h);
 
     nrm = invSqrt((x_hat(6)*x_hat(6) + x_hat(7)*x_hat(7) + x_hat(8)*x_hat(8) + x_hat(9)*x_hat(9)));
+    float temp[4];
+    temp[0] = x_hat(6)*x_hat(6);
+    temp[1] = x_hat(7)*x_hat(7);
+    temp[2] = x_hat(8)*x_hat(8);
+    temp[3] = x_hat(9)*x_hat(9);
+
     x_hat(6) = x_hat(6) * nrm;
     x_hat(7) = x_hat(7) * nrm;
     x_hat(8) = x_hat(8) * nrm;
@@ -159,9 +165,9 @@ void EKF::update(double dt, VectorXd &acc, VectorXd &measurement) {
 float EKF::invSqrt(float x) {
     float halfx = 0.5f * x;
     float y = x;
-    long i = *(long*)&y;
-    i = 0x5f3759df - (i>>1);
-    y = *(float*)&i;
-    y = y * (1.5f - (halfx * y * y));
-    return y;
+    long i = * ( long * ) &y;
+    i = 0x5f3759df - (i >> 1);
+    y = * ( float * ) &i;
+    y = y * (1.5f - ( halfx * y * y));
+    return abs(y);
 }

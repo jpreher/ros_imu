@@ -46,6 +46,8 @@ def IMU_callback():
     global footIMU
     
     message = [0.0]*27
+    time.sleep(0.0005)
+
     if shinIMU is not None:
         readings = checkIMUStream( shinIMU )
         # readings = pingIMUOnce( shin )
@@ -83,7 +85,6 @@ def IMU_callback():
         message[25] = readings[7]
         message[26] = readings[8]
 
-    #print(message)
     return message
 
 ###############################################################################################
@@ -102,6 +103,8 @@ def IMU_init():
         # Set the axes properly for the Kalman Filter
         print("   Setting Axis Directions to YXZ - 002 with Z and X axis flipped about Y")
         threespace_api.TSUSBSensor.setAxisDirections( shinIMU, 0x2A )
+        print('   Starting gyro autocalibration')
+        threespace_api.TSUSBSensor.beginGyroscopeAutoCalibration( shinIMU )
         # Put in IMU mode (speed considerations)
         print('   Setting to raw IMU mode')
         threespace_api.TSUSBSensor.setFilterMode( shinIMU, 0 )
@@ -122,6 +125,9 @@ def IMU_init():
         # Set the axes properly for the Kalman Filter
         print('   Setting Axis Directions to YXZ - 002 with Z and X axis flipped about Y')
         threespace_api.TSUSBSensor.setAxisDirections( thighIMU, 0x2A )
+        # Set the gyroscope auto-scale
+        print('   Starting gyro autocalibration')
+        threespace_api.TSUSBSensor.beginGyroscopeAutoCalibration( thighIMU )
         # Put in IMU mode (speed considerations)
         print('   Setting to raw IMU mode')
         threespace_api.TSUSBSensor.setFilterMode( thighIMU, 0 )
@@ -160,6 +166,7 @@ def IMU_init():
         threespace_api.TSUSBSensor.startStreaming( thighIMU )
     #    #threespace_api.TSUSBSensor.startStreaming( IMUfoot )
         print("   Stream Enabled on all sensors")
+        time.sleep(1)
     except:
         print("   Could not start stream")
         exit()

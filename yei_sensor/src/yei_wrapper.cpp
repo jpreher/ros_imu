@@ -88,7 +88,6 @@ int yei_wrapper::initialize(int argc, char *argv[]) {
         ROS_INFO("Initialization Function Successfully Imported");
 
         pFunc = PyObject_GetAttrString(pModule, func);
-        Py_INCREF(pFunc); // This module now using pFunc, keep it in scope
         if (!pFunc && !PyCallable_Check(pFunc)) {
             if (PyErr_Occurred())
                 PyErr_Print();
@@ -123,15 +122,22 @@ int yei_wrapper::initialize(int argc, char *argv[]) {
     return 0;
 }
 
-int yei_wrapper::getLastStream(double *reading) {
+int yei_wrapper::getLastStream(float *reading) {
     PyObject *pValue;
 
+    // Check to make sure function is still callable
+    if (!pFunc && !PyCallable_Check(pFunc)) {
+        if (PyErr_Occurred())
+            PyErr_Print();
+        fprintf(stderr, "Cannot find function \"%s\"\n", func);
+        return 1;
+    }
     // Get the pyList from the stream
     pValue = PyObject_CallObject(pFunc, NULL);
 
     // Check for NULL
     if (pValue != NULL) {
-        // Do nothing
+        //DoNothing
     }
     else {
         Py_DECREF(pFunc);

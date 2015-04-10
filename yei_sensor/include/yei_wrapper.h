@@ -10,7 +10,7 @@ public:
     yei_wrapper();
     ~yei_wrapper();
     int initialize(int argc, char *argv[]);
-    int getLastStream(double *reading);
+    int getLastStream(float *reading);
 
 private:
     char *script;

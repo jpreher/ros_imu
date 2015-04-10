@@ -69,7 +69,7 @@ yei_EKF::yei_EKF(ros::NodeHandle nh, int freq): rate((float)freq) {
     // Let the sensor run for a bit before calibrating / etc
     for (int i=0; i<200; i++) {
         usleep(5000);
-        getYEIreading();
+       getYEIreading();
     }
 
     // Clear the calibration by updating
@@ -180,6 +180,7 @@ bool yei_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad, int freq) {
 
     velocity << 0., 0., 0.;
     Dvelocity << 0., 0., 0.;
+    dt = 0.005;
 
     // Set up calibration steps
     iscalibrated = false;
@@ -202,9 +203,9 @@ bool yei_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad, int freq) {
 void yei_EKF::filter(imu& device) {
     // Rotate the measurements
     float tempa[3], tempg[3];
-    tempa[0] = 9.81 * device.data.linear_acceleration.x;
-    tempa[1] = 9.81 * device.data.linear_acceleration.y;
-    tempa[2] = 9.81 * device.data.linear_acceleration.z;
+    tempa[0] = device.data.linear_acceleration.x;
+    tempa[1] = device.data.linear_acceleration.y;
+    tempa[2] = device.data.linear_acceleration.z;
     quat::rotateVec(tempa, device.q_sensor_cal, tempa);
     device.acc << tempa[0],
                   0.,
@@ -357,7 +358,7 @@ void yei_EKF::imu::pitch_roll_ref() {
 
     acc[0] = data.linear_acceleration.x;
     acc[1] = data.linear_acceleration.y;
-    acc[2] = rawdata.linear_acceleration.z;
+    acc[2] = data.linear_acceleration.z;
     quat::two_vec_q(acc, grav, q_sensor_cal);
     quat::inv(q_sensor_cal, q_sensor_cal);
     ROS_INFO("Sensor Initialized at %f, %f, %f, %f", q_sensor_cal[0], q_sensor_cal[1], q_sensor_cal[2], q_sensor_cal[3]);
@@ -408,14 +409,13 @@ void yei_EKF::Callback() {
 }
 
 void yei_EKF::getYEIreading() {
-    double reading[27];
+    float reading[27];
 
     yei_python.getLastStream(reading);
-    ROS_INFO("Shank acceleration %f, %f, %f", reading[0], reading[1], reading[2]);
 
-    R_shank.data.linear_acceleration.x = reading[0];
-    R_shank.data.linear_acceleration.y = reading[1];
-    R_shank.data.linear_acceleration.z = reading[2];
+    R_shank.data.linear_acceleration.x = 9.81f * reading[0];
+    R_shank.data.linear_acceleration.y = 9.81f * reading[1];
+    R_shank.data.linear_acceleration.z = 9.81f * reading[2];
     R_shank.data.angular_velocity_measure.x = reading[3];
     R_shank.data.angular_velocity_measure.y = reading[4];
     R_shank.data.angular_velocity_measure.z = reading[5];
@@ -423,9 +423,9 @@ void yei_EKF::getYEIreading() {
     R_shank.data.magnetometer.y = reading[7];
     R_shank.data.magnetometer.z = reading[8];
 
-    R_thigh.data.linear_acceleration.x = reading[9];
-    R_thigh.data.linear_acceleration.y = reading[10];
-    R_thigh.data.linear_acceleration.z = reading[11];
+    R_thigh.data.linear_acceleration.x = 9.81f * reading[9];
+    R_thigh.data.linear_acceleration.y = 9.81f * reading[10];
+    R_thigh.data.linear_acceleration.z = 9.81f * reading[11];
     R_thigh.data.angular_velocity_measure.x = reading[12];
     R_thigh.data.angular_velocity_measure.y = reading[13];
     R_thigh.data.angular_velocity_measure.z = reading[14];
@@ -433,9 +433,9 @@ void yei_EKF::getYEIreading() {
     R_thigh.data.magnetometer.y = reading[16];
     R_thigh.data.magnetometer.z = reading[17];
 
-    L_foot.data.linear_acceleration.x = reading[18];
-    L_foot.data.linear_acceleration.y = reading[19];
-    L_foot.data.linear_acceleration.z = reading[20];
+    L_foot.data.linear_acceleration.x = 9.81f * reading[18];
+    L_foot.data.linear_acceleration.y = 9.81f * reading[19];
+    L_foot.data.linear_acceleration.z = 9.81f * reading[20];
     L_foot.data.angular_velocity_measure.x = reading[21];
     L_foot.data.angular_velocity_measure.y = reading[22];
     L_foot.data.angular_velocity_measure.z = reading[23];

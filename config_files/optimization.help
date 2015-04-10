@@ -1,0 +1,6 @@
+sudo apt-get install valgrind
+sudo apt-get install kcachegrind graphviz
+
+cd catkin_ws/devel/lib/capture_legs
+valgrind --tool=callgrind --callgrind-out-file=/home/jreher/catkin_ws/profile/prof.out ./capture_legs
+kcachegrind <file>

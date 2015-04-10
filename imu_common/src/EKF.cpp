@@ -76,7 +76,7 @@ void EKF::update(float dt, Matrix<float, 3, 1> &acc, Matrix<float, 9, 1> &measur
     A_.row(12) << -0.5*q3, 0.5*q0,  -0.5*q1,  0., 0., 0.,    0.5*wy, -0.5*wz, 0, -0.5*wx,      0., 0., 0., 0.;
     A_.row(13) << -0.5*q2, 0.5*q1,  0.5*q0,   0., 0., 0.,    0.5*wz, 0.5*wy, -0.5*wx, 0,       0., 0., 0., 0.;
 
-    x_minus.row(0) << x_hat(0) + x_hat(3)*dt,  //angular velocity
+    x_minus << x_hat(0) + x_hat(3)*dt,  //angular velocity
                x_hat(1) + x_hat(4)*dt,
                x_hat(2) + x_hat(5)*dt,
                x_hat(3),                // angular acceleration

@@ -113,14 +113,8 @@ bool yei_EKF::updateEKF() {
  * @PARAM nh - Node handle that the ROS services will be assosciated to.
  * @PARAM device - IMU device which will be initialized.
  */
-bool yei_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad, int freq) {
+bool yei_EKF::imu::initialize(ros::NodeHandle& nh, Vector3f &rad, int freq) {
     // Initialize all the things
-    velocity.resize(3);
-    Dvelocity.resize(3);
-    acc.resize(3);
-    a0.resize(3);
-    r_init.resize(3);
-
     std::string param_base_path = "/imu/";
     std::string param_device;
     r_init << rad(0), rad(1), rad(2);
@@ -152,30 +146,26 @@ bool yei_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad, int freq) {
     ROS_INFO("Sensor Created");
 
     // Setup ekf
-    x_init.resize(14);
     x_init << 0., 0.0001, 0.,
               0., 0.00001, 0.,
               1., 0., 0., 0.,
               0., 0., 0., 0.;
 
     // Process Variance
-    processVar.resize(14);
     processVar << 0.01, 0.01, 0.01,
                   10., 10., 10.,
                   0.00001, 0.00001, 0.00001, 0.00001,
                   0.001, 0.001, 0.001, 0.001;
 
     // Measurement Variance
-    measureVar.resize(9);
     measureVar << 6., 6., 6.,
                   3000., 3000., 3000.,
                   900., 900., 900.;
 
     // Matrices
-    P_init.resize(14,14); Q_init.resize(14,14); R_init.resize(9,9);
-    P_init = MatrixXd::Identity(14,14);
-    Q_init = MatrixXd(processVar.asDiagonal());
-    R_init = MatrixXd(measureVar.asDiagonal());
+    P_init = Matrix<float, 14, 14>::Identity(14,14);
+    Q_init = processVar.asDiagonal();
+    R_init = measureVar.asDiagonal();
 
     Filter.initialize(x_init, P_init, Q_init, R_init, r_init);
 
@@ -217,17 +207,15 @@ void yei_EKF::filter(imu& device) {
     tempg[2] = device.data.angular_velocity_measure.z;
     quat::rotateVec(tempg, device.q_sensor_cal, tempg);
 
-    device.Dvelocity = Vector3d( 0., (-tempg[1] - device.velocity(1)) / 0.005, 0.);
-    device.velocity = Vector3d( 0., -tempg[1], 0.);
+    device.Dvelocity << 0., (-tempg[1] - device.velocity(1)) / 0.005, 0.;
+    device.velocity << 0., -tempg[1], 0.;
 
     // Get previous joint acceleration.
-    device.a0.resize(3);
     if ( device.imu_location == l_foot ) {
-        //TODO
         device.a0 << 0., 0., 0.;
     }
     if ( device.imu_location == r_shank ) {
-        Vector3d tempThighW, tempThighWdot;
+        Matrix<float, 3, 1> tempThighW, tempThighWdot;
         float temp[3], tempq[4];
 
         tempThighW << -Len_thigh(0) * R_thigh.velocity(1) * R_thigh.velocity(1),
@@ -248,7 +236,7 @@ void yei_EKF::filter(imu& device) {
         tempq[3] = device.Filter.x_hat(9);
 
         quat::rotateVec(temp, tempq, temp);
-        device.a0 = Vector3d(temp[0], temp[1], temp[2]);
+        device.a0 << temp[0], temp[1], temp[2];
 
         //device.a0 << 0., 0., 0.;
     }
@@ -256,7 +244,7 @@ void yei_EKF::filter(imu& device) {
         device.a0 << 0., 0., 0.;
     }
 
-    VectorXd measurement(9);
+    Matrix<float, 9, 1> measurement;
     measurement << device.velocity, device.Dvelocity, device.acc;
 
     device.Filter.update(device.dt, device.a0, measurement);

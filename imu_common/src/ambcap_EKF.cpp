@@ -241,14 +241,7 @@ bool ambcap_EKF::setting_select() {
  * @PARAM nh - Node handle that the ROS services will be assosciated to.
  * @PARAM device - IMU device which will be initialized.
  */
-bool ambcap_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
-    // Initialize all the things
-    velocity.resize(3);
-    Dvelocity.resize(3);
-    acc.resize(3);
-    a0.resize(3);
-    r_init.resize(3);
-
+bool ambcap_EKF::imu::initialize(ros::NodeHandle& nh, Matrix<float, 3, 1> &rad) {
     std::string param_base_path = "/imu/";
     std::string param_device;
     r_init << rad(0), rad(1), rad(2);
@@ -325,7 +318,6 @@ bool ambcap_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
     ROS_INFO("%s initialized on bus %d, chan %d, address %d", param_device.c_str(), bus, chan, addr);
 
     // Setup ekf
-    x_init.resize(14);
     x_init << 0.,
               0.0001,
               0.,
@@ -349,16 +341,14 @@ bool ambcap_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
                   0.001, 0.001, 0.001, 0.001;
 
     // Measurement Variance
-    measureVar.resize(9);
     measureVar << 6., 6., 6.,
                   3000., 3000., 3000.,
                   900., 900., 900.;
 
     // Matrices
-    P_init.resize(14,14); Q_init.resize(14,14); R_init.resize(9,9);
-    P_init = MatrixXd::Identity(14,14);
-    Q_init = MatrixXd(processVar.asDiagonal());
-    R_init = MatrixXd(measureVar.asDiagonal());
+    P_init = Matrix<float, 14, 14>::Identity(14,14);
+    Q_init = processVar.asDiagonal();
+    R_init = measureVar.asDiagonal();
 
     Filter.initialize(x_init, P_init, Q_init, R_init, r_init);
 
@@ -388,7 +378,6 @@ bool ambcap_EKF::imu::initialize(ros::NodeHandle& nh, Vector3d &rad) {
 bool ambcap_EKF::update(imu& device) {
     double time_now = ros::Time::now().toSec();
     double dt = (time_now - device.time_last_run);
-    VectorXd measurement;
 
     device.MPU.read6DOF();
     device.dt = 0.005;
@@ -420,51 +409,24 @@ bool ambcap_EKF::update(imu& device) {
 
 void ambcap_EKF::filter(imu& device) {
     // Rotate the measurements
-    float tempa[3];
+    float tempa[3], tempg[3];;
     quat::rotateVec(device.MPU.v_acc, device.q_sensor_cal, tempa);
     device.acc << tempa[0],
                   0.,
                   tempa[2];
 
-    quat::rotateVec(device.MPU.v_gyr, device.q_sensor_cal, tempa);
+    quat::rotateVec(device.MPU.v_gyr, device.q_sensor_cal, tempg);
 
-    device.Dvelocity = Vector3d( 0., (-tempa[1] - device.velocity(1)) / 0.005, 0.);
-    device.velocity = Vector3d( 0., -tempa[1], 0.);
+    device.Dvelocity << 0., (-tempg[1] - device.velocity(1)) / 0.005, 0.;
+    device.velocity << 0., -tempg[1], 0.;
 
     // Get previous joint acceleration.
-    device.a0.resize(3);
     if ( device.imu_location == l_foot ) {
-        //TODO
         device.a0 << 0., 0., 0.;
-    }
-    if ( device.imu_location == l_shank ) {
-        Vector3d tempThighW, tempThighWdot;
-        float temp[3], tempq[4];
-        tempThighW << -Len_thigh(0) * L_thigh.velocity(1) * L_thigh.velocity(1), 0., -Len_thigh(2) * L_thigh.velocity(1) * L_thigh.velocity(1);
-        tempThighWdot << Len_thigh(2) * -L_thigh.Dvelocity(1), 0., -Len_thigh(0) * -L_thigh.Dvelocity(1);
-
-        // Bad jake, bad, need to update utilities to use Eigen..
-        temp[0] = tempThighW(0) + tempThighWdot(0);
-        temp[1] = tempThighW(1) + tempThighWdot(1);
-        temp[2] = tempThighW(2) + tempThighWdot(2);
-        tempq[0] = device.Filter.x_hat(6);
-        tempq[1] = device.Filter.x_hat(7);
-        tempq[2] = device.Filter.x_hat(8);
-        tempq[3] = device.Filter.x_hat(9);
-
-        quat::rotateVec(temp, tempq, temp);
-        device.a0 = Vector3d(temp[0], temp[1], temp[2]);
-    }
-    if ( device.imu_location == l_thigh ) {
-        device.a0 << 0., 0., 0.;
-    }
-    if ( device.imu_location == r_foot ) {
-        //TODO
     }
     if ( device.imu_location == r_shank ) {
-        Vector3d tempThighW, tempThighWdot;
+        Matrix<float, 3, 1> tempThighW, tempThighWdot;
         float temp[3], tempq[4];
-
 
         tempThighW << -Len_thigh(0) * R_thigh.velocity(1) * R_thigh.velocity(1),
                       0.,
@@ -484,29 +446,20 @@ void ambcap_EKF::filter(imu& device) {
         tempq[3] = device.Filter.x_hat(9);
 
         quat::rotateVec(temp, tempq, temp);
-        device.a0 = Vector3d(temp[0], temp[1], temp[2]);
+        device.a0 << temp[0], temp[1], temp[2];
 
         //device.a0 << 0., 0., 0.;
     }
     if ( device.imu_location == r_thigh ) {
         device.a0 << 0., 0., 0.;
     }
-    if ( device.imu_location == torso ) {
-        //TODO
-        device.a0 << 0., 0., 0.;
-    }
-    if ( device.imu_location == single ) {
-        device.a0 << 0., 0., 0.;
-    }
 
-    VectorXd measurement(9);
+    Matrix<float, 9, 1> measurement;
     measurement << device.velocity, device.Dvelocity, device.acc;
 
     device.Filter.update(device.dt, device.a0, measurement);
 
-    device.data.linear_acceleration.x = device.acc(0);
-    device.data.linear_acceleration.y = device.acc(1);
-    device.data.linear_acceleration.z = device.acc(2);
+    device.data.header.stamp = ros::Time::now();
 
     device.data.linear_acceleration_model.x = device.Filter.h(6);
     device.data.linear_acceleration_model.y = device.Filter.h(7);
@@ -523,10 +476,6 @@ void ambcap_EKF::filter(imu& device) {
     device.data.angular_velocity.x = device.Filter.x_hat(0);
     device.data.angular_velocity.y = device.Filter.x_hat(1);
     device.data.angular_velocity.z = device.Filter.x_hat(2);
-
-    device.data.angular_velocity_measure.x = device.velocity(0);
-    device.data.angular_velocity_measure.y = device.velocity(1);
-    device.data.angular_velocity_measure.z = device.velocity(2);
 
     device.data.orientation.w = device.Filter.x_hat(6);
     device.data.orientation.x = device.Filter.x_hat(7);

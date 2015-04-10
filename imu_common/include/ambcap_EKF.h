@@ -66,10 +66,13 @@ public:
 
         float   q_sensor_cal[4];
 
-        VectorXd x_init, r_init;
-        MatrixXd P_init, Q_init, R_init;
-        VectorXd processVar, measureVar;
-        VectorXd velocity, Dvelocity, acc, a0;
+        Matrix<float, 14, 1>     x_init;
+        Matrix<float, 3, 1>     r_init;
+        Matrix<float, 14, 14>   P_init, Q_init;
+        Matrix<float, 9, 9>     R_init;
+        Matrix<float, 14, 1>    processVar;
+        Matrix<float, 9, 1>     measureVar;
+        Matrix<float, 3, 1>     velocity, Dvelocity, acc, a0;
 
         std::string bias_path;
 
@@ -79,7 +82,7 @@ public:
         ros::ServiceServer  yaw_ref_;
         imu_common::imu     data;
 
-        bool initialize(ros::NodeHandle &nh, Vector3d &rad);
+        bool initialize(ros::NodeHandle &nh, Matrix<float, 3, 1> &rad);
         void check_cal();
         bool calibrate_gyro();
         void pitch_roll_ref();
@@ -112,7 +115,7 @@ public:
     imu Single;
 
 private:
-    Vector3d Len_shank, Len_thigh, Rad_foot, Rad_shank, Rad_thigh, Rad_torso, Rad_single;
+    Matrix<float, 3, 1> Len_shank, Len_thigh, Rad_foot, Rad_shank, Rad_thigh, Rad_torso, Rad_single;
 
     int frequency;
     int setting;

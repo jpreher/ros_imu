@@ -11,32 +11,21 @@
 #include "EKF.h"
 
 EKF::EKF() {
-    r.resize(3);
-    P_.resize(14,14);
-    P_minus_.resize(14,14);
-    Q_.resize(14,14);
-    R_.resize(9,9);
-    x_hat.resize(14);
-    A_.resize(14,14);
-    K_.resize(14,9);
-    x_minus.resize(14);
-    h.resize(9);
-
-    h = VectorXd::Zero(9);
-    x_minus = VectorXd::Zero(14);
-    r = VectorXd::Zero(3);
-    P_ = MatrixXd::Zero(14, 14);
-    Q_ = MatrixXd::Zero(14, 14);
-    R_ = MatrixXd::Zero(9, 9);
-    K_ = MatrixXd::Zero(14, 9);
-    A_ = MatrixXd::Zero(14, 14);
-    H_ = MatrixXd::Zero(9, 14);
-    P_minus_ = MatrixXd::Zero(14, 14);
-    I_ = MatrixXd::Identity(14, 14);
+    h.setZero();
+    x_minus.setZero();
+    r.setZero();
+    P_.setZero();
+    Q_.setZero();
+    R_.setZero();
+    K_.setZero();
+    A_.setZero();
+    H_.setZero();
+    P_minus_.setZero();
+    I_ = Matrix<float, 14, 14>::Identity(14, 14);
     g = 9.81;
 }
 
-void EKF::initialize(VectorXd &x_init, MatrixXd &P_init, MatrixXd &Q_init, MatrixXd &R_init, VectorXd &r_init) {
+void EKF::initialize(Matrix<float, 14, 1> &x_init, Matrix<float, 14, 14> &P_init, Matrix<float, 14, 14> &Q_init, Matrix<float, 9, 9> &R_init, Matrix<float, 3, 1> &r_init) {
     r = r_init;
     P_ = P_init;
     Q_ = Q_init;
@@ -44,18 +33,18 @@ void EKF::initialize(VectorXd &x_init, MatrixXd &P_init, MatrixXd &Q_init, Matri
     x_hat = x_init;
 }
 
-void EKF::update(double dt, VectorXd &acc, VectorXd &measurement) {
-    double rx = r(0);
-    double ry = r(1);
-    double rz = r(2);
+void EKF::update(float dt, Matrix<float, 3, 1> &acc, Matrix<float, 9, 1> &measurement) {
+    float rx = r(0);
+    float ry = r(1);
+    float rz = r(2);
 
     z = measurement;
 
     // Project the state ahead
-    float w[4]; double wx; double wy; double wz;
-    double wdotx; double wdoty; double wdotz;
-    float q[4]; double q0; double q1; double q2; double q3;
-    double nrm = 1.0;
+    float w[4]; float wx; float wy; float wz;
+    float wdotx; float wdoty; float wdotz;
+    float q[4]; float q0; float q1; float q2; float q3;
+    float nrm = 1.0;
     w[0] = 0.f;
     w[1] = x_hat(0);
     w[2] = x_hat(1);
@@ -87,7 +76,7 @@ void EKF::update(double dt, VectorXd &acc, VectorXd &measurement) {
     A_.row(12) << -0.5*q3, 0.5*q0,  -0.5*q1,  0., 0., 0.,    0.5*wy, -0.5*wz, 0, -0.5*wx,      0., 0., 0., 0.;
     A_.row(13) << -0.5*q2, 0.5*q1,  0.5*q0,   0., 0., 0.,    0.5*wz, 0.5*wy, -0.5*wx, 0,       0., 0., 0., 0.;
 
-    x_minus << x_hat(0) + x_hat(3)*dt,  //angular velocity
+    x_minus.row(0) << x_hat(0) + x_hat(3)*dt,  //angular velocity
                x_hat(1) + x_hat(4)*dt,
                x_hat(2) + x_hat(5)*dt,
                x_hat(3),                // angular acceleration
@@ -126,7 +115,7 @@ void EKF::update(double dt, VectorXd &acc, VectorXd &measurement) {
     H_.row(8) << (rx*wz - 2.*rz*wx),    (2.*rz*wy + ry*wz),   (rx*wx - ry*wy),        -ry,   rx,  0.,         2.*g*q0,   -2.*g*q1,   -2.*g*q2,   2.*g*q3,       0., 0., 0., 0.;
 
     // Calculate the Kalman gain
-    MatrixXd denom(9,9);
+    Matrix<float, 9, 9> denom(9,9);
     denom = H_ * P_minus_ * H_.transpose() + R_;
     K_ = (P_minus_ * H_.transpose()) * denom.inverse();
 

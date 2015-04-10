@@ -125,13 +125,6 @@ int yei_wrapper::initialize(int argc, char *argv[]) {
 int yei_wrapper::getLastStream(float *reading) {
     PyObject *pValue;
 
-    // Check to make sure function is still callable
-    if (!pFunc && !PyCallable_Check(pFunc)) {
-        if (PyErr_Occurred())
-            PyErr_Print();
-        fprintf(stderr, "Cannot find function \"%s\"\n", func);
-        return 1;
-    }
     // Get the pyList from the stream
     pValue = PyObject_CallObject(pFunc, NULL);
 

@@ -11,26 +11,27 @@ using namespace Eigen;
 
 class EKF {
 public:
-	VectorXd x_hat;
-	VectorXd x_minus;
-	VectorXd h;
-	VectorXd r;
-	VectorXd z;
+    Matrix<float, 14, 1> x_hat;
+    Matrix<float, 14, 1> x_minus;
+    Matrix<float, 9, 1> h;
+    Matrix<float, 3, 1> r;
+    Matrix<float, 9, 1> z;
 
     EKF();
-    void initialize(VectorXd &x_init, MatrixXd &P_init, MatrixXd &Q_init, MatrixXd &R_init, VectorXd &r_init);
-    void update(double dt, VectorXd &acc, VectorXd &measurement);
+    void initialize(Matrix<float, 14, 1> &x_init, Matrix<float, 14, 14> &P_init, Matrix<float, 14, 14> &Q_init, Matrix<float, 9, 9> &R_init, Matrix<float, 3, 1> &r_init);
+    void update(float dt, Matrix<float, 3, 1> &acc, Matrix<float, 9,1> &measurement);
 
 //private:
-	MatrixXd K_;
-	MatrixXd Q_;
-	MatrixXd R_;
-	MatrixXd A_;
-	MatrixXd H_;
-    MatrixXd P_;
-    MatrixXd P_minus_;
-	MatrixXd I_;
-    double g;
+    Matrix<float, 14, 9>    K_;
+    Matrix<float, 14, 14>   Q_;
+    Matrix<float, 9, 9>     R_;
+    Matrix<float, 14, 14>   A_;
+    Matrix<float, 9, 14>    H_;
+    Matrix<float, 14, 14>   P_;
+    Matrix<float, 14, 14>   P_minus_;
+    Matrix<float, 14, 14>   I_;
+
+    float g;
 
     static float invSqrt(float x);
 };

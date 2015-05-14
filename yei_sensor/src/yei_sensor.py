@@ -46,7 +46,7 @@ def IMU_callback():
     global footIMU
     
     message = [0.0]*27
-    time.sleep(0.0005)
+    #time.sleep(0.0005)
 
     if shinIMU is not None:
         readings = checkIMUStream( shinIMU )
@@ -181,7 +181,10 @@ if __name__ == '__main__':
 
     IMU_init()
 
-    while
+    for _ in range(10000)
+        message = IMU_callback()
+        print("{0}".format(message)
+        sleep(0.001) # Try 1kHz
 
     ## Close
     shinIMU.close()

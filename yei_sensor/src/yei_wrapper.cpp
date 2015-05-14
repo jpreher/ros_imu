@@ -1,7 +1,7 @@
 #include "yei_wrapper.h"
 
 yei_wrapper::yei_wrapper() {
-    arg_count = NULL;
+    arg_count = 0;
     script    = NULL;
     init      = NULL;
     func      = NULL;
@@ -126,11 +126,16 @@ int yei_wrapper::getLastStream(float *reading) {
     PyObject *pValue;
 
     // Get the pyList from the stream
-    pValue = PyObject_CallObject(pFunc, NULL);
+    // PyObject_CallObject call should not have args as NULL - creates overhead and slows call
+    // pValue = PyObject_CallObject(pFunc, NULL);
+
+    // PyObject_CallFunction can have NULL passed as args for no function input. Returns PyObject with function output.
+    pValue = PyObject_CallFunction(pFunc, NULL);
 
     // Check for NULL
     if (pValue != NULL) {
         //DoNothing
+        // Possibly add further data integrity check here
     }
     else {
         Py_DECREF(pFunc);
@@ -146,7 +151,8 @@ int yei_wrapper::getLastStream(float *reading) {
     for (int i=0; i<sizeofpy; i++) {
         reading[i] = PyFloat_AsDouble(PyList_GetItem(pValue, i));
     }
-    Py_DECREF(pValue); // Deallocate the pValue
+    // Not necessary as pValue is local to the function?
+    // Py_DECREF(pValue); // Deallocate the pValue
     return 0;
 }
 

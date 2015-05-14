@@ -47,8 +47,8 @@ include_directories(
 
 ## Declare a cpp library
 add_library(yei_sensor
-  src/yei_wrapper.cpp 
-  include/yei_wrapper.h
+  src/yei_wrapper.cpp  include/yei_wrapper.h
+  src/yei_driver.cpp   include/yei_driver.h
 )
 add_dependencies(yei_sensor yei_sensor_generate_messages_cpp)
 

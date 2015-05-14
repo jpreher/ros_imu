@@ -116,8 +116,9 @@ void EKF::update(float dt, Matrix<float, 3, 1> &acc, Matrix<float, 9, 1> &measur
 
     // Calculate the Kalman gain
     Matrix<float, 9, 9> denom(9,9);
-    denom = H_ * P_minus_ * H_.transpose() + R_;
-    K_ = (P_minus_ * H_.transpose()) * denom.inverse();
+    Matrix<float, 14, 9> H_transpose = H_.transpose();
+    denom = H_ * P_minus_ * H_transpose + R_;
+    K_ = (P_minus_ * H_transpose) * denom.inverse();
 
     // Calculate the a posteriori state
     h <<    x_minus(0),

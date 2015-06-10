@@ -10,6 +10,7 @@
 // 06/11/2014   Jake Reher      Added rotation of vector by quaternion.
 // 10/28/2014   Jake Reher      Cleaned up math and added documentation.
 // 04/05/2015   Jake Reher      Quaternion between two vecors added.
+// 06/03/2015   Jake Reher      Added quat2eulerXYZ
 //
 //=====================================================================================================*/
 // For more details on how the math behind these functions works read:
@@ -82,6 +83,7 @@ void quat::inv(float q[4], float qinv[4]){
 void quat::prod(float q1[4], float q2[4], float q1q2[4]){
     float a0, a1, a2, a3;
     float b0, b1, b2, b3;
+    float nrm;
 
     a0 = q1[0];
     a1 = q1[1];
@@ -93,9 +95,15 @@ void quat::prod(float q1[4], float q2[4], float q1q2[4]){
     b3 = q2[3];
 
     q1q2[0] = a0*b0 - a1*b1 - a2*b2 - a3*b3;
-    q1q2[1] = a0*b1 + a1*b0 + a2*b3 - a3*b2;
-    q1q2[2] = a0*b2 - a1*b3 + a2*b0 - a3*b1;
-    q1q2[3] = a0*b3 + a1*b2 - a2*b1 + a3*b0;
+    q1q2[1] = a0*b1 + a1*b0 - a2*b3 + a3*b2;
+    q1q2[2] = a0*b2 + a1*b3 + a2*b0 - a3*b1;
+    q1q2[3] = a0*b3 - a1*b2 + a2*b1 + a3*b0;
+
+    nrm = norm(q1q2);
+    q1q2[0] = q1q2[0] / nrm;
+    q1q2[1] = q1q2[1] / nrm;
+    q1q2[2] = q1q2[2] / nrm;
+    q1q2[3] = q1q2[3] / nrm;
 }
 
 /* FUNCTION rotateVec(float vec[3], float q[4], float rotated[3])
@@ -116,7 +124,7 @@ void quat::rotateVec(float vec[3], float q[4], float rotated[3]) {
     v3 = vec[2];
 
     rotated[0] = v1*(1.f - 2.f*q2*q2 - 2.f*q3*q3)   + 2.f*v2*(q1*q2 + q0*q3)                + 2.f*v3*(q1*q3 - q0*q2);
-    rotated[1] = 2.f*v1*(q1*q2 + q0*q3)             + v2*(1.f - 2.f*q1*q1 - 2.f*q3*q3)      + 2.f*v3*(q2*q3 + q0*q1);
+    rotated[1] = 2.f*v1*(q1*q2 - q0*q3)             + v2*(1.f - 2.f*q1*q1 - 2.f*q3*q3)      + 2.f*v3*(q2*q3 + q0*q1);
     rotated[2] = 2.f*v1*(q1*q3 + q0*q2)             + 2.f*v2*(q2*q3 - q0*q1)                + v3*(1.f - 2.f*q1*q1 - 2.f*q2*q2);
 }
 
@@ -231,6 +239,18 @@ void quat::two_vec_q(float v1[3], float v2[3], float qout[4]) {
     qout[1] = tempq[1] / norm(tempq);
     qout[2] = tempq[2] / norm(tempq);
     qout[3] = tempq[3] / norm(tempq);
+}
+
+void quat::quat2eulerXYZ(float q[4], float euler[3]) {
+    float q0, q1, q2, q3;
+    q0 = q[0];
+    q1 = q[1];
+    q2 = q[2];
+    q3 = q[3];
+
+    euler[0] = atan2(2.*q2*q3 + 2.*q0*q1, q3*q3 - q2*q2 - q1*q1 + q0*q0);
+    euler[1] = -asin(2.*q1*q3 - 2.*q0*q2);
+    euler[2] = atan2(2.*q1*q2 + 2.*q0*q3, q1*q1 + q0*q0 - q3*q3 - q2*q2);
 }
 
 //---------------------------------------------------------------------------------------------------

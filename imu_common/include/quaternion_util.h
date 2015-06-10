@@ -38,6 +38,8 @@ public:
 
     static void euler2quatXYZ(float euler[3], float qout[4]);
     static void euler2quatZYX(float euler[3], float qout[4]);
+
+    static void quat2eulerXYZ(float q[4], float euler[3]);
 };
 
 #endif // QUATERNION_UTIL_H

@@ -95,9 +95,9 @@ void quat::prod(float q1[4], float q2[4], float q1q2[4]){
     b3 = q2[3];
 
     q1q2[0] = a0*b0 - a1*b1 - a2*b2 - a3*b3;
-    q1q2[1] = a0*b1 + a1*b0 - a2*b3 + a3*b2;
-    q1q2[2] = a0*b2 + a1*b3 + a2*b0 - a3*b1;
-    q1q2[3] = a0*b3 - a1*b2 + a2*b1 + a3*b0;
+    q1q2[1] = a0*b1 + a1*b0 + a2*b3 - a3*b2;
+    q1q2[2] = a0*b2 - a1*b3 + a2*b0 - a3*b1;
+    q1q2[3] = a0*b3 + a1*b2 - a2*b1 + a3*b0;
 
     nrm = norm(q1q2);
     q1q2[0] = q1q2[0] / nrm;

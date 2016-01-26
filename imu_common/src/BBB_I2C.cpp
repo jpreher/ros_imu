@@ -96,7 +96,7 @@ int8_t BBBI2C::readBytes(uint8_t bus, uint8_t devAddress, uint8_t regAddress, ui
     if( write(file, buf, 1) !=1 ){
         std::cout << "Failed to command read address on register " << regAddress;
         std::cout << ". Waiting 1ms and looping to try a bit bang" << std::endl;
-        usleep(100);
+        nanosleep((const struct timespec[]){{0, 100000L}}, NULL);
         return(3);
     }
 

@@ -121,7 +121,7 @@ void MPU9150::initialize(const char *bias) {
     setAccelRange(MPU6050_ACCEL_FS_4);
     setGyroRange(MPU6050_GYRO_FS_1000);
     setDLPFMode(MPU6050_DLPF_BW_98);
-    usleep(50000);
+    nanosleep((const struct timespec[]){{0, 50000000L}}, NULL);
     initOrientation();
 
     //Initial convergence of butterworth filters. Takes 0.5 seconds @ 200Hz.

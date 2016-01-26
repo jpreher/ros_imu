@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <math.h>
+#include <unistd.h>
 
 class BBBI2C {
 public:

@@ -1,90 +1,49 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(imu_common)
-add_definitions(-std=c++0x)
 
-set(YEI_PATH "../yei_sensor")
+SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11")
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
+  roslib
   message_generation
   std_msgs
   sensor_msgs
-  common_cmake
-  roslib_utilities
-  yaml_eigen_utilities
-  control_utilities
-  yei_sensor
 )
 
-include_directories(
-        ${YEI_PATH}
-        ${YEI_PATH}/include
-)
-
-## Generate messages in the 'msg' folder
- add_message_files(
-   DIRECTORY msg
-   FILES
-   imu.msg
- )
+#add_message_files(
+#   FILES yei_msg.msg
+#)
 
  ## Generate added messages and services with any dependencies listed here
- generate_messages(
-   DEPENDENCIES
-   std_msgs
-   geometry_msgs
- )
-
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if you package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
+ #generate_messages(
+ #  DEPENDENCIES
+ #  std_msgs
+ #  geometry_msgs
+ #)
 
 catkin_package(
-  INCLUDE_DIRS
-    include
-  LIBRARIES imu_common
-  CATKIN_DEPENDS yei_sensor
+  INCLUDE_DIRS include
+  LIBRARIES yei_lib
+#  CATKIN_DEPENDS message_runtime
 )
-
-find_package(
-  eigen3 REQUIRED
-)
-
-###########
-## Build ##
-###########
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIR}
 )
 
-add_library(imu_common src/MPU9150.cpp include/MPU9150.h 
-	src/BBB_I2C.cpp include/BBB_I2C.h 
-	src/quaternion_util.cpp include/quaternion_util.h
-	include/butterworth_util.h include/MPU_RegMap.h
-	include/limits.hpp include/common_assert.hpp
-        include/pca9547.h src/pca9547.cpp
-        include/ambcap.h src/ambcap.cpp
-        include/ambcap_pros.h src/ambcap_pros.cpp
-        include/ambcap_proxi.h src/ambcap_proxi.cpp
-        include/EKF.h src/EKF.cpp
-        include/ambcap_EKF.h src/ambcap_EKF.cpp
-        include/yei_EKF.h src/yei_EKF.cpp
-  ${catkin_Libraries})
+## Declare a cpp library
+add_library(imu_common
+  src/EKF.cpp  include/EKF.hpp
+  src/estimator.cpp include/estimator.hpp
+  ${catkin_Libraries}
+)
+add_dependencies(imu_common ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-add_dependencies(imu_common imu_common_gencpp)
-target_link_libraries(imu_common ${catkin_LIBRARIES} yei_sensor)
+#add_executable(sensor_test src/test.cpp)
+#add_dependencies(sensor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#target_link_libraries(sensor_test yei_lib ${catkin_LIBRARIES})

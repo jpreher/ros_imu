@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>imu_common</name>
+  <name>yei</name>
   <version>0.0.0</version>
   <description>A package for interacting with the YEI sensor on a UNIX system.</description>
 

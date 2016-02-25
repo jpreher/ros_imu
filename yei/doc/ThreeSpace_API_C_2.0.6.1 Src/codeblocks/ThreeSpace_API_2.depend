@@ -1,0 +1,253 @@
+# depslib dependency file v1.0
+1362677349 source:c:\documents and settings\mocap\desktop\ts_c_api2\ts_c_api2\main.c
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	"yei_threespace_api_2.h"
+
+1362683870 source:c:\documents and settings\mocap\desktop\ts_c_api2\ts_c_api2\yei_threespace_api_2.c
+	"yei_threespace_api_2.h"
+
+1362683870 c:\documents and settings\mocap\desktop\ts_c_api2\ts_c_api2\yei_threespace_api_2.h
+	<stdio.h>
+	<string.h>
+	<windows.h>
+
+1362632310 source:e:\work\ts_c_api2\ts_c_api2\main.c
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	"yei_threespace_api_2.h"
+
+1362634601 e:\work\ts_c_api2\ts_c_api2\yei_threespace_api_2.h
+	<stdio.h>
+	<string.h>
+	<windows.h>
+
+1362633601 source:e:\work\ts_c_api2\ts_c_api2\yei_threespace_api_2.c
+	"yei_threespace_api_2.h"
+
+1363370557 source:c:\documents and settings\mocap\desktop\motion capture\ts_c_api2\main.c
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	"yei_threespace_api_2.h"
+
+1363377253 c:\documents and settings\mocap\desktop\motion capture\ts_c_api2\yei_threespace_api_2.h
+	<stdio.h>
+	<string.h>
+	<windows.h>
+	<process.h>
+	"yei_enum_ports.h"
+
+1363383254 source:c:\documents and settings\mocap\desktop\motion capture\ts_c_api2\yei_threespace_api_2.c
+	"yei_threespace_api_2.h"
+
+1362718412 source:i:\ts_c_api2\main.c
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	"yei_threespace_api_2.h"
+
+1362724622 i:\ts_c_api2\yei_threespace_api_2.h
+	<stdio.h>
+	<string.h>
+	<windows.h>
+
+1362721716 source:i:\ts_c_api2\yei_threespace_api_2.c
+	"yei_threespace_api_2.h"
+
+1363485154 source:e:\work\ts_c_api2\main.c
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	"yei_threespace_api_2.h"
+
+1363489657 e:\work\ts_c_api2\yei_threespace_api_2.h
+	<stdio.h>
+	<string.h>
+	<windows.h>
+	<process.h>
+	"yei_enum_ports.h"
+
+1363488743 source:e:\work\ts_c_api2\yei_threespace_api_2.c
+	"yei_threespace_api_2.h"
+
+1363485096 source:e:\work\ts_c_api2\yei_enum_ports.c
+	"yei_enum_ports.h"
+
+1363489670 e:\work\ts_c_api2\yei_enum_ports.h
+	<Windows.h>
+	<SetupAPI.h>
+	<initguid.h>
+
+1363780894 c:\documents and settings\mocap\desktop\motion capture\ts_c_api2\yei_enum_ports.h
+	<Windows.h>
+	<SetupAPI.h>
+	<initguid.h>
+
+1363547247 source:c:\documents and settings\mocap\desktop\motion capture\ts_c_api2\yei_enum_ports.c
+	"yei_enum_ports.h"
+
+1377273586 source:c:\users\user\desktop\motion capture\ts_c_api2\yei_enum_ports.c
+	"yei_enum_ports.h"
+	"ddk\ntddser.h"
+
+1375988748 c:\users\user\desktop\motion capture\ts_c_api2\yei_enum_ports.h
+	<Windows.h>
+	<SetupAPI.h>
+	<initguid.h>
+	"yei_threespace_api.h"
+
+1368715227 source:c:\users\user\desktop\motion capture\ts_c_api2\yei_threespace_api_2.c
+	"yei_threespace_api_2.h"
+	"yei_threespace_core.h"
+
+1368646743 c:\users\user\desktop\motion capture\ts_c_api2\yei_threespace_api_2.h
+	<stdio.h>
+	<string.h>
+	<windows.h>
+	<process.h>
+	<math.h>
+
+1377273006 source:c:\users\user\desktop\motion capture\ts_c_api2\main.c
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	"yei_threespace_api.h"
+
+1377117004 c:\users\user\desktop\motion capture\ts_c_api2\yei_threespace_core.h
+	<stdio.h>
+	<string.h>
+	<windows.h>
+	<process.h>
+	"yei_enum_ports.h"
+
+1377214975 source:c:\users\user\desktop\motion capture\ts_c_api2\yei_threespace_core.c
+	"yei_threespace_api.h"
+	"yei_threespace_core.h"
+	"yei_enum_ports.h"
+
+1366933851 source:c:\users\mocap\motion capture\ts_c_api2\yei_enum_ports.c
+	"yei_enum_ports.h"
+
+1366656553 c:\users\mocap\motion capture\ts_c_api2\yei_enum_ports.h
+	<Windows.h>
+	<SetupAPI.h>
+	<initguid.h>
+	"yei_threespace_api_2.h"
+
+1366937082 c:\users\mocap\motion capture\ts_c_api2\yei_threespace_api_2.h
+	<stdio.h>
+	<string.h>
+	<windows.h>
+	<process.h>
+	<math.h>
+
+1367337174 source:c:\users\mocap\motion capture\ts_c_api2\yei_threespace_api_2.c
+	"yei_threespace_api_2.h"
+	"yei_threespace_core.h"
+
+1367335072 c:\users\mocap\motion capture\ts_c_api2\yei_threespace_core.h
+	<stdio.h>
+	<string.h>
+	<windows.h>
+	<process.h>
+	"yei_enum_ports.h"
+
+1367337080 source:c:\users\mocap\motion capture\ts_c_api2\yei_threespace_core.c
+	"yei_threespace_api_2.h"
+	"yei_threespace_core.h"
+	"yei_enum_ports.h"
+
+1377121938 c:\users\user\desktop\motion capture\ts_c_api2\yei_threespace_api.h
+	<stdio.h>
+	<string.h>
+	<windows.h>
+	<process.h>
+	<math.h>
+
+1377214975 source:c:\users\user\desktop\motion capture\ts_c_api2\yei_threespace_api.c
+	"yei_threespace_api.h"
+	"yei_threespace_core.h"
+
+1379425890 source:c:\users\user\desktop\motion capture\ts_c_api2\threespace_api.rc
+	<windows.h>
+
+1369856994 c:\users\user\desktop\motion capture\ts_c_api2\curdate.h
+
+1371070660 source:c:\users\mocap\desktop\motion capture\ts_c_api2\threespace_api.rc
+	<windows.h>
+
+1371764059 source:c:\users\mocap\desktop\motion capture\ts_c_api2\yei_enum_ports.c
+	"yei_enum_ports.h"
+	"ddk\ntddser.h"
+
+1369231714 c:\users\mocap\desktop\motion capture\ts_c_api2\yei_enum_ports.h
+	<Windows.h>
+	<SetupAPI.h>
+	<initguid.h>
+	"yei_threespace_api.h"
+
+1372269301 c:\users\mocap\desktop\motion capture\ts_c_api2\yei_threespace_api.h
+	<stdio.h>
+	<string.h>
+	<windows.h>
+	<process.h>
+	<math.h>
+
+1372271448 source:c:\users\mocap\desktop\motion capture\ts_c_api2\yei_threespace_api.c
+	"yei_threespace_api.h"
+	"yei_threespace_core.h"
+
+1371070660 c:\users\mocap\desktop\motion capture\ts_c_api2\yei_threespace_core.h
+	<stdio.h>
+	<string.h>
+	<windows.h>
+	<process.h>
+	"yei_enum_ports.h"
+
+1372268457 source:c:\users\mocap\desktop\motion capture\ts_c_api2\yei_threespace_core.c
+	"yei_threespace_api.h"
+	"yei_threespace_core.h"
+	"yei_enum_ports.h"
+
+1372271502 source:c:\users\mocap\desktop\motion capture\ts_c_api2\main.c
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	"yei_threespace_api.h"
+
+1377614932 source:c:\users\user\desktop\motion capture\ts_c_api2\src\yei_enum_ports.c
+	"yei_enum_ports.h"
+	"ddk\ntddser.h"
+
+1377614932 c:\users\user\desktop\motion capture\ts_c_api2\include\yei_enum_ports.h
+	<Windows.h>
+	<SetupAPI.h>
+	<initguid.h>
+	"yei_threespace_api.h"
+
+1383847135 c:\users\user\desktop\motion capture\ts_c_api2\include\yei_threespace_api.h
+	<stdio.h>
+	<string.h>
+	<windows.h>
+	<process.h>
+	<math.h>
+
+1384869225 source:c:\users\user\desktop\motion capture\ts_c_api2\src\yei_threespace_api.c
+	"yei_threespace_api.h"
+	"yei_threespace_core.h"
+
+1384206001 c:\users\user\desktop\motion capture\ts_c_api2\include\yei_threespace_core.h
+	<stdio.h>
+	<string.h>
+	<windows.h>
+	<process.h>
+	"yei_enum_ports.h"
+
+1384206001 source:c:\users\user\desktop\motion capture\ts_c_api2\src\yei_threespace_core.c
+	"yei_threespace_api.h"
+	"yei_threespace_core.h"
+	"yei_enum_ports.h"
+

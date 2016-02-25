@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ThreeSpace_API_2" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/ThreeSpace_API" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DTSS_STATIC_LIB" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/ThreeSpace_API" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-DTSS_STATIC_LIB" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="UDK">
+				<Option output="C:/UDK/UDK-2013-02/Binaries/Win32/UserCode/ThreeSpace_API" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option parameters="EpicCitadel?game=yei_headtrack2.YEIVRGameInfo -log" />
+				<Option host_application="c:/UDK/UDK-2013-02/Binaries/Win32/UDK.exe" />
+				<Option run_host_application_in_terminal="0" />
+				<Compiler>
+					<Add option="-O3" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="DLL Release">
+				<Option output="bin/Release/ThreeSpace_API" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="1" />
+				<Option working_dir="bin/Release" />
+				<Option object_output="obj/Release/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option host_application="C:/Users/User/Desktop/Motion Capture/APIExamples/C API 2/Debug/Creating_Class_Instances.exe" />
+				<Option run_host_application_in_terminal="0" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="DLL Debug">
+				<Option output="bin/Debug/ThreeSpace_API" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="1" />
+				<Option working_dir="bin/Debug" />
+				<Option object_output="obj/Debug/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option host_application="C:/Users/User/Desktop/Motion Capture/APIExamples/C API 2/Debug/Creating_Class_Instances.exe" />
+				<Option run_host_application_in_terminal="1" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="../include" />
+		</Compiler>
+		<Linker>
+			<Add option="-lsetupapi" />
+		</Linker>
+		<Unit filename="../ThreeSpace_API.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="../include/yei_enum_ports.h" />
+		<Unit filename="../include/yei_threespace_api.h" />
+		<Unit filename="../include/yei_threespace_core.h" />
+		<Unit filename="../src/main.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="../src/yei_enum_ports.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/yei_threespace_api.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/yei_threespace_core.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<DoxyBlocks>
+				<comment_style block="4" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

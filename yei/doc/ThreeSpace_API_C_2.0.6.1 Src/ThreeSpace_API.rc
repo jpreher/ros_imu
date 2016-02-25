@@ -1,0 +1,49 @@
+#define VS_VERSION_INFO     1
+#include <windows.h>
+#define VER_FILEVERSION             2,0,6,1
+#define VER_FILEVERSION_STR         "2.0.6.1 "
+
+#define VER_PRODUCTVERSION          VER_FILEVERSION
+#define VER_PRODUCTVERSION_STR      VER_FILEVERSION_STR
+
+#ifndef DEBUG
+#define VER_DEBUG                   0
+#else
+#define VER_DEBUG                   VS_FF_DEBUG
+#endif
+
+
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION    	VER_FILEVERSION
+PRODUCTVERSION 	VER_PRODUCTVERSION
+FILETYPE       	VFT_DLL
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName",      "YEI Corporation.\0"
+            VALUE "FileDescription",  "YEI 3-Space Sensor API 2\0"
+            VALUE "FileVersion",      VER_FILEVERSION_STR
+            VALUE "InternalName",     "ThreeSpace_API\0"
+            VALUE "LegalCopyright",   "Copyright 1998-2014, YEI Corporation.\0"
+            VALUE "OriginalFilename", "ThreeSpace_API.dll\0"
+            VALUE "ProductName",      "YEI 3-Space Sensor API 2\0"
+            VALUE "ProductVersion",   VER_FILEVERSION_STR
+        END
+    END
+
+    BLOCK "VarFileInfo"
+    BEGIN
+        /* The following line should only be modified for localized versions.     */
+        /* It consists of any number of WORD,WORD pairs, with each pair           */
+        /* describing a language,codepage combination supported by the file.      */
+        /*                                                                        */
+        /* For example, a file might have values "0x409,1252" indicating that it  */
+        /* supports English language (0x409) in the Windows ANSI codepage (1252). */
+
+        VALUE "Translation", 0x409, 1252
+
+    END
+END

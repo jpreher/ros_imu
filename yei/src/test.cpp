@@ -4,7 +4,7 @@
 
 int main(int argc, char **argv) {
     YEI3Space sensor;
-	const char* port = "ttyACM0";
+    const char* port = "ttyACM1";
     float gyro_rate3[3];
     float accelerometer3[3];
     float compass3[3];

@@ -40,6 +40,8 @@ int YEI3Space::openAndSetupComPort(const char* comport)
     fd_set rfds;
     char str[12];
 
+    fcntl(fd, F_SETFL, 0);
+
     strcpy(str, "/dev/");
     strcat(str, comport);
     fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
@@ -48,8 +50,6 @@ int YEI3Space::openAndSetupComPort(const char* comport)
         fd = -2;
         return 0;
     }
-
-    fcntl(fd, F_SETFL, 0);
 
     // Get last COM port attributes
     tcgetattr(fd, &old_options);
@@ -65,10 +65,11 @@ int YEI3Space::openAndSetupComPort(const char* comport)
     cfsetospeed(&options, B115200);
 
     // Control Mode Parameters
-    options.c_cflag = (options.c_cflag & ~CSIZE) | CS8;
-    options.c_cflag |= CLOCAL | CREAD;
+    options.c_cflag &= CS8;
+    options.c_cflag &= ~INPCK;
+    //options.c_cflag |= CLOCAL | CREAD;
     options.c_cflag &= ~CSTOPB;
-    options.c_cflag &= ~CRTSCTS;
+    //options.c_cflag &= ~CRTSCTS;
     options.c_cflag &= ~(PARENB | PARODD);
 
     // Input Mode Parameters
@@ -79,7 +80,7 @@ int YEI3Space::openAndSetupComPort(const char* comport)
     options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
 
     // Timeout and return length
-    options.c_cc[VMIN] = 0; // or use 1 if you feel like perma-waiting
+    options.c_cc[1] = 0; // or use 1 if you feel like perma-waiting
     options.c_cc[VTIME]= 10; // Timeout in 0.1s
 
     tcflush(fd, TCIOFLUSH); // Flush input and output data from device
@@ -90,7 +91,7 @@ int YEI3Space::openAndSetupComPort(const char* comport)
         return 0;
     }
 
-    int mcs=0;
+    /*    int mcs=0;
     ioctl(fd, TIOCMGET, &mcs);
     mcs |= TIOCM_RTS;
     ioctl(fd, TIOCMSET, &mcs);
@@ -101,7 +102,7 @@ int YEI3Space::openAndSetupComPort(const char* comport)
         return 0;
     }
 
-    options.c_cflag &= ~CRTSCTS;
+    options.c_cflag &= ~CRTSCTS; */
 
     if (tcsetattr(fd, TCSANOW, &options)!=0)
     {
@@ -139,6 +140,23 @@ int YEI3Space::setupStreamSlots(int streamRate) {
     unsigned char command_bytes[8];
     unsigned int rtn_data_detail_len;
 
+    // Setup header information
+    TSS_Protocol_Header_Setup wired_setup;
+    wired_setup.protocol_byte = 0;
+    wired_setup.protocol_bits.success_failure = 1;
+    wired_setup.protocol_bits.timestamp = 0;
+    wired_setup.protocol_bits.command_echo = 0;
+    wired_setup.protocol_bits.checksum = 0;
+    wired_setup.protocol_bits.logical_id = 0;
+    wired_setup.protocol_bits.serial_number = 0;
+    wired_setup.protocol_bits.data_length = 1;
+    wired_setup.protocol_bits.pad = 0;
+
+    if (!writeRead(&simple_commands[TSS_SET_WIRED_RESPONSE_HEADER_BITFIELD],(char*)&wired_setup.protocol_byte, NULL)) {
+        printf("Error with setting header bitfield");
+        return 1;
+    }
+
     // Step through the stream commands and allocate the stream information
     stream_byte_len = 0;
     for( i=0; i < 8; i++){
@@ -172,19 +190,23 @@ int YEI3Space::setupStreamSlots(int streamRate) {
     unsigned int interval = 1./streamRate * 1000000.; // microseconds between streaming packets
     // A duration of 0xffffffff will have the streaming session run till the stop stream command is called
     unsigned int duration = 0xffffffff;
-    unsigned int delay = 0; // microseconds until start streaming
+    unsigned int delay = 10000; // microseconds until start streaming
     unsigned int args[3]= {interval,duration, delay};
     if (!writeRead(&simple_commands[TSS_SET_STREAMING_TIMING], (char*)args, NULL)) {
         printf("Error writing the streaming timing.");
         return 1;
     }
-    return 1;
+
+
+    tcflush(fd, TCIOFLUSH); // clear buffer
+    return 0;
 }
 
 // Write to the device to start streaming then start background serial monitor thread
 int YEI3Space::startStreaming(){
-    std::lock_guard<std::mutex> guard(mu);
+    //std::lock_guard<std::mutex> guard(mu);
     int ret;
+    tcflush(fd, TCIOFLUSH); // clear buffer
     ret = writeRead(&simple_commands[TSS_START_STREAMING], NULL, NULL);
     if (ret == 1){
         // Start thread
@@ -209,6 +231,7 @@ int YEI3Space::stopStreaming(){
         printf("Closing stream\n");
 
         return writeRead(&simple_commands[TSS_STOP_STREAMING], NULL, NULL);
+        tcflush(fd, TCIOFLUSH); // clear buffer
     }
 }
 
@@ -216,13 +239,14 @@ int YEI3Space::stopStreaming(){
 int YEI3Space::streamThread() {
     printf("Running the stream thread\n");
     bool ok = true;
+    sleep(0.1);
 
     while (ok) {
         ok = checkStream();
     }
 
     mu.lock();
-        threadON = 0;
+    threadON = 0;
     mu.unlock();
     return 1;
 }
@@ -238,21 +262,21 @@ int YEI3Space::checkStream() {
 
     dat = (float*)malloc(stream_byte_len * sizeof(float));
 
-    ret = readFile(stream_byte_len, stream_parse_str, (char*)dat);
+    {
+        ret = readFile(stream_byte_len, stream_parse_str, (char*)dat);
+    }
 
     if (ret == 1) {
         std::lock_guard<std::mutex> guard(mu);
-        memcpy(last_stream_data,      &dat[0],   sizeof(float)*stream_byte_len);
+        memcpy(last_stream_data,      dat,   sizeof(float)*stream_byte_len);
         free(dat);
         newData = true;
     } else {
         std::lock_guard<std::mutex> guard(mu);
-        streamON = false;
+        //streamON = false;
         newData = false;
-        printf("Failed to read from stream\n");
-        on = streamON;
+        //printf("Stream did not match\n");
         free(dat);
-        return on;
     }
     on = streamON;
     return on;
@@ -266,7 +290,7 @@ int YEI3Space::getStream(float * data) {
     {
         std::lock_guard<std::mutex> guard(mu);
         if (newData) {
-            memcpy(data,      &last_stream_data[0],   sizeof(float)*stream_byte_len);
+            memcpy(data,      last_stream_data,   sizeof(float)*stream_byte_len);
             newData = false;
         } else {
             return 0;
@@ -351,7 +375,11 @@ int YEI3Space::writeRead(const TSS_Command * cmd_info, const char * input_data, 
     }
     memset((void *)write_array, 0, sizeof(write_array)); // clear the buffer out.
 
-    write_array[0] = TSS_START_BYTE;
+    if (cmd_info->command == simple_commands[TSS_START_STREAMING].command)
+       write_array[0] = TSS_RESPONSE_HEADER_START_BYTE;
+    else
+        write_array[0] = TSS_START_BYTE;
+
     write_array[1] = cmd_info->command;
 
     if( cmd_info->in_data_len ){
@@ -388,11 +416,17 @@ int YEI3Space::writeRead(const TSS_Command * cmd_info, const char * input_data, 
     if (cmd_info->rtn_data_len) {
         if (select(fd + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1)
         {
-            read( fd, output_data, read_size ); // there was data to read
-            parseData( output_data, read_size, cmd_info->rtn_data_detail);
+            rv = read( fd, output_data, read_size ); // there was data to read
+            if (rv == read_size) {
+                parseData( output_data, read_size, cmd_info->rtn_data_detail);
+            } else {
+                perror("Missed tail end of a packet\n");
+                return 0;
+            }
+            tcflush(fd, TCIOFLUSH); // clear buffer
         } else
         {
-            perror("Timed out while waiting for response.");
+            perror("Timed out while waiting for response.\n");
             return 0;
         }
     }
@@ -442,7 +476,11 @@ int YEI3Space::setAccelerometerRange(unsigned char accelerometer_range_setting) 
 }
 //123(0x7b)
 int YEI3Space::setFilterMode(unsigned char mode) {
-    return writeRead(&simple_commands[TSS_SET_FILTER_MODE],(char *)&mode,NULL);
+    return writeRead(&simple_commands[TSS_SET_FILTER_MODE], (char *)&mode, NULL);
+}
+//221(0xdd)
+int YEI3Space::tss_setWiredResponseHeaderBitfield(unsigned int header_bitfield){
+    return writeRead(&simple_commands[TSS_SET_WIRED_RESPONSE_HEADER_BITFIELD], (char *)&header_bitfield, NULL);
 }
 //124(0x7c)
 int YEI3Space::setRunningAverageMode(unsigned char mode) {
@@ -468,43 +506,77 @@ int YEI3Space::getOffsetOrientationAsQuaternion() {
 }
 
 // Read from a threespace device serial port
+// Only called when streaming
+// Equivalent to parseWiredStreamData in API
 int YEI3Space::readFile(unsigned int rtn_data_len, char *rtn_data_detail, char * output_data) {
     // Check to make sure the class has a valid device
     if ( fd < 0 ) {
+        tcflush(fd, TCIOFLUSH); // clear buffer
+        return 0;
+    }
+    if (!rtn_data_len) {
+        tcflush(fd, TCIOFLUSH); // clear buffer
         return 0;
     }
 
     // Setup variables
+    int header_size;
+    char header_data[2];
+    int num_bytes_read;
     unsigned int read_size =  stream_byte_len;
 
+    header_size = 2; // We have asked for a 2-byte header
+    header_data[0] = 1; // Should set to 0 on read if success
+
     // Initialize file descriptor sets
-    fd_set read_fds, write_fds, except_fds;
+    fd_set read_fds;
     FD_ZERO(&read_fds);
-    FD_ZERO(&write_fds);
-    FD_ZERO(&except_fds);
     FD_SET(fd, &read_fds);
 
     // Set timeout to 1.0 seconds
     struct timeval timeout;
-    timeout.tv_sec = 1;
+    timeout.tv_sec = 2;
     timeout.tv_usec = 0;
+    if (!select(fd + 1, &read_fds, NULL, NULL, &timeout)) {
+        perror("Could not select device!\n");
+        tcflush(fd, TCIOFLUSH); // clear buffer
+        return 0;
+    }
 
     // Wait for input to become ready or until the time out; the first parameter is
     // 1 more than the largest file descriptor in any of the sets
-    if (rtn_data_len) {
-        if (select(fd + 1, &read_fds, &write_fds, &except_fds, &timeout) == 1)
-        {
-            read( fd, output_data, read_size ); // there was data to read
-            parseData( output_data, read_size, rtn_data_detail);
-        } else
-        {
-            perror("Timed out while waiting for response.");
-            return 0;
-        }
+    num_bytes_read = read( fd, header_data, header_size ); // there was data to read
+
+    //printf("header data %d, %d\n", header_data[0], header_data[1]);
+    if (!num_bytes_read) {
+        printf("Error in reading stream.\n");
+        tcflush(fd, TCIOFLUSH); // clear buffer
+        return 0;
+    }
+    if (header_data[0] != 0) {
+        printf("Success not true on read\n");
+        tcflush(fd, TCIOFLUSH); // clear buffer
+        return 0;
+    }
+    if (header_data[1] != stream_byte_len) {
+        printf("Stream byte length does not match header!\n");
+        tcflush(fd, TCIOFLUSH); // clear buffer
+        return 0;
     }
 
+    num_bytes_read = 0;
+    num_bytes_read = read( fd, output_data, stream_byte_len ); // there was data to read
+    if (num_bytes_read) {
+        parseData( output_data, read_size, rtn_data_detail);
+    } else {
+        perror("Error in reading stream.\n");
+        tcflush(fd, TCIOFLUSH); // clear buffer
+        return 0;
+    }
     return 1;
+
 }
+
 
 // The 3-Space sensors are Big Endian and x86 is Little Endian
 // So the bytes need be swapped around, this function can convert from and

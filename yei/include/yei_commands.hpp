@@ -186,6 +186,29 @@ typedef enum TSS_Firmware_Compatibility
     TSS_FW_20R13_COMPATIBLE      /**< 3-Space device compatible with 2.0R13 commands and up */
 }TSS_Firmware_Compatibility;
 
+
+typedef struct TSS_Header_69{
+    char success_failure;
+    unsigned char command_echo;
+    unsigned char data_length;
+} TSS_Header_69;
+
+typedef union TSS_Protocol_Header_Setup
+{
+  struct protocol_bits
+  {
+    unsigned success_failure : 1;
+    unsigned timestamp : 1;
+    unsigned command_echo : 1;
+    unsigned checksum : 1;
+    unsigned logical_id : 1;
+    unsigned serial_number : 1;
+    unsigned data_length : 1;
+    unsigned pad : 1;
+  }protocol_bits;
+  unsigned char protocol_byte;
+}TSS_Protocol_Header_Setup;
+
 /********************************************//**
  * An enum expressing the command list of Streamable Commands.
  *

@@ -1,9 +1,7 @@
 #ifndef EKF_H
 #define EKF_H
 
-#include <eigen3/Eigen/Core>
-#include <eigen3/Eigen/Eigen>
-#include <eigen3/Eigen/Geometry>
+#include <eigen3/Eigen/Dense>
 
 using namespace Eigen;
 

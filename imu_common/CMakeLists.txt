@@ -10,6 +10,8 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   std_msgs
   sensor_msgs
+  yei
+  yaml_eigen_utilities
 )
 
 #add_message_files(
@@ -25,8 +27,10 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES yei_lib
-#  CATKIN_DEPENDS message_runtime
+  LIBRARIES imu_common
+  CATKIN_DEPENDS
+    yei
+    yaml_eigen_utilities
 )
 
 ## Specify additional locations of header files

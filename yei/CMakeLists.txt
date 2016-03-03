@@ -3,6 +3,8 @@ project(yei)
 
 SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11 -pthread")
 
+set(CMAKE_BUILD_TYPE Debug)
+
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy

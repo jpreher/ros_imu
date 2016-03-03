@@ -23,7 +23,7 @@ public:
     unsigned int SerialNumber;
     unsigned int streamingSlots[8];
     unsigned int stream_byte_len;
-    char stream_parse_str[257];
+    char stream_parse_str[13];
     float offsetQ[4];
 
     // Configure and connect
@@ -53,6 +53,7 @@ public:
     int setGyroscopeRange(unsigned char gyroscope_range_setting);
     int setCompassRange(unsigned char compass_range_setting);
     int getEulerAngleDecompositionOrder(unsigned char * order);
+    int tss_setWiredResponseHeaderBitfield(unsigned int header_bitfield);
     int getOffsetOrientationAsQuaternion();
 
 private:

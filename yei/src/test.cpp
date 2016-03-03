@@ -4,20 +4,20 @@
 
 int main(int argc, char **argv) {
     YEI3Space sensor;
-    const char* port = "ttyACM1";
+    const char* port = "ttyACM0";
     float gyro_rate3[3];
     float accelerometer3[3];
     float compass3[3];
-    float *streamPacket;
+    float * streamPacket;
     yei::yei_msg data;
-    int streamRate = 1;
+    int streamRate = 750;
 
     ros::init(argc, argv, "yei");
     ros::NodeHandle n;
 
     ros::Publisher pub = n.advertise<yei::yei_msg>("yei_msg", 1000);
 
-    ros::Rate rate(1000);
+    ros::Rate rate(2000);
 
 	if ( !sensor.openAndSetupComPort(port) )
 		return 0;
@@ -26,18 +26,18 @@ int main(int argc, char **argv) {
     printf("Serial Number: %x\n", sensor.SerialNumber);
 
 
-    sensor.getAllCorrectedComponentSensorData(gyro_rate3, accelerometer3, compass3);
+    //sensor.getAllCorrectedComponentSensorData(gyro_rate3, accelerometer3, compass3);
 
-    printf(" Gyro: %f %f %f\n Accelerometer: %f %f %f\n Compass: %f %f %f\n\n", gyro_rate3[0], gyro_rate3[1], gyro_rate3[2],
-                                                                              accelerometer3[0], accelerometer3[1], accelerometer3[2],
-                                                                              compass3[0], compass3[1], compass3[2]);
+    //printf(" Gyro: %f %f %f\n Accelerometer: %f %f %f\n Compass: %f %f %f\n\n", gyro_rate3[0], gyro_rate3[1], gyro_rate3[2],
+    //                                                                          accelerometer3[0], accelerometer3[1], accelerometer3[2],
+    //                                                                          compass3[0], compass3[1], compass3[2]);
 
-    sensor.resetBaseOffset();
-    sensor.offsetWithCurrentOrientation();
-    sensor.getOffsetOrientationAsQuaternion();
+    //sensor.resetBaseOffset();
+    //sensor.offsetWithCurrentOrientation();
+    //sensor.getOffsetOrientationAsQuaternion();
 
-    sensor.getAllCorrectedComponentSensorData(gyro_rate3, accelerometer3, compass3);
-    printf(" Offset: %f %f %f %f\n\n\n", sensor.offsetQ[0], sensor.offsetQ[1], sensor.offsetQ[2], sensor.offsetQ[3]);
+    //sensor.getAllCorrectedComponentSensorData(gyro_rate3, accelerometer3, compass3);
+    //printf(" Offset: %f %f %f %f\n\n\n", sensor.offsetQ[0], sensor.offsetQ[1], sensor.offsetQ[2], sensor.offsetQ[3]);
 
     sensor.setupStreamSlots(streamRate);
 

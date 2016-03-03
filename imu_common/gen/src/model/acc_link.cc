@@ -7,7 +7,7 @@
 /*
  * Sub functions
  */
-static void output1(float *p_output1,const float *x,const float *rad)
+static void output1(float *p_output1,const float *x,const float *a,const float *rad)
 {
   float t1;
   float t2;
@@ -52,13 +52,13 @@ void mexFunction( int nlhs, mxArray *plhs[],
 {
   size_t mrows, ncols;
 
-  float *x,*rad;
+  float *x,*a,*rad;
   float *p_output1;
 
   /*  Check for proper number of arguments.  */ 
-  if( nrhs != 2)
+  if( nrhs != 3)
     {
-      mexErrMsgIdAndTxt("MATLAB:MShaped:invalidNumInputs", "Two input(s) required (x,rad).");
+      mexErrMsgIdAndTxt("MATLAB:MShaped:invalidNumInputs", "Three input(s) required (x,a,rad).");
     }
   else if( nlhs > 1)
     {
@@ -80,12 +80,21 @@ void mexFunction( int nlhs, mxArray *plhs[],
     ( !(mrows == 3 && ncols == 1) && 
       !(mrows == 1 && ncols == 3))) 
     {
+      mexErrMsgIdAndTxt( "MATLAB:MShaped:inputNotRealVector", "a is wrong.");
+    }
+  mrows = mxGetM(prhs[2]);
+  ncols = mxGetN(prhs[2]);
+  if( !mxIsfloat(prhs[2]) || mxIsComplex(prhs[2]) ||
+    ( !(mrows == 3 && ncols == 1) && 
+      !(mrows == 1 && ncols == 3))) 
+    {
       mexErrMsgIdAndTxt( "MATLAB:MShaped:inputNotRealVector", "rad is wrong.");
     }
 
   /*  Assign pointers to each input.  */
   x = mxGetPr(prhs[0]);
-  rad = mxGetPr(prhs[1]);
+  a = mxGetPr(prhs[1]);
+  rad = mxGetPr(prhs[2]);
    
 
 
@@ -96,7 +105,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 
   /* Call the calculation subroutine. */
-  output1(p_output1,x,rad);
+  output1(p_output1,x,a,rad);
 
 
 }
@@ -110,10 +119,10 @@ namespace model_ekf
 namespace basic
 {
 
-void acc_link_raw(float *p_output1, const float *x,const float *rad)
+void acc_link_raw(float *p_output1, const float *x,const float *a,const float *rad)
 {
   // Call Subroutines
-  output1(p_output1, x, rad);
+  output1(p_output1, x, a, rad);
 
 }
 

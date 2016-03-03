@@ -56,16 +56,18 @@ void EKF::reset(){
     isInit = false;
 }
 
-int EKF::update(float dt, Matrix<float, 16, 1> &acc, Matrix<float, 16,1> &measurement) {
+int EKF::update(float dt, Matrix<float, 3, 1> &acc, Matrix<float, 16,1> &measurement) {
     if (isInit){
-        A_.setZero();
+        // Update the model
+        model_ekf::basic::Amat_raw(A_.data(), x_hat.data(), &dt);
+        model_ekf::basic::fvec_raw(x_minus.data(), x_hat.data(), &dt);
 
         // Project the error covariance ahead
         P_minus_ = A_ * P_ * A_.transpose() + Q_;
 
         // Calculate H
-        H_.setIdentity();
-        h << x_minus;
+        model_ekf::basic::Hmat_raw(H_.data(), measurement.data(), acc.data(), r.data());
+        model_ekf::basic::hvec_raw(h.data(), measurement.data(), acc.data(), r.data());
 
         // Calculate the Kalman gain
         K_ = (P_minus_ * H_.transpose()) * (H_ * P_minus_ * H_.transpose() + R_).inverse();
@@ -77,6 +79,7 @@ int EKF::update(float dt, Matrix<float, 16, 1> &acc, Matrix<float, 16,1> &measur
 
         return 1;
     } else {
+        // Load in values from YAML (TODO)
         return 0;
     }
 }

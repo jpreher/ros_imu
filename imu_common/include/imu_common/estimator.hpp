@@ -7,7 +7,6 @@
 
 #include <imu_common/EKF.hpp>
 #include <yei/yei_threespace.hpp>
-#include <ekf_expr/all.hpp>
 
 
 class chain_estimator {

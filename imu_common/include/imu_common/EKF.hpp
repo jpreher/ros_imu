@@ -2,6 +2,7 @@
 #define EKF_H
 
 #include <eigen3/Eigen/Dense>
+#include <ekf_expr/all.hpp>
 
 using namespace Eigen;
 
@@ -14,7 +15,7 @@ public:
 
     void initialize(Matrix<float, 18, 1> &x_init, Matrix<float, 18, 18> &P_init, Matrix<float, 18, 18> &Q_init, Matrix<float, 16, 16> &R_init, Matrix<float, 3, 1> &r_init);
     void reset();
-    int  update(float dt, Matrix<float, 16, 1> &acc, Matrix<float, 16,1> &measurement);
+    int  update(float dt, Matrix<float, 3, 1> &acc, Matrix<float, 16,1> &measurement);
 
 private:
     Matrix<float, 18, 1>    x_minus;

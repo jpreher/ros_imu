@@ -392,9 +392,9 @@ int YEI3Space::writeRead(const TSS_Command * cmd_info, const char * input_data, 
 
     wv = write(fd, write_array, write_size);  //Send data
     if (wv == -1) {
-        perror("Write Error: ");
+        perror("Write Error: \n");
     } else if ( wv == 0 ) {
-        perror("Nothing was written: ");
+        perror("Nothing was written: \n");
     }
 
     free(write_array);

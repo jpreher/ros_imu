@@ -26,18 +26,18 @@ int main(int argc, char **argv) {
     printf("Serial Number: %x\n", sensor.SerialNumber);
 
 
-    //sensor.getAllCorrectedComponentSensorData(gyro_rate3, accelerometer3, compass3);
+    sensor.getAllCorrectedComponentSensorData(gyro_rate3, accelerometer3, compass3);
 
-    //printf(" Gyro: %f %f %f\n Accelerometer: %f %f %f\n Compass: %f %f %f\n\n", gyro_rate3[0], gyro_rate3[1], gyro_rate3[2],
-    //                                                                          accelerometer3[0], accelerometer3[1], accelerometer3[2],
-    //                                                                          compass3[0], compass3[1], compass3[2]);
+    printf(" Gyro: %f %f %f\n Accelerometer: %f %f %f\n Compass: %f %f %f\n\n", gyro_rate3[0], gyro_rate3[1], gyro_rate3[2],
+                                                                              accelerometer3[0], accelerometer3[1], accelerometer3[2],
+                                                                              compass3[0], compass3[1], compass3[2]);
 
-    //sensor.resetBaseOffset();
-    //sensor.offsetWithCurrentOrientation();
-    //sensor.getOffsetOrientationAsQuaternion();
+    sensor.resetBaseOffset();
+    sensor.offsetWithCurrentOrientation();
+    sensor.getOffsetOrientationAsQuaternion();
 
-    //sensor.getAllCorrectedComponentSensorData(gyro_rate3, accelerometer3, compass3);
-    //printf(" Offset: %f %f %f %f\n\n\n", sensor.offsetQ[0], sensor.offsetQ[1], sensor.offsetQ[2], sensor.offsetQ[3]);
+    sensor.getAllCorrectedComponentSensorData(gyro_rate3, accelerometer3, compass3);
+    printf(" Offset: %f %f %f %f\n\n\n", sensor.offsetQ[0], sensor.offsetQ[1], sensor.offsetQ[2], sensor.offsetQ[3]);
 
     sensor.setupStreamSlots(streamRate);
 

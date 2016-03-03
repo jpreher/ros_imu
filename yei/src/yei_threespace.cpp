@@ -20,7 +20,6 @@ YEI3Space::YEI3Space() {
 
     stream_byte_len = 0; // To be set by setupStreamSlots()
     streamON = false;
-    threadON = false;
     newData  = false;
 }
 
@@ -67,9 +66,7 @@ int YEI3Space::openAndSetupComPort(const char* comport)
     // Control Mode Parameters
     options.c_cflag &= CS8;
     options.c_cflag &= ~INPCK;
-    //options.c_cflag |= CLOCAL | CREAD;
     options.c_cflag &= ~CSTOPB;
-    //options.c_cflag &= ~CRTSCTS;
     options.c_cflag &= ~(PARENB | PARODD);
 
     // Input Mode Parameters
@@ -88,25 +85,6 @@ int YEI3Space::openAndSetupComPort(const char* comport)
     // Set the new attributes
     if((rc = tcsetattr(fd, TCSANOW, &options)) != 0){
         perror("Failed to set attr: ");
-        return 0;
-    }
-
-    /*    int mcs=0;
-    ioctl(fd, TIOCMGET, &mcs);
-    mcs |= TIOCM_RTS;
-    ioctl(fd, TIOCMSET, &mcs);
-
-    if (tcgetattr(fd, &options)!=0)
-    {
-        perror("tcgetattr() 4 failed: ");
-        return 0;
-    }
-
-    options.c_cflag &= ~CRTSCTS; */
-
-    if (tcsetattr(fd, TCSANOW, &options)!=0)
-    {
-        printf("tcsetattr() 2 failed");
         return 0;
     }
 
@@ -165,7 +143,6 @@ int YEI3Space::setupStreamSlots(int streamRate) {
         stream_byte_len += command.rtn_data_len;
         rtn_data_detail_len = strlen(command.rtn_data_detail);
 
-        //printf("current command detail %s\n", command.rtn_data_detail);
         if (i ==0) {
             strcpy(stream_parse_str, command.rtn_data_detail);
         } else {
@@ -197,8 +174,6 @@ int YEI3Space::setupStreamSlots(int streamRate) {
         return 1;
     }
 
-
-    tcflush(fd, TCIOFLUSH); // clear buffer
     return 0;
 }
 
@@ -206,7 +181,6 @@ int YEI3Space::setupStreamSlots(int streamRate) {
 int YEI3Space::startStreaming(){
     //std::lock_guard<std::mutex> guard(mu);
     int ret;
-    tcflush(fd, TCIOFLUSH); // clear buffer
     ret = writeRead(&simple_commands[TSS_START_STREAMING], NULL, NULL);
     if (ret == 1){
         // Start thread
@@ -227,7 +201,6 @@ int YEI3Space::stopStreaming(){
             }
             if (readThread.joinable()) readThread.join();
         }
-
         printf("Closing stream\n");
 
         return writeRead(&simple_commands[TSS_STOP_STREAMING], NULL, NULL);
@@ -245,17 +218,13 @@ int YEI3Space::streamThread() {
         ok = checkStream();
     }
 
-    mu.lock();
-    threadON = 0;
-    mu.unlock();
-    return 1;
+    return 0;
 }
 
 // Take a reading on the serial port, assume control of the shared memory for the stream data packet and write
 int YEI3Space::checkStream() {
     // Guard takes on the mutex for the class and locks the memory for the functions herein.
     // This memory is released when it goes out of scope (i.e. the function returns or fails.
-    //printf("Getting data from stream\n");
     float * dat;
     int on;
     int ret = 0;
@@ -273,9 +242,7 @@ int YEI3Space::checkStream() {
         newData = true;
     } else {
         std::lock_guard<std::mutex> guard(mu);
-        //streamON = false;
         newData = false;
-        //printf("Stream did not match\n");
         free(dat);
     }
     on = streamON;
@@ -389,7 +356,6 @@ int YEI3Space::writeRead(const TSS_Command * cmd_info, const char * input_data, 
     write_array[write_size-1] = createChecksum(write_array+1, write_size-2);
 
     // Write the command to the device
-
     wv = write(fd, write_array, write_size);  //Send data
     if (wv == -1) {
         perror("Write Error: \n");
@@ -559,7 +525,7 @@ int YEI3Space::readFile(unsigned int rtn_data_len, char *rtn_data_detail, char *
         return 0;
     }
     if (header_data[1] != stream_byte_len) {
-        printf("Stream byte length does not match header!\n");
+        printf("Stream byte length did not match header!\n");
         tcflush(fd, TCIOFLUSH); // clear buffer
         return 0;
     }

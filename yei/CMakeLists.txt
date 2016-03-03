@@ -28,7 +28,7 @@ add_message_files(
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES yei_lib
+  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS message_runtime
 )
 
@@ -36,18 +36,17 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include
+  include/${PROJECT_NAME}
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
-add_library(yei_lib
-  src/yei_threespace.cpp  include/yei_threespace.hpp
-  include/yei_commands.hpp
+add_library(${PROJECT_NAME}
+  src/yei_threespace.cpp
   src/test.cpp
-  ${catkin_Libraries}
 )
-add_dependencies(yei_lib ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(sensor_test src/test.cpp)
 add_dependencies(sensor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(sensor_test yei_lib ${catkin_LIBRARIES})
+target_link_libraries(sensor_test yei ${catkin_LIBRARIES})

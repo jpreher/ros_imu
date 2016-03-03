@@ -1,3 +1,0 @@
-third_party:
--   files: [RobotLinks.m, Screws.m]
--   files: [snakeyaml-1.10.jar]

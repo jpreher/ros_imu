@@ -1,0 +1,10 @@
+set(SRCS
+        gen/src/model/acc_link.cc
+        gen/src/model/Amat.cc
+        gen/src/model/fvec.cc
+        gen/src/model/Hmat.cc
+        gen/src/model/hvec.cc
+    )
+include_directories(
+    gen/include/ekf_expr/model
+    )

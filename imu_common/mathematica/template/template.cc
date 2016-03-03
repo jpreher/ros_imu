@@ -8,11 +8,11 @@
  * Sub functions
  */
 <* StringJoin@@Table[
-"static void "<>`argouts`[[i]]<>"(double *p_"<>`argouts`[[i]]<>","<>StringJoin[Riffle[StringJoin["const double *", ToString[#]] & /@ `argins`, ","]]<>")\n"<>
+"static void "<>`argouts`[[i]]<>"(float *p_"<>`argouts`[[i]]<>","<>StringJoin[Riffle[StringJoin["const float *", ToString[#]] & /@ `argins`, ","]]<>")\n"<>
 "{\n"<>
-StringJoin[Riffle[StringJoin["  double ",ToString[#]]&/@`lvars`[[i]],";\n"],";\n"]<>
+StringJoin[Riffle[StringJoin["  float ",ToString[#]]&/@`lvars`[[i]],";\n"],";\n"]<>
 StringJoin@@{"  ", Riffle[`statements`[[i]], ";\n  "], ";\n"}<>
-"  Eigen::Map<Eigen::VectorXd> foo(p_"<>`argouts`[[i]]<>", "<>ToString[`argoutDims`[[i,1]]*`argoutDims`[[i,2]]]<>");\n"<>
+"  Eigen::Map<Eigen::VectorXf> foo(p_"<>`argouts`[[i]]<>", "<>ToString[`argoutDims`[[i,1]]*`argoutDims`[[i,2]]]<>");\n"<>
 "  foo << "<>`final`[[i]]<>";\n"<>
 "}\n\n"
 ,
@@ -32,8 +32,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
 {
   size_t mrows, ncols;
 
-  double <* StringJoin[Riffle[StringJoin["*", ToString[#]] & /@ `argins`, ","]] *>;
-  double <* StringJoin[Riffle[StringJoin["*p_", #] & /@ `argouts`, ","]] *>;
+  float <* StringJoin[Riffle[StringJoin["*", ToString[#]] & /@ `argins`, ","]] *>;
+  float <* StringJoin[Riffle[StringJoin["*p_", #] & /@ `argouts`, ","]] *>;
 
   /*  Check for proper number of arguments.  */ 
   if( nrhs != <* Length[`argins`] *>)
@@ -46,11 +46,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
       mexErrMsgIdAndTxt("MATLAB:MShaped:maxlhs", "Too many output arguments.");
     }
 
-  /*  The input must be a noncomplex double vector or scaler.  */
+  /*  The input must be a noncomplex float vector or scaler.  */
 <* StringJoin@@Table[
   "  mrows = mxGetM(prhs["<>ToString[i-1]<>"]);\n"<>
   "  ncols = mxGetN(prhs["<>ToString[i-1]<>"]);\n"<>
-  "  if( !mxIsDouble(prhs["<>ToString[i-1]<>"]) || mxIsComplex(prhs["<>ToString[i-1]<>"]) ||\n"<>
+  "  if( !mxIsfloat(prhs["<>ToString[i-1]<>"]) || mxIsComplex(prhs["<>ToString[i-1]<>"]) ||\n"<>
   "    ( !(mrows == "<>ToString[`arginDims`[[i,1]]]<>" && ncols == "<>ToString[`arginDims`[[i,2]]]<>") && \n"<>
   "      !(mrows == "<>ToString[`arginDims`[[i,2]]]<>" && ncols == "<>ToString[`arginDims`[[i,1]]]<>"))) \n"<>
   "    {\n"<>
@@ -66,7 +66,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
    
   /*  Create matrices for return arguments.  */
 <* StringJoin@@Table[
-  "  plhs["<>ToString[i-1]<>"] = mxCreateDoubleMatrix((mwSize) "<>ToString[`argoutDims`[[i,1]]]<>", (mwSize) "<>ToString[`argoutDims`[[i,2]]]<>", mxREAL);\n"<>
+  "  plhs["<>ToString[i-1]<>"] = mxCreatefloatMatrix((mwSize) "<>ToString[`argoutDims`[[i,1]]]<>", (mwSize) "<>ToString[`argoutDims`[[i,2]]]<>", mxREAL);\n"<>
   "  p_"<>`argouts`[[i]]<>" = mxGetPr(plhs["<>ToString[i-1]<>"]);\n", {i, Length[`argouts`]}]
 *>
 
@@ -86,7 +86,7 @@ namespace <*`namespace`*>
 namespace <*`behavior`*>
 {
 
-void <*`name`*>_raw(<*StringImplode[Table["double *p_" <> `argouts`[[i]], {i, Length[`argouts`]}], ", "]*>, <*StringImplode[Table["const double *"<>ToString[arg], {arg, `argins`}], ","]*>)
+void <*`name`*>_raw(<*StringImplode[Table["float *p_" <> `argouts`[[i]], {i, Length[`argouts`]}], ", "]*>, <*StringImplode[Table["const float *"<>ToString[arg], {arg, `argins`}], ","]*>)
 {
   // Call Subroutines
 <*StringJoin@@Table[

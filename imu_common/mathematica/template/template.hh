@@ -1,4 +1,5 @@
 #include <Eigen/Dense>
+#include <math2mat.hpp>
 
 #ifdef MATLAB_MEX_FILE
 // No need for external definitions
@@ -9,9 +10,9 @@ namespace <*`namespace`*>
 namespace <*`behavior`*>
 {
 
-void <*`name`*>_raw(<*StringImplode[Table["double *p_" <> `argouts`[[i]], {i, Length[`argouts`]}], ", "]*>, <*StringImplode[Table["const double *"<>ToString[arg], {arg, `argins`}], ","]*>);
+void <*`name`*>_raw(<*StringImplode[Table["float *p_" <> `argouts`[[i]], {i, Length[`argouts`]}], ", "]*>, <*StringImplode[Table["const float *"<>ToString[arg], {arg, `argins`}], ","]*>);
 
-inline void <*`name`*>(<*StringImplode[Table["Eigen::MatrixXd &p_" <> `argouts`[[i]], {i, Length[`argouts`]}], ", "]*>, <*StringImplode[Table["const Eigen::VectorXd &"<>ToString[`argins`[[i]]], {i, Length[`argins`]}], ","]*>)
+inline void <*`name`*>(<*StringImplode[Table["Eigen::MatrixXf &p_" <> `argouts`[[i]], {i, Length[`argouts`]}], ", "]*>, <*StringImplode[Table["const Eigen::VectorXf &"<>ToString[`argins`[[i]]], {i, Length[`argins`]}], ","]*>)
 {
   // Check
   // - Inputs

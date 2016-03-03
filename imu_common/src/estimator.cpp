@@ -1,4 +1,4 @@
-#include "estimator.hpp"
+#include <imu_common/estimator.hpp>
 #include <string.h>
 
 chain_estimator::chain_estimator(ros::NodeHandle n){

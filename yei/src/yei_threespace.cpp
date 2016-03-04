@@ -80,7 +80,7 @@ int YEI3Space::openAndSetupComPort(const char* comport)
     options.c_cc[1] = 0; // or use 1 if you feel like perma-waiting
     options.c_cc[VTIME]= 10; // Timeout in 0.1s
 
-    tcflush(fd, TCIOFLUSH); // Flush input and output data from device
+    //tcflush(fd, TCIOFLUSH); // Flush input and output data from device
 
     // Set the new attributes
     if((rc = tcsetattr(fd, TCSANOW, &options)) != 0){
@@ -89,7 +89,7 @@ int YEI3Space::openAndSetupComPort(const char* comport)
     }
 
     printf("Established connection to %s: %d\n", comport, fd);
-    tcflush(fd, TCIOFLUSH); // clear buffer
+    //tcflush(fd, TCIOFLUSH); // clear buffer
 
     return 1;
 }
@@ -236,12 +236,20 @@ int YEI3Space::checkStream() {
     }
 
     if (ret == 1) {
+        // Get the time
+        std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+
+        // Lock memory and update
         std::lock_guard<std::mutex> guard(mu);
+
         memcpy(last_stream_data,      dat,   sizeof(float)*stream_byte_len);
+        dt = now - last_data_time;
+        last_data_time = now;
         free(dat);
         newData = true;
     } else {
         std::lock_guard<std::mutex> guard(mu);
+
         newData = false;
         free(dat);
     }

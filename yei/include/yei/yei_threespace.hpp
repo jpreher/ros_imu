@@ -11,6 +11,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <chrono>
 
 #include "yei_commands.hpp"
 
@@ -69,10 +70,14 @@ private:
 	int Parity;
     int fd;                     // File handle for device
     struct termios old_options; // TERMIOS setting of device when first opened
-    float * last_stream_data;
     bool streamON;
     bool threadON;
     bool newData;
+
+    // Data
+    std::chrono::time_point<std::chrono::system_clock> last_data_time;
+    std::chrono::duration<float> dt;
+    float * last_stream_data;
 
     // Stream
     int checkStream();

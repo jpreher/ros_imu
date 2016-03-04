@@ -1,7 +1,6 @@
 #ifndef EKF_H
 #define EKF_H
 
-#include <eigen3/Eigen/Dense>
 #include <ekf_expr/all.hpp>
 
 using namespace Eigen;

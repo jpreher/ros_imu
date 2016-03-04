@@ -1,7 +1,7 @@
 #include <imu_common/estimator.hpp>
 #include <string.h>
 
-chain_estimator::chain_estimator(ros::NodeHandle n){
+chain_estimator::chain_estimator(){
 
 }
 
@@ -9,16 +9,9 @@ chain_estimator::~chain_estimator(){
 
 }
 
-void chain_estimator::reset(const YAML::Node &node){
+void chain_estimator::reset(){
     std::vector<char*> addresses;
-    std::vector<int> sn;
-
-    // Extract the length of the chain;
-    //N = node["IMU"]["N"].as<int>();
-
-    // Get the addresses, connect, get serial numbers
-
-
+    std::vector<int>   sn;
 
     // Extract the IMU data for each IMU
     Matrix<float, 18, 1>  x_init;
@@ -34,11 +27,6 @@ void chain_estimator::reset(const YAML::Node &node){
         R_init.setZero();
         r_init.setZero();
 
-        node["xi"]  >> x_init;
-        node["P"]   >> P_init;
-        node["Q"]   >> Q_init;
-        node["R"]   >> R_init;
-        node["r"]   >> r_init;
 
         ekf[i].initialize(x_init, P_init, Q_init, R_init, r_init);
     }

@@ -34,7 +34,7 @@ public:
     int setupStreamSlots(int streamRate);
     int startStreaming();
     int stopStreaming();
-    int getStream(float * data);
+    int getStream(float * data, float * diff);
 
     // API commands
     int getSerialNumber();
@@ -75,7 +75,7 @@ private:
     bool newData;
 
     // Data
-    std::chrono::time_point<std::chrono::system_clock> last_data_time;
+    std::chrono::time_point<std::chrono::system_clock> last_packet_time, last_retreival_time;
     std::chrono::duration<float> dt;
     float * last_stream_data;
 

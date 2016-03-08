@@ -179,8 +179,9 @@ int YEI3Space::setupStreamSlots(int streamRate) {
 
 // Write to the device to start streaming then start background serial monitor thread
 int YEI3Space::startStreaming(){
-    //std::lock_guard<std::mutex> guard(mu);
     int ret;
+    last_packet_time = std::chrono::system_clock::now();
+    last_retreival_time = last_packet_time;
     ret = writeRead(&simple_commands[TSS_START_STREAMING], NULL, NULL);
     if (ret == 1){
         // Start thread
@@ -243,34 +244,36 @@ int YEI3Space::checkStream() {
         std::lock_guard<std::mutex> guard(mu);
 
         memcpy(last_stream_data,      dat,   sizeof(float)*stream_byte_len);
-        dt = now - last_data_time;
-        last_data_time = now;
-        free(dat);
+        last_packet_time = now;
         newData = true;
     } else {
         std::lock_guard<std::mutex> guard(mu);
-
         newData = false;
-        free(dat);
+
     }
+
+    free(dat);
     on = streamON;
     return on;
 }
 
 // Get current stream value for an external user
 // Copies the stream shared memory data and exports it
-int YEI3Space::getStream(float * data) {
+int YEI3Space::getStream(float * data, float * diff) {
     // Guard takes on the mutex for the class and locks the memory for the functions herein.
     // This memory is released when it goes out of scope (i.e. the function returns or fails.
     {
         std::lock_guard<std::mutex> guard(mu);
-        if (newData) {
+        //if (newData) {
             memcpy(data,      last_stream_data,   sizeof(float)*stream_byte_len);
+            dt = last_packet_time - last_retreival_time;
             newData = false;
-        } else {
-            return 0;
-        }
+        //} else {
+        //    return 0;
+        //}
     }
+    *diff = dt.count();
+    last_retreival_time = std::chrono::system_clock::now();
     return 1;
 }
 

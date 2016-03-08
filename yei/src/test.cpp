@@ -2,6 +2,11 @@
 #include "yei/yei_msg.h"
 #include "ros/ros.h"
 
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <chrono>
+
 int main(int argc, char **argv) {
     YEI3Space sensor;
     const char* port = "ttyACM0";
@@ -11,11 +16,12 @@ int main(int argc, char **argv) {
     float * streamPacket;
     yei::yei_msg data;
     int streamRate = 750;
+    float dt;
 
     ros::init(argc, argv, "yei");
     ros::NodeHandle n;
 
-    ros::Publisher pub = n.advertise<yei::yei_msg>("yei_msg", 1000);
+    // ros::Publisher pub = n.advertise<yei::yei_msg>("yei_msg", 1000);
 
     ros::Rate rate(2000);
 
@@ -43,13 +49,18 @@ int main(int argc, char **argv) {
 
     streamPacket = (float*)malloc(sensor.stream_byte_len * sizeof(float));
 
+    std::ofstream myfile;
+    myfile.open("imu_test.log");
+    myfile << std::fixed << std::showpoint << std::setprecision(9);
+
     sensor.startStreaming();
     printf("Streaming worker thread at %d Hz\n", streamRate);
 
+
     while (ros::ok())
     {
-        if (sensor.getStream(streamPacket)) {
-            data.header.stamp = ros::Time::now();
+        if (sensor.getStream(streamPacket, &dt)) {
+            /*data.header.stamp = ros::Time::now();
 
             data.quat.w = streamPacket[0];
             data.quat.x = streamPacket[1];
@@ -68,12 +79,19 @@ int main(int argc, char **argv) {
             data.mag.y = streamPacket[11];
             data.mag.z = streamPacket[12];
 
-            pub.publish(data);
+            pub.publish(data);*/
+
+            myfile << dt << ", ";
+            for (int i=0; i<13; i++ ) {
+                myfile << streamPacket[i] << ", ";
+            }
+            myfile << "\n";
         }
         ros::spinOnce();
         rate.sleep();
     }
 
+    myfile.close();
     free(streamPacket);
     printf("Main is sending close signal!\n");
     sensor.stopStreaming();

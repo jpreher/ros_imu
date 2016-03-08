@@ -6,7 +6,7 @@
 
 #include <imu_common/EKF.hpp>
 #include <yei/yei_threespace.hpp>
-
+#include <ros/ros.h>
 
 class chain_estimator {
 public:
@@ -15,26 +15,20 @@ public:
     chain_estimator();
     ~chain_estimator();
 
-    void reset();
+    void reset(const YAML::Node &node);
     int update();
 
 private:
     bool isInit;
-    float * acc;
     int N;
 
-    std::vector<YEI3Space> IMU;
-    std::vector<EKF> ekf;
+    std::string                         basePath;
+    std::vector<YEI3Space>              IMU;
+    std::vector<EKF>                    ekf;
+    std::vector<Matrix<float, 3, 1>>    acc;
+    std::vector<Matrix<float, 16,1>>    last_measurement;
 
 };
-
-
-
-
-
-
-
-
 
 
 #endif // ESTIMATOR

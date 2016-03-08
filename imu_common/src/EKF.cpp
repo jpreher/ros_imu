@@ -56,7 +56,7 @@ void EKF::reset(){
     isInit = false;
 }
 
-int EKF::update(float dt, Matrix<float, 3, 1> &acc, Matrix<float, 16,1> &measurement) {
+bool EKF::update(float dt, Matrix<float, 3, 1> &acc, Matrix<float, 16,1> &measurement) {
     if (isInit){
         // Update the model
         model_ekf::basic::Amat_raw(A_.data(), x_hat.data(), &dt);
@@ -77,9 +77,11 @@ int EKF::update(float dt, Matrix<float, 3, 1> &acc, Matrix<float, 16,1> &measure
         // Update the error covariance
         P_ = (I_ - K_ * H_) * P_minus_;
 
-        return 1;
+        // Get the distal acceleration
+
+        return true;
     } else {
-        // Load in values from YAML (TODO)
-        return 0;
+        throw std::runtime_error("Attempted to update EKF without init!");
+        return false;
     }
 }

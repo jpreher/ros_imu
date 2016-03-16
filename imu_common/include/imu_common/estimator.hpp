@@ -7,6 +7,9 @@
 #include <imu_common/EKF.hpp>
 #include <yei/yei_threespace.hpp>
 #include <ros/ros.h>
+#include <memory>
+
+using std::shared_ptr;
 
 class chain_estimator {
 public:
@@ -23,10 +26,16 @@ private:
     int N;
 
     std::string                         basePath;
-    std::vector<YEI3Space>              IMU;
-    std::vector<EKF>                    ekf;
-    std::vector<Matrix<float, 3, 1>>    acc;
-    std::vector<Matrix<float, 16,1>>    last_measurement;
+    struct sensor {
+        YEI3Space              IMU;
+        EKF                    ekf;
+        Matrix<float, 3, 1>    acc;
+        Matrix<float, 16,1>    last_measurement;
+        int                    serial_id;
+    };
+
+    typedef std::shared_ptr<sensor> sensorptr;
+    std::vector<sensorptr>          imu_vec;
 
 };
 

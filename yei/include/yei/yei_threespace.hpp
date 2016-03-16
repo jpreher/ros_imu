@@ -29,6 +29,7 @@ public:
 
     // Configure and connect
 	int openAndSetupComPort(const char* comport);
+    int closeComPort();
 
     // Streaming options
     int setupStreamSlots(int streamRate);
@@ -59,7 +60,6 @@ public:
 
 private:
     // Multithreading
-    std::mutex mu;              // thread mutex
     std::condition_variable cv; // Condition variable for passing thread locking order (prevent starvation)
     std::thread readThread;
 

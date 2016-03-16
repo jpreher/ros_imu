@@ -1,4 +1,4 @@
-#include "yei_threespace.hpp"
+#include <yei/yei_threespace.hpp>
 #include "yei/yei_msg.h"
 #include "ros/ros.h"
 
@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     ros::init(argc, argv, "yei");
     ros::NodeHandle n;
 
-    // ros::Publisher pub = n.advertise<yei::yei_msg>("yei_msg", 1000);
+    ros::Publisher pub = n.advertise<yei::yei_msg>("yei_msg", 1000);
 
     ros::Rate rate(2000);
 
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
     while (ros::ok())
     {
         if (sensor.getStream(streamPacket, &dt)) {
-            /*data.header.stamp = ros::Time::now();
+            data.header.stamp = ros::Time::now();
 
             data.quat.w = streamPacket[0];
             data.quat.x = streamPacket[1];
@@ -79,13 +79,13 @@ int main(int argc, char **argv) {
             data.mag.y = streamPacket[11];
             data.mag.z = streamPacket[12];
 
-            pub.publish(data);*/
+            pub.publish(data);
 
-            myfile << dt << ", ";
+            /*myfile << dt << ", ";
             for (int i=0; i<13; i++ ) {
                 myfile << streamPacket[i] << ", ";
             }
-            myfile << "\n";
+            myfile << "\n";*/
         }
         ros::spinOnce();
         rate.sleep();

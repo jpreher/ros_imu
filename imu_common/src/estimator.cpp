@@ -3,13 +3,11 @@
 
 using namespace std;
 
+
 chain_estimator::chain_estimator(){
     basePath = "/ampro/sensors/imu/";
     ros::param::get(basePath + "N", N);
     isInit = false;
-
-    acc.resize(N+1);
-    ekf.resize(N);
 }
 
 chain_estimator::~chain_estimator(){
@@ -23,6 +21,7 @@ void chain_estimator::reset(const YAML::Node &node){
     Matrix<float, 18, 18> Q_init;
     Matrix<float, 16, 16> R_init;
     Matrix<float, 3, 1>   r_init;
+    unsigned int sn;
 
     x_init.setZero();
     P_init.setZero();
@@ -35,21 +34,29 @@ void chain_estimator::reset(const YAML::Node &node){
     node["R"] >> R_init;
 
     for (int i = 0; i<N; i++) {
-        node[to_string(i) + "x_init"] >> x_init;
-        node[to_string(i) + "r"] >> r_init;
+        sensorptr tempSens;
+        tempSens.reset(new sensor);
 
-        ekf[i].initialize(x_init, P_init, Q_init, R_init, r_init);
-    }
+        node[to_string(i) + "x_init"]   >> x_init;
+        node[to_string(i) + "r"]        >> r_init;
+        node[to_string(i) + "SN"]       >> sn;
 
-    // Setup the IMUs
-    try {
-        // Iterate and assign based on serial #
+        tempSens->serial_id = sn;
+        tempSens->ekf.initialize(x_init, P_init, Q_init, R_init, r_init);
 
-
-    } catch(const std::runtime_error &e) {
-        std::cout << "Error setting up IMUs: " << e.what() << endl;
-        isInit = false;
-        return;
+        for (int j = 0; j<N; j++) {
+            string port = "ttyACM" + std::to_string(j);
+            if (!tempSens->IMU.openAndSetupComPort(port.c_str())) {
+                tempSens->IMU.closeComPort();
+                continue;
+            }
+            tempSens->IMU.getSerialNumber();
+            if (tempSens->IMU.SerialNumber != sn) {
+                tempSens->IMU.closeComPort();
+                continue;
+            }
+            imu_vec.push_back(tempSens);
+        }
     }
 
     isInit = true;
@@ -61,20 +68,20 @@ int chain_estimator::update(){
         for (int i = 0; i<N; i++) {
             float dt;
             float meas[13];
-            IMU[i].getStream(meas, &dt);
-            last_measurement[i] << meas[0], meas[1], meas[2], meas[3],  // quat
-                                   meas[4], meas[5], meas[6],           // gyr
-                                   meas[4]/dt, meas[5]/dt, meas[6]/dt,  // gyrDot
-                                   meas[7], meas[8], meas[9],           // accelerometer
-                                   meas[10], meas[11], meas[12];        // mag
+            imu_vec[i]->IMU.getStream(meas, &dt);
+            imu_vec[i]->last_measurement <<  meas[0], meas[1], meas[2], meas[3],  // quat
+                                             meas[4], meas[5], meas[6],           // gyr
+                                             meas[4]/dt, meas[5]/dt, meas[6]/dt,  // gyrDot
+                                             meas[7], meas[8], meas[9],           // accelerometer
+                                             meas[10], meas[11], meas[12];        // mag
 
             if (i==0) { // Base joint
-                acc[i] << 0., 0., 0.;
-                ekf[i].update(dt, acc[i], last_measurement[i]);
-                acc[i+1] = ekf[i].a_distal;
+                imu_vec[i]->acc << 0., 0., 0.;
+                imu_vec[i]->ekf.update(dt, imu_vec[i]->acc, imu_vec[i]->last_measurement);
+                imu_vec[i+1]->acc = imu_vec[i]->ekf.a_distal;
             } else { // All the distals
-                ekf[i].update(dt, acc[i], last_measurement[i]);
-                acc[i+1] = ekf[i].a_distal;
+                imu_vec[i]->ekf.update(dt, imu_vec[i]->acc, imu_vec[i]->last_measurement);
+                imu_vec[i+1]->acc = imu_vec[i]->ekf.a_distal;
             }
         }
     } else {

@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   yei
   yaml_eigen_utilities
   eigen_utilities
+  roslib_utilities
 )
 
 #add_message_files(
@@ -32,6 +33,7 @@ catkin_package(
   CATKIN_DEPENDS
     yei
     yaml_eigen_utilities
+    roslib_utilities
   DEPENDS
     eigen_utilities
 )
@@ -58,10 +60,15 @@ include(gen/sources.cmake)
 add_library(${PROJECT_NAME}
   src/EKF.cpp
   src/estimator.cpp
+  src/test.cpp
   ${SRCS}
 )
 
 add_dependencies(imu_common ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+add_executable(ekf_chain_test src/test.cpp)
+add_dependencies(ekf_chain_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(ekf_chain_test yei ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 #add_executable(sensor_test src/test.cpp)
 #add_dependencies(sensor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

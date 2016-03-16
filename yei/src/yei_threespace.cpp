@@ -1,4 +1,6 @@
-#include "yei_threespace.hpp"
+#include <yei/yei_threespace.hpp>
+
+std::mutex mu;              // thread mutex
 
 // Constructor
 YEI3Space::YEI3Space() {
@@ -91,6 +93,11 @@ int YEI3Space::openAndSetupComPort(const char* comport)
     printf("Established connection to %s: %d\n", comport, fd);
     //tcflush(fd, TCIOFLUSH); // clear buffer
 
+    return 1;
+}
+
+int YEI3Space::closeComPort() {
+    close(fd);
     return 1;
 }
 

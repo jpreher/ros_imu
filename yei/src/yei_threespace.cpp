@@ -1,7 +1,5 @@
 #include <yei/yei_threespace.hpp>
 
-std::mutex mu;              // thread mutex
-
 // Constructor
 YEI3Space::YEI3Space() {
     fd = -2;            // File descriptor is invalid to start
@@ -23,6 +21,7 @@ YEI3Space::YEI3Space() {
     stream_byte_len = 0; // To be set by setupStreamSlots()
     streamON = false;
     newData  = false;
+    SerialNumber = 0;
 }
 
 // Destructor

@@ -1,5 +1,5 @@
 #include <yei/yei_threespace.hpp>
-#include "yei/yei_msg.h"
+#include <yei/yei_msg.h>
 #include "ros/ros.h"
 
 #include <iostream>
@@ -35,8 +35,8 @@ int main(int argc, char **argv) {
     sensor.getAllCorrectedComponentSensorData(gyro_rate3, accelerometer3, compass3);
 
     printf(" Gyro: %f %f %f\n Accelerometer: %f %f %f\n Compass: %f %f %f\n\n", gyro_rate3[0], gyro_rate3[1], gyro_rate3[2],
-                                                                              accelerometer3[0], accelerometer3[1], accelerometer3[2],
-                                                                              compass3[0], compass3[1], compass3[2]);
+                                                                                accelerometer3[0], accelerometer3[1], accelerometer3[2],
+                                                                                compass3[0], compass3[1], compass3[2]);
 
     sensor.resetBaseOffset();
     sensor.offsetWithCurrentOrientation();
@@ -49,9 +49,9 @@ int main(int argc, char **argv) {
 
     streamPacket = (float*)malloc(sensor.stream_byte_len * sizeof(float));
 
-    std::ofstream myfile;
-    myfile.open("imu_test.log");
-    myfile << std::fixed << std::showpoint << std::setprecision(9);
+    //std::ofstream myfile;
+    //myfile.open("imu_test.log");
+    //myfile << std::fixed << std::showpoint << std::setprecision(9);
 
     sensor.startStreaming();
     printf("Streaming worker thread at %d Hz\n", streamRate);
@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
         rate.sleep();
     }
 
-    myfile.close();
+    //myfile.close();
     free(streamPacket);
     printf("Main is sending close signal!\n");
     sensor.stopStreaming();

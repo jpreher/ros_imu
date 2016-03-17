@@ -11,19 +11,14 @@
 
 using std::shared_ptr;
 
+namespace imu_common {
+
 class chain_estimator {
 public:
-    std::vector<float[3]> segment;
-
-    chain_estimator();
-    ~chain_estimator();
-
-    void reset(const YAML::Node &node);
-    int update();
-
 private:
     bool isInit;
     int N;
+    int streamRate;
 
     std::string                         basePath;
     struct sensor {
@@ -35,9 +30,19 @@ private:
     };
 
     typedef std::shared_ptr<sensor> sensorptr;
-    std::vector<sensorptr>          imu_vec;
 
+public:
+    std::vector<float[3]> segment;
+
+    chain_estimator();
+    ~chain_estimator();
+
+    void reset(const YAML::Node &node);
+    int update();
+    std::vector<sensorptr>          imu_vec;
 };
+
+}
 
 
 #endif // ESTIMATOR

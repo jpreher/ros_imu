@@ -2,16 +2,18 @@
 #include <string.h>
 
 using namespace std;
-
+using namespace imu_common;
 
 chain_estimator::chain_estimator(){
     basePath = "/ampro/sensors/imu/";
     ros::param::get(basePath + "N", N);
     isInit = false;
+    streamRate = 400;
 }
 
 chain_estimator::~chain_estimator(){
-
+    // Since shared_ptr we need to explicity tell it to call sub-deconstructors
+    imu_vec.clear();
 }
 
 void chain_estimator::reset(const YAML::Node &node){
@@ -33,29 +35,34 @@ void chain_estimator::reset(const YAML::Node &node){
     node["Q"] >> Q_init;
     node["R"] >> R_init;
 
+    imu_vec.resize(N);
+
     for (int i = 0; i<N; i++) {
-        sensorptr tempSens;
-        tempSens.reset(new sensor);
+        imu_vec[i].reset(new sensor);
 
-        node[to_string(i) + "x_init"]   >> x_init;
-        node[to_string(i) + "r"]        >> r_init;
-        node[to_string(i) + "SN"]       >> sn;
+        node[to_string(i)]["x_init"]   >> x_init;
+        node[to_string(i)]["r"]        >> r_init;
+        node[to_string(i)]["SN"]       >> sn;
 
-        tempSens->serial_id = sn;
-        tempSens->ekf.initialize(x_init, P_init, Q_init, R_init, r_init);
+        imu_vec[i]->serial_id = sn;
+        imu_vec[i]->ekf.initialize(x_init, P_init, Q_init, R_init, r_init);
 
         for (int j = 0; j<N; j++) {
             string port = "ttyACM" + std::to_string(j);
-            if (!tempSens->IMU.openAndSetupComPort(port.c_str())) {
-                tempSens->IMU.closeComPort();
+            printf("Opening com port ttyACM%d\n",j);
+            if (!imu_vec[i]->IMU.openAndSetupComPort(port.c_str())) {
+                imu_vec[i]->IMU.closeComPort();
+                printf("Failed to open com port ttyACM%d\n", j);
                 continue;
             }
-            tempSens->IMU.getSerialNumber();
-            if (tempSens->IMU.SerialNumber != sn) {
-                tempSens->IMU.closeComPort();
+            imu_vec[i]->IMU.getSerialNumber();
+            if (imu_vec[i]->IMU.SerialNumber != sn) {
+                imu_vec[i]->IMU.closeComPort();
+                printf("Serial number %d did not match yaml %d\n", imu_vec[i]->IMU.SerialNumber, sn);
                 continue;
             }
-            imu_vec.push_back(tempSens);
+            imu_vec[i]->IMU.setupStreamSlots(streamRate);
+            imu_vec[i]->IMU.startStreaming();
         }
     }
 
@@ -75,11 +82,16 @@ int chain_estimator::update(){
                                              meas[7], meas[8], meas[9],           // accelerometer
                                              meas[10], meas[11], meas[12];        // mag
 
-            if (i==0) { // Base joint
+            if ( N ==1 ) { // There is only one joint
+                imu_vec[i]->acc << 0., 0., 0.;
+                imu_vec[i]->ekf.update(dt, imu_vec[i]->acc, imu_vec[i]->last_measurement);
+            } else if (i==0 && N > 1) { // Base joint in a chain
                 imu_vec[i]->acc << 0., 0., 0.;
                 imu_vec[i]->ekf.update(dt, imu_vec[i]->acc, imu_vec[i]->last_measurement);
                 imu_vec[i+1]->acc = imu_vec[i]->ekf.a_distal;
-            } else { // All the distals
+            } else if (i==N-1 && N>1) { // Last joint in the chain
+                imu_vec[i]->ekf.update(dt, imu_vec[i]->acc, imu_vec[i]->last_measurement);
+            } else { // Intermediate joints
                 imu_vec[i]->ekf.update(dt, imu_vec[i]->acc, imu_vec[i]->last_measurement);
                 imu_vec[i+1]->acc = imu_vec[i]->ekf.a_distal;
             }
@@ -88,4 +100,5 @@ int chain_estimator::update(){
         throw std::runtime_error("EKF attempted to run without loading parameters.");
         return false;
     }
+    return 1;
 }

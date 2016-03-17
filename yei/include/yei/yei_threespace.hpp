@@ -28,7 +28,7 @@ public:
     float offsetQ[4];
 
     // Configure and connect
-	int openAndSetupComPort(const char* comport);
+    int openAndSetupComPort(const char* comport);
     int closeComPort();
 
     // Streaming options
@@ -58,8 +58,9 @@ public:
     int tss_setWiredResponseHeaderBitfield(unsigned int header_bitfield);
     int getOffsetOrientationAsQuaternion();
 
-private:
+//private:
     // Multithreading
+    std::mutex mu;              // thread mutex
     std::condition_variable cv; // Condition variable for passing thread locking order (prevent starvation)
     std::thread readThread;
 

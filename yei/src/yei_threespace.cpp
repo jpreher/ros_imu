@@ -40,16 +40,16 @@ int YEI3Space::openAndSetupComPort(const char* comport)
     fd_set rfds;
     char str[12];
 
-    fcntl(fd, F_SETFL, 0);
-
     strcpy(str, "/dev/");
     strcat(str, comport);
-    fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
+    fd = open(str, O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
     if ( fd == -1 ) {
         printf("COMPORT %s not available!\n", str);
         fd = -2;
         return 0;
     }
+
+    fcntl(fd, F_SETFL, 0);
 
     // Get last COM port attributes
     tcgetattr(fd, &old_options);
@@ -90,13 +90,17 @@ int YEI3Space::openAndSetupComPort(const char* comport)
     }
 
     printf("Established connection to %s: %d\n", comport, fd);
-    //tcflush(fd, TCIOFLUSH); // clear buffer
+    tcflush(fd, TCIOFLUSH); // clear buffer
 
     return 1;
 }
 
 int YEI3Space::closeComPort() {
+    SerialNumber = 0;
+    tcflush(fd, TCIOFLUSH); // clear buffer
+    tcsetattr(fd, TCSANOW, &old_options); // reset the terminal options
     close(fd);
+    fd = -2;
     return 1;
 }
 
@@ -137,7 +141,7 @@ int YEI3Space::setupStreamSlots(int streamRate) {
     wired_setup.protocol_bits.pad = 0;
 
     if (!writeRead(&simple_commands[TSS_SET_WIRED_RESPONSE_HEADER_BITFIELD],(char*)&wired_setup.protocol_byte, NULL)) {
-        printf("Error with setting header bitfield");
+        printf("Error with setting header bitfield!\n");
         return 1;
     }
 

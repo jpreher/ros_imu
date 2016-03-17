@@ -37,6 +37,7 @@ void chain_estimator::reset(const YAML::Node &node){
 
     imu_vec.resize(N);
 
+    // Initialize the vector of devices
     for (int i = 0; i<N; i++) {
         imu_vec[i].reset(new sensor);
 
@@ -46,28 +47,35 @@ void chain_estimator::reset(const YAML::Node &node){
 
         imu_vec[i]->serial_id = sn;
         imu_vec[i]->ekf.initialize(x_init, P_init, Q_init, R_init, r_init);
-
+    }
+    // Sort the vector
+    for (int i=0; i<N; i++) {
         for (int j = 0; j<N; j++) {
             string port = "ttyACM" + std::to_string(j);
-            printf("Opening com port ttyACM%d\n",j);
+            printf("Opening com port %s\n", port.c_str());
             if (!imu_vec[i]->IMU.openAndSetupComPort(port.c_str())) {
                 imu_vec[i]->IMU.closeComPort();
                 printf("Failed to open com port ttyACM%d\n", j);
                 continue;
             }
             imu_vec[i]->IMU.getSerialNumber();
-            if (imu_vec[i]->IMU.SerialNumber != sn) {
+            if (imu_vec[i]->IMU.SerialNumber != imu_vec[i]->serial_id) {
                 imu_vec[i]->IMU.closeComPort();
                 printf("Serial number %d did not match yaml %d\n", imu_vec[i]->IMU.SerialNumber, sn);
                 continue;
             }
-            imu_vec[i]->IMU.setupStreamSlots(streamRate);
-            imu_vec[i]->IMU.startStreaming();
+            break;
         }
     }
-
+    // Start streaming on the vector
+    for (int k=0; k<N; k++) {
+        imu_vec[k]->IMU.setupStreamSlots(streamRate);
+        imu_vec[k]->IMU.startStreaming();
+    }
     isInit = true;
 }
+
+
 
 int chain_estimator::update(){
     if (isInit) {

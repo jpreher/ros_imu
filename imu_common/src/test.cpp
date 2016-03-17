@@ -12,6 +12,7 @@ int main(int argc, char **argv) {
     yei::yei_msg data;
     ros::Publisher pub = n.advertise<yei::yei_msg>("chain_tester", 1000);
     int N;
+    //float *streamPacket;
     float streamPacket[13];
     float dt;
 
@@ -30,10 +31,8 @@ int main(int argc, char **argv) {
 
     //streamPacket = (float*)malloc(chainEKF.imu_vec[0]->IMU.stream_byte_len * sizeof(float));
 
-    chainEKF.update();
-
     while (ros::ok()) {
-        //chainEKF.imu_vec[0]->IMU.getStream(streamPacket, &dt);
+        chainEKF.imu_vec[0]->IMU.getStream(streamPacket, &dt);
         data.header.stamp = ros::Time::now();
 
         data.quat.w = streamPacket[0];
@@ -59,7 +58,7 @@ int main(int argc, char **argv) {
         rate.sleep();
     }
 
-
+    //free(streamPacket);
 
     return 0;
 }

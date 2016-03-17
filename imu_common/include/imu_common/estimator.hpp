@@ -29,7 +29,7 @@ private:
         int                    serial_id;
     };
 
-    typedef std::shared_ptr<sensor> sensorptr;
+    //typedef std::shared_ptr<sensor> sensorptr;
 
 public:
     std::vector<float[3]> segment;
@@ -39,7 +39,7 @@ public:
 
     void reset(const YAML::Node &node);
     int update();
-    std::vector<sensorptr>          imu_vec;
+    std::vector<std::shared_ptr<sensor>>  imu_vec;
 };
 
 }

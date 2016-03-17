@@ -271,7 +271,9 @@ int YEI3Space::getStream(float * data, float * diff) {
     {
         std::lock_guard<std::mutex> guard(mu);
         //if (newData) {
-            memcpy(data,      last_stream_data,   sizeof(float)*stream_byte_len);
+            //memcpy(data,      last_stream_data,   sizeof(float)*stream_byte_len);
+            int len = stream_byte_len/4;
+            std::copy(&last_stream_data[0], &last_stream_data[len], data);
             dt = last_packet_time - last_retreival_time;
             newData = false;
         //} else {

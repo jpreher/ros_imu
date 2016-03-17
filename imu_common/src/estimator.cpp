@@ -74,7 +74,8 @@ int chain_estimator::update(){
         // Update the IMUS then the EKF
         for (int i = 0; i<N; i++) {
             float dt;
-            float meas[13];
+            float *meas;
+            meas = (float*)malloc(imu_vec[i]->IMU.stream_byte_len * sizeof(float));
             imu_vec[i]->IMU.getStream(meas, &dt);
             imu_vec[i]->last_measurement <<  meas[0], meas[1], meas[2], meas[3],  // quat
                                              meas[4], meas[5], meas[6],           // gyr
@@ -95,6 +96,7 @@ int chain_estimator::update(){
                 imu_vec[i]->ekf.update(dt, imu_vec[i]->acc, imu_vec[i]->last_measurement);
                 imu_vec[i+1]->acc = imu_vec[i]->ekf.a_distal;
             }
+            free(meas);
         }
     } else {
         throw std::runtime_error("EKF attempted to run without loading parameters.");

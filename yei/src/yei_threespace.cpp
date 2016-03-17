@@ -21,6 +21,7 @@ YEI3Space::YEI3Space() {
     stream_byte_len = 0; // To be set by setupStreamSlots()
     streamON = false;
     newData  = false;
+    hasFirst = false;
     SerialNumber = 0;
 }
 
@@ -89,7 +90,7 @@ int YEI3Space::openAndSetupComPort(const char* comport)
         return 0;
     }
 
-    printf("Established connection to %s: %d\n", comport, fd);
+    printf("\t Established connection to %s: %d\n", comport, fd);
     tcflush(fd, TCIOFLUSH); // clear buffer
 
     return 1;
@@ -197,7 +198,7 @@ int YEI3Space::startStreaming(){
         // Start thread
         streamON = true;
         readThread = std::thread(&YEI3Space::streamThread, this);
-        printf("Started stream\n");
+        printf("Started stream: \t %d\n", fd);
     }
     return 1;
 }
@@ -212,7 +213,7 @@ int YEI3Space::stopStreaming(){
             }
             if (readThread.joinable()) readThread.join();
         }
-        printf("Closing stream\n");
+        printf("Closing stream: \t %d\n", fd);
 
         return writeRead(&simple_commands[TSS_STOP_STREAMING], NULL, NULL);
         tcflush(fd, TCIOFLUSH); // clear buffer
@@ -221,9 +222,7 @@ int YEI3Space::stopStreaming(){
 
 // Function which will as a background thread until streamON is set to false.
 int YEI3Space::streamThread() {
-    printf("Running the stream thread\n");
     bool ok = true;
-    sleep(0.1);
 
     while (ok) {
         ok = checkStream();
@@ -548,7 +547,11 @@ int YEI3Space::readFile(unsigned int rtn_data_len, char *rtn_data_detail, char *
         return 0;
     }
     if (header_data[1] != stream_byte_len) {
-        printf("Stream byte length did not match header!\n");
+        if (!hasFirst) // Header will not match on first packet.
+            hasFirst = true;
+        else
+            printf("Stream byte length did not match header!\n");
+
         tcflush(fd, TCIOFLUSH); // clear buffer
         return 0;
     }

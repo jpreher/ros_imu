@@ -74,6 +74,7 @@ public:
     bool streamON;
     bool threadON;
     bool newData;
+    bool hasFirst;
 
     // Data
     std::chrono::time_point<std::chrono::system_clock> last_packet_time, last_retreival_time;

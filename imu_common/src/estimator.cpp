@@ -36,6 +36,7 @@ void chain_estimator::reset(const YAML::Node &node){
     node["R"] >> R_init;
 
     imu_vec.resize(N);
+    int cnt =0;
 
     // Initialize the vector of devices
     for (int i = 0; i<N; i++) {
@@ -50,9 +51,10 @@ void chain_estimator::reset(const YAML::Node &node){
     }
     // Sort the vector
     for (int i=0; i<N; i++) {
+        printf("Sensor %d:\n", i);
         for (int j = 0; j<N; j++) {
             string port = "ttyACM" + std::to_string(j);
-            printf("Opening com port %s\n", port.c_str());
+            //printf("Opening com port %s\n", port.c_str());
             if (!imu_vec[i]->IMU.openAndSetupComPort(port.c_str())) {
                 imu_vec[i]->IMU.closeComPort();
                 printf("Failed to open com port ttyACM%d\n", j);
@@ -61,12 +63,15 @@ void chain_estimator::reset(const YAML::Node &node){
             imu_vec[i]->IMU.getSerialNumber();
             if (imu_vec[i]->IMU.SerialNumber != imu_vec[i]->serial_id) {
                 imu_vec[i]->IMU.closeComPort();
-                printf("Serial number %d did not match yaml %d\n", imu_vec[i]->IMU.SerialNumber, sn);
                 continue;
             }
+            cnt ++;
             break;
         }
     }
+    if (cnt != N)
+        throw std::runtime_error("Not all of the EKF chains were able to load");
+
     // Start streaming on the vector
     for (int k=0; k<N; k++) {
         imu_vec[k]->IMU.setupStreamSlots(streamRate);
@@ -82,8 +87,7 @@ int chain_estimator::update(){
         // Update the IMUS then the EKF
         for (int i = 0; i<N; i++) {
             float dt;
-            float *meas;
-            meas = (float*)malloc(imu_vec[i]->IMU.stream_byte_len * sizeof(float));
+            float meas[13];
             imu_vec[i]->IMU.getStream(meas, &dt);
             imu_vec[i]->last_measurement <<  meas[0], meas[1], meas[2], meas[3],  // quat
                                              meas[4], meas[5], meas[6],           // gyr
@@ -104,7 +108,6 @@ int chain_estimator::update(){
                 imu_vec[i]->ekf.update(dt, imu_vec[i]->acc, imu_vec[i]->last_measurement);
                 imu_vec[i+1]->acc = imu_vec[i]->ekf.a_distal;
             }
-            free(meas);
         }
     } else {
         throw std::runtime_error("EKF attempted to run without loading parameters.");

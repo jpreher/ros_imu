@@ -74,6 +74,10 @@ void chain_estimator::reset(const YAML::Node &node){
 
     // Start streaming on the vector
     for (int k=0; k<N; k++) {
+        imu_vec[k]->IMU.resetBaseOffset();
+        imu_vec[k]->IMU.offsetWithCurrentOrientation();
+        sleep(0.25);
+        imu_vec[k]->IMU.getOffsetOrientationAsQuaternion();
         imu_vec[k]->IMU.setupStreamSlots(streamRate);
         imu_vec[k]->IMU.startStreaming();
     }

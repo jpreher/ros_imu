@@ -9,8 +9,10 @@ int main(int argc, char **argv) {
     ros::init(argc, argv, "ekf_chain");
     ros::NodeHandle n;
     ros::Rate rate(200);
-    yei::yei_msg data;
-    ros::Publisher pub = n.advertise<yei::yei_msg>("chain_tester", 1000);
+    yei::yei_msg dataThigh;
+    yei::yei_msg dataShank;
+    ros::Publisher pub1 = n.advertise<yei::yei_msg>("thigh", 1000);
+    ros::Publisher pub2 = n.advertise<yei::yei_msg>("shank", 1000);
     int N;
     float streamPacket[13];
     float dt;
@@ -30,26 +32,48 @@ int main(int argc, char **argv) {
 
     while (ros::ok()) {
         chainEKF.imu_vec[0]->IMU.getStream(streamPacket, &dt);
-        data.header.stamp = ros::Time::now();
+        dataThigh.header.stamp = ros::Time::now();
 
-        data.quat.w = streamPacket[0];
-        data.quat.x = streamPacket[1];
-        data.quat.y = streamPacket[2];
-        data.quat.z = streamPacket[3];
+        dataThigh.quat.w = streamPacket[0];
+        dataThigh.quat.x = streamPacket[1];
+        dataThigh.quat.y = streamPacket[2];
+        dataThigh.quat.z = streamPacket[3];
 
-        data.gyr.x = streamPacket[4];
-        data.gyr.y = streamPacket[5];
-        data.gyr.z = streamPacket[6];
+        dataThigh.gyr.x = streamPacket[4];
+        dataThigh.gyr.y = streamPacket[5];
+        dataThigh.gyr.z = streamPacket[6];
 
-        data.acc.x = streamPacket[7];
-        data.acc.y = streamPacket[8];
-        data.acc.z = streamPacket[9];
+        dataThigh.acc.x = streamPacket[7];
+        dataThigh.acc.y = streamPacket[8];
+        dataThigh.acc.z = streamPacket[9];
 
-        data.mag.x = streamPacket[10];
-        data.mag.y = streamPacket[11];
-        data.mag.z = streamPacket[12];
+        dataThigh.mag.x = streamPacket[10];
+        dataThigh.mag.y = streamPacket[11];
+        dataThigh.mag.z = streamPacket[12];
 
-        pub.publish(data);
+        chainEKF.imu_vec[1]->IMU.getStream(streamPacket, &dt);
+        dataShank.header.stamp = dataThigh.header.stamp;
+
+        dataShank.quat.w = streamPacket[0];
+        dataShank.quat.x = streamPacket[1];
+        dataShank.quat.y = streamPacket[2];
+        dataShank.quat.z = streamPacket[3];
+
+        dataShank.gyr.x = streamPacket[4];
+        dataShank.gyr.y = streamPacket[5];
+        dataShank.gyr.z = streamPacket[6];
+
+        dataShank.acc.x = streamPacket[7];
+        dataShank.acc.y = streamPacket[8];
+        dataShank.acc.z = streamPacket[9];
+
+        dataShank.mag.x = streamPacket[10];
+        dataShank.mag.y = streamPacket[11];
+        dataShank.mag.z = streamPacket[12];
+
+
+        pub1.publish(dataThigh);
+        pub2.publish(dataShank);
 
         ros::spinOnce();
         rate.sleep();

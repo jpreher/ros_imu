@@ -166,7 +166,7 @@ int YEI3Space::setupStreamSlots(int streamRate) {
             }
         }
     }
-    last_stream_data = (float*)malloc(stream_byte_len * sizeof(float));
+    last_stream_data = (float*)calloc(stream_byte_len, sizeof(float));
 
     // Write settings
     if (!writeRead(&simple_commands[TSS_SET_STREAMING_SLOTS], (char*)command_bytes, NULL)) {

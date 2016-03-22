@@ -1,6 +1,7 @@
 #include <imu_common/estimator.hpp>
 #include <roslib_utilities/ros_package_utilities.hpp>
 #include <yei/yei_msg.h>
+#include <imu_common/estimator_shm.hpp>
 
 using namespace YAML;
 using namespace imu_common;
@@ -8,14 +9,16 @@ using namespace imu_common;
 int main(int argc, char **argv) {
     ros::init(argc, argv, "ekf_chain");
     ros::NodeHandle n;
-    ros::Rate rate(200);
+    ros::Rate rate(500);
     yei::yei_msg dataThigh;
     yei::yei_msg dataShank;
     ros::Publisher pub1 = n.advertise<yei::yei_msg>("thigh", 1000);
     ros::Publisher pub2 = n.advertise<yei::yei_msg>("shank", 1000);
     int N;
-    float streamPacket[13];
+    Eigen::Matrix<float, 16,1> streamPacket;
     float dt;
+
+    streamPacket.setZero();
 
     // Load in the YAML config
     Node doc;
@@ -31,7 +34,11 @@ int main(int argc, char **argv) {
     rate.sleep();
 
     while (ros::ok()) {
-        chainEKF.imu_vec[0]->IMU.getStream(streamPacket, &dt);
+        chainEKF.update();
+
+        // Get thigh populated
+        streamPacket = chainEKF.imu_vec[0]->last_measurement;
+
         dataThigh.header.stamp = ros::Time::now();
 
         dataThigh.quat.w = streamPacket[0];
@@ -43,15 +50,21 @@ int main(int argc, char **argv) {
         dataThigh.gyr.y = streamPacket[5];
         dataThigh.gyr.z = streamPacket[6];
 
-        dataThigh.acc.x = streamPacket[7];
-        dataThigh.acc.y = streamPacket[8];
-        dataThigh.acc.z = streamPacket[9];
+        dataThigh.gyrDot.x = streamPacket[7];
+        dataThigh.gyrDot.y = streamPacket[8];
+        dataThigh.gyrDot.z = streamPacket[9];
 
-        dataThigh.mag.x = streamPacket[10];
-        dataThigh.mag.y = streamPacket[11];
-        dataThigh.mag.z = streamPacket[12];
+        dataThigh.acc.x = streamPacket[10];
+        dataThigh.acc.y = streamPacket[11];
+        dataThigh.acc.z = streamPacket[12];
 
-        chainEKF.imu_vec[1]->IMU.getStream(streamPacket, &dt);
+        dataThigh.mag.x = streamPacket[13];
+        dataThigh.mag.y = streamPacket[14];
+        dataThigh.mag.z = streamPacket[15];
+
+        // Get shank populated
+        streamPacket = chainEKF.imu_vec[1]->last_measurement;
+
         dataShank.header.stamp = dataThigh.header.stamp;
 
         dataShank.quat.w = streamPacket[0];
@@ -63,23 +76,25 @@ int main(int argc, char **argv) {
         dataShank.gyr.y = streamPacket[5];
         dataShank.gyr.z = streamPacket[6];
 
-        dataShank.acc.x = streamPacket[7];
-        dataShank.acc.y = streamPacket[8];
-        dataShank.acc.z = streamPacket[9];
+        dataShank.gyrDot.x = streamPacket[7];
+        dataShank.gyrDot.y = streamPacket[8];
+        dataShank.gyrDot.z = streamPacket[9];
 
-        dataShank.mag.x = streamPacket[10];
-        dataShank.mag.y = streamPacket[11];
-        dataShank.mag.z = streamPacket[12];
+        dataShank.acc.x = streamPacket[10];
+        dataShank.acc.y = streamPacket[11];
+        dataShank.acc.z = streamPacket[12];
 
+        dataShank.mag.x = streamPacket[13];
+        dataShank.mag.y = streamPacket[14];
+        dataShank.mag.z = streamPacket[15];
 
+        // Publish
         pub1.publish(dataThigh);
         pub2.publish(dataShank);
 
         ros::spinOnce();
         rate.sleep();
     }
-
-    //free(streamPacket);
 
     return 0;
 }

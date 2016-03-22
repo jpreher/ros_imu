@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(imu_common)
 
-add_definitions(-std=c++0x)
+add_definitions(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -48,7 +48,6 @@ include_directories(${EIGEN3_INCLUDE_DIRS})
 ## Your package locations should be listed before other locations
 include_directories(
   include
-  #include/${PROJECT_NAME}
   ${catkin_INCLUDE_DIRS}
   gen
   gen/include
@@ -60,17 +59,20 @@ include(gen/sources.cmake)
 add_library(${PROJECT_NAME}
   src/EKF.cpp
   src/estimator.cpp
-  src/test.cpp
   ${SRCS}
 )
 
 add_dependencies(imu_common ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-add_executable(ekf_chain_test src/test.cpp)
-add_dependencies(ekf_chain_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(ekf_chain_test yei ${PROJECT_NAME} ${catkin_LIBRARIES})
+add_executable(test_ekf_chain src/test.cpp)
+add_dependencies(test_ekf_chain ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(test_ekf_chain yei ${PROJECT_NAME} ${catkin_LIBRARIES})
 
-#add_executable(sensor_test src/test.cpp)
-#add_dependencies(sensor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#target_link_libraries(sensor_test yei_lib ${catkin_LIBRARIES})
+add_executable(ekf_shm_node src/node.cpp)
+add_dependencies(ekf_shm_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(ekf_shm_node yei ${PROJECT_NAME} ${catkin_LIBRARIES} rt)
+
+add_executable(test_shm_collect src/test_shm_collect.cpp)
+add_dependencies(test_shm_collect ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(test_shm_collect yei ${PROJECT_NAME} ${catkin_LIBRARIES} rt)
 

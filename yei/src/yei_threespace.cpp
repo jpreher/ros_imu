@@ -273,15 +273,15 @@ int YEI3Space::getStream(float * data, float * diff) {
     // This memory is released when it goes out of scope (i.e. the function returns or fails.
     {
         std::lock_guard<std::mutex> guard(mu);
-        //if (newData) {
+        if (newData) {
             //memcpy(data,      last_stream_data,   sizeof(float)*stream_byte_len);
             int len = stream_byte_len/4;
             std::copy(&last_stream_data[0], &last_stream_data[len], data);
             dt = last_packet_time - last_retreival_time;
             newData = false;
-        //} else {
-        //    return 0;
-        //}
+        } else {
+            return 0;
+        }
     }
     *diff = dt.count();
     last_retreival_time = std::chrono::system_clock::now();

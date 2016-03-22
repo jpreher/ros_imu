@@ -9,6 +9,8 @@
 //---------------------------------------------------------------------------------------------------
 
 #include <imu_common/EKF.hpp>
+using namespace model_ekf::basic;
+//using namespace basic;
 
 EKF::EKF() {
     x_hat.setZero();
@@ -36,6 +38,8 @@ void EKF::initialize(Matrix<float, 18, 1> &x_init, Matrix<float, 18, 18> &P_init
     R_          << R_init;
     r           << r_init;
 
+    x_hat = x_minus;
+
     isInit = true;
 }
 
@@ -59,15 +63,15 @@ void EKF::reset(){
 bool EKF::update(float dt, Matrix<float, 3, 1> &acc, Matrix<float, 16,1> &measurement) {
     if (isInit){
         // Update the model
-        model_ekf::basic::Amat_raw(A_.data(), x_hat.data(), &dt);
-        model_ekf::basic::fvec_raw(x_minus.data(), x_hat.data(), &dt);
+        Amat_raw(A_.data(), x_hat.data(), &dt);
+        fvec_raw(x_minus.data(), x_hat.data(), &dt);
 
         // Project the error covariance ahead
         P_minus_ = A_ * P_ * A_.transpose() + Q_;
 
         // Calculate H
-        model_ekf::basic::Hmat_raw(H_.data(), measurement.data(), acc.data(), r.data());
-        model_ekf::basic::hvec_raw(h.data(), measurement.data(), acc.data(), r.data());
+        Hmat_raw(H_.data(), measurement.data(), acc.data(), r.data());
+        hvec_raw(h.data(), measurement.data(), acc.data(), r.data());
 
         // Calculate the Kalman gain
         K_ = (P_minus_ * H_.transpose()) * (H_ * P_minus_ * H_.transpose() + R_).inverse();
@@ -78,6 +82,7 @@ bool EKF::update(float dt, Matrix<float, 3, 1> &acc, Matrix<float, 16,1> &measur
         P_ = (I_ - K_ * H_) * P_minus_;
 
         // Get the distal acceleration
+        acc_link_raw(a_distal.data(), x_hat.data(), acc.data(), r.data());
 
         return true;
     } else {

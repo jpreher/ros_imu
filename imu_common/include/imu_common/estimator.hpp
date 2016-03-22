@@ -8,6 +8,7 @@
 #include <yei/yei_threespace.hpp>
 #include <ros/ros.h>
 #include <memory>
+#include <boost/interprocess/shared_memory_object.hpp>
 
 using std::shared_ptr;
 
@@ -17,7 +18,6 @@ class chain_estimator {
 public:
 private:
     bool isInit;
-    int N;
     int streamRate;
 
     std::string                         basePath;
@@ -29,16 +29,17 @@ private:
         int                    serial_id;
     };
 
-    //typedef std::shared_ptr<sensor> sensorptr;
-
 public:
-    std::vector<float[3]> segment;
+    bool isSHM;
+    int N;
 
     chain_estimator();
+    chain_estimator(bool useSHM);
     ~chain_estimator();
 
     void reset(const YAML::Node &node);
     int update();
+    int getState(int i, float * state, float * meas, float * proximal_acc);
     std::vector<std::shared_ptr<sensor>>  imu_vec;
 };
 

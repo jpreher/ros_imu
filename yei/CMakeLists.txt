@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(yei)
 
-add_definitions(-std=c++0x)
+add_definitions(-std=c++11)
 SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread")
 
-set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Debug)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
